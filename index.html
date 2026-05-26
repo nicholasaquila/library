@@ -1905,7 +1905,7 @@ function initMap() {
   }).addTo(mapInstance);
 
   // Warm antique tone
-  mapInstance.getContainer().style.filter = 'sepia(0.7) saturate(0.6) brightness(0.6) contrast(1.1)';
+  mapInstance.getContainer().style.filter = 'sepia(0.45) saturate(1.4) brightness(0.75) contrast(1.35) hue-rotate(-10deg)';
 
   mapSortedVols = [...LIBRARY_DATA.volumes]
     .filter(v => MAP_LOCATIONS[v.title])
@@ -2655,6 +2655,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.6 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.7 · 27 May 2026</div>
 </body>
 </html>
