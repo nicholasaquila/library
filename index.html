@@ -469,6 +469,7 @@
   }
   .bible-scroll {
     scroll-behavior: smooth;
+    scroll-behavior: smooth;
     flex: 1;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -618,6 +619,23 @@
 
     .status-legend-bar { padding: 4px 14px; }
     .sl-item { font-size: 10px; }
+
+
+    /* Scripture timeline mobile */
+    .bible-card { width: 110px; padding: 5px 7px 4px; }
+    .bc-date  { font-size: 6px; }
+    .bc-event { font-size: 9px; }
+    .bc-book  { font-size: 7.5px; }
+    .bc-greek { font-size: 7px; }
+    .bc-note  { font-size: 6.5px; }
+    .bc-badge { font-size: 5.5px; }
+    .bible-legend-bar { padding: 5px 14px; gap: 8px; flex-wrap: wrap; }
+    .bl-item { font-size: 9px; }
+    .tl-era-spine-line, .tl-spine-row { height: 16px; }
+    .tl-stem { height: 14px !important; }
+    .tl-dot { width: 6px; height: 6px; }
+    .tl-era-label { font-size: 7px !important; letter-spacing: 0.15em !important; }
+    #bible-view .tl-era { min-width: calc(var(--era-min, 120px)); }
 
     /* Timeline mobile hint */
     .mobile-timeline-hint {
@@ -1430,6 +1448,6 @@ function introShowcase() {
 setTimeout(introShowcase, 200);
 
 </script>
-  <div class="version-stamp">v2.0 · 26 May 2026</div>
+  <div class="version-stamp">v2.1 · 26 May 2026</div>
 </body>
 </html>
