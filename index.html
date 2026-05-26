@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Clayton Historical Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:       #f5f0e1;
+    --cream-dark:  #ede6cf;
+    --cream-deep:  #e4dbc0;
+    --ink:         #1e1910;
+    --ink-mid:     #3a3020;
+    --brown:       #50410a;
+    --brown-light: #6e5a28;
+    --gold:        #8c6e37;
+    --gold-light:  #b89050;
+    --rule:        #8c6e37;
+
+    --series-ante:      #5c3d1e;
+    --series-nicene:    #1e3d5c;
+    --series-ecumen:    #3d1e5c;
+    --series-early:     #1e5c3d;
+    --series-monastic:  #5c4a1e;
+    --series-byzantine: #5c1e1e;
+    --series-history:   #2e4a1e;
+    --series-voices:    #6b4c11;
+    --series-unknown:   #444;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 10%, rgba(140,110,55,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 90%, rgba(80,65,40,0.05) 0%, transparent 50%);
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 56px 40px 40px;
+    border-bottom: 1px solid rgba(140,110,55,0.3);
+    position: relative;
+  }
+  header::after {
+    content: '';
+    display: block;
+    width: 280px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 20px auto 0;
+  }
+  .header-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .header-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(24px, 4vw, 42px);
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  .header-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--brown-light);
+    margin-top: 8px;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    max-width: 1200px;
+    margin: 28px auto 0;
+    padding: 0 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: var(--brown);
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .legend-item:hover { color: var(--ink); }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .status-legend {
+    max-width: 1200px;
+    margin: 10px auto 0;
+    padding: 0 32px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .sl-item {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--brown-light);
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    max-width: 1200px;
+    margin: 24px auto 0;
+    padding: 0 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .filter-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-right: 4px;
+  }
+  .filter-btn {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    padding: 5px 14px;
+    border: 1px solid rgba(140,110,55,0.4);
+    border-radius: 0;
+    background: transparent;
+    color: var(--brown-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .filter-btn:hover { background: rgba(140,110,55,0.1); border-color: var(--gold); color: var(--ink); }
+  .filter-btn.active { background: var(--gold); border-color: var(--gold); color: var(--cream); }
+
+  .view-toggle { display: flex; gap: 6px; }
+  .view-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    padding: 5px 14px;
+    border: 1px solid rgba(140,110,55,0.4);
+    background: transparent;
+    color: var(--brown-light);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .view-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+
+  .stats-bar {
+    max-width: 1200px;
+    margin: 12px auto 0;
+    padding: 0 32px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--brown-light);
+  }
+
+  /* ── MAIN CONTENT ── */
+  main { max-width: 1200px; margin: 0 auto; padding: 32px 32px 80px; }
+
+  /* ── ERA HEADINGS ── */
+  .era-section { margin-bottom: 52px; }
+  .era-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .era-rule {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold-light), transparent);
+    margin-bottom: 20px;
+  }
+
+  /* ── GRID VIEW ── */
+  .volumes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .vol-card {
+    background: linear-gradient(160deg, #faf6ea, #f0e9d4);
+    border: 1px solid rgba(140,110,55,0.25);
+    padding: 18px 16px 14px;
+    position: relative;
+    cursor: default;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+  .vol-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--series-color, var(--gold));
+    opacity: 0.7;
+  }
+  .vol-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(80,65,40,0.15);
+    border-color: rgba(140,110,55,0.5);
+  }
+  .vol-card.pending { opacity: 0.65; }
+  .vol-card.needs-refresh { border-color: rgba(180,120,30,0.5); }
+
+  .vol-date {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .vol-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 3px;
+    flex: 1;
+  }
+  .vol-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--brown-light);
+    margin-bottom: 6px;
+  }
+  .vol-author {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: var(--brown);
+    margin-bottom: 10px;
+  }
+  .series-badge {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 8.5px;
+    letter-spacing: 0.12em;
+    padding: 3px 8px;
+    border: 1px solid;
+    color: var(--series-color);
+    border-color: var(--series-color);
+    opacity: 0.85;
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .status-icon {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+  /* ── TIMELINE VIEW ── */
+  #timeline-view { display: none; }
+  .timeline-era { margin-bottom: 48px; }
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 130px 28px 1fr;
+    gap: 0 12px;
+    margin-bottom: 0;
+    position: relative;
+  }
+  .tl-date {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    text-align: right;
+    padding-top: 3px;
+    padding-right: 4px;
+  }
+  .tl-node-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .tl-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+    border: 2px solid var(--cream);
+    box-shadow: 0 0 0 1px currentColor;
+  }
+  .tl-line {
+    width: 1px;
+    flex: 1;
+    min-height: 20px;
+    background: rgba(140,110,55,0.25);
+    margin-top: 3px;
+  }
+  .tl-content {
+    padding-bottom: 22px;
+  }
+  .tl-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 3px;
+  }
+  .tl-meta {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: var(--brown);
+    margin-bottom: 5px;
+  }
+  .tl-badge {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    padding: 2px 8px;
+    border: 1px solid var(--series-color, #888);
+    color: var(--series-color, #888);
+    opacity: 0.85;
+  }
+
+  .empty-state {
+    display: none;
+    text-align: center;
+    padding: 80px 20px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--brown-light);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">Compiled by Nicholas</div>
+  <div class="header-title">The Clayton Historical Library</div>
+  <div class="header-sub">A Chronological Collection of Primary Sources</div>
+</header>
+
+<div class="legend" id="series-legend"></div>
+
+<div class="status-legend">
+  <span class="sl-item">✓ Complete</span>
+  <span class="sl-item">⚠ Needs cover refresh</span>
+  <span class="sl-item">◦ Pending build</span>
+</div>
+
+<div class="controls">
+  <div class="filter-group">
+    <span class="filter-label">Filter</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('complete',this)">Complete</button>
+    <button class="filter-btn" onclick="setFilter('needs-refresh',this)">Needs Refresh</button>
+    <button class="filter-btn" onclick="setFilter('pending',this)">Pending</button>
+  </div>
+  <div class="view-toggle">
+    <button class="view-btn active" id="btn-grid" onclick="setView('grid')">Grid</button>
+    <button class="view-btn" id="btn-timeline" onclick="setView('timeline')">Timeline</button>
+  </div>
+</div>
+
+<div class="stats-bar" id="stats-bar"></div>
+
+<main>
+  <div id="grid-view"></div>
+  <div id="timeline-view"></div>
+  <div class="empty-state" id="empty-state">No volumes match the current filter.</div>
+</main>
+
+<script>
+const LIBRARY_DATA = {
+  "library": "The Clayton Historical Library",
+  "compiler": "Nicholas",
+  "volumes": [
+    { "id": 1, "filename": "(c50-100AD)_The_Didache.epub", "title": "The Didache", "subtitle": null, "author": "Anonymous", "date_label": "c. 50–100 AD", "date_sort": 75, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 2, "filename": "(c70-132AD)_The_Epistle_of_Barnabas.epub", "title": "The Epistle of Barnabas", "subtitle": null, "author": "Anonymous", "date_label": "c. 70–132 AD", "date_sort": 100, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 3, "filename": "(c96AD)_The_First_Epistle_of_Clement_of_Rome.epub", "title": "The First Epistle of Clement of Rome", "subtitle": null, "author": "St. Clement of Rome", "date_label": "c. 96 AD", "date_sort": 96, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 4, "filename": "(c105-115AD)_The_Letters_of_St_Ignatius_of_Antioch.epub", "title": "The Letters of St. Ignatius of Antioch", "subtitle": null, "author": "St. Ignatius of Antioch", "date_label": "c. 105–115 AD", "date_sort": 110, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 5, "filename": "(c110-160AD)_The_Epistle_and_Martyrdom_of_St_Polycarp_of_Smyrna.epub", "title": "The Epistle and Martyrdom of St. Polycarp of Smyrna", "subtitle": null, "author": "St. Polycarp of Smyrna", "date_label": "c. 110–160 AD", "date_sort": 135, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 6, "filename": "(c155AD)_The_First_and_Second_Apologies_Justin_Martyr.epub", "title": "The First and Second Apologies", "subtitle": null, "author": "Justin Martyr", "date_label": "c. 155 AD", "date_sort": 155, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 7, "filename": "(c180AD)_Against_Heresies_St_Irenaeus_of_Lyons.epub", "title": "Against Heresies", "subtitle": null, "author": "St. Irenaeus of Lyons", "date_label": "c. 180 AD", "date_sort": 180, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 8, "filename": "(c181AD)_To_Autolycus_St_Theophilus_of_Antioch.epub", "title": "To Autolycus", "subtitle": null, "author": "St. Theophilus of Antioch", "date_label": "c. 181 AD", "date_sort": 181, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 9, "filename": "(c200AD)_The_Prescription_Against_Heretics_Tertullian.epub", "title": "The Prescription Against Heretics", "subtitle": null, "author": "Tertullian", "date_label": "c. 200 AD", "date_sort": 200, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 10, "filename": "(c230AD)_De_Principiis_Origen_of_Alexandria.epub", "title": "De Principiis", "subtitle": "On First Principles", "author": "Origen of Alexandria", "date_label": "c. 230 AD", "date_sort": 230, "series": "Ante-Nicene Fathers", "status": "complete", "notes": "Bilingual cover" },
+    { "id": 11, "filename": "(c250AD)_The_Unity_of_the_Church_St_Cyprian_of_Carthage.epub", "title": "The Unity of the Church", "subtitle": null, "author": "St. Cyprian of Carthage", "date_label": "c. 250 AD", "date_sort": 250, "series": "Ante-Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 12, "filename": "(c325AD)_First_Council_of_Nicaea.epub", "title": "First Council of Nicaea", "subtitle": null, "author": null, "date_label": "c. 325 AD", "date_sort": 325, "series": "Ecumenical Councils", "status": "complete", "notes": null },
+    { "id": 13, "filename": "(c335AD)_On_the_Incarnation_St_Athanasius_of_Alexandria.epub", "title": "On the Incarnation", "subtitle": null, "author": "St. Athanasius of Alexandria", "date_label": "c. 335 AD", "date_sort": 335, "series": "Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 14, "filename": "(c380-383AD)_Ad_Ablabium_Not_Three_Gods_St_Gregory_of_Nyssa.epub", "title": "Ad Ablabium", "subtitle": "On Not Three Gods", "author": "St. Gregory of Nyssa", "date_label": "c. 380–383 AD", "date_sort": 381, "series": "Nicene Fathers", "status": "complete", "notes": "Bilingual cover" },
+    { "id": 15, "filename": "(c380AD)_Five_Theological_Orations_St_Gregory_of_Nazianzus.epub", "title": "Five Theological Orations", "subtitle": null, "author": "St. Gregory of Nazianzus", "date_label": "c. 380 AD", "date_sort": 380, "series": "Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 16, "filename": "(c381AD)_First_Council_of_Constantinople.epub", "title": "First Council of Constantinople", "subtitle": null, "author": null, "date_label": "c. 381 AD", "date_sort": 381, "series": "Ecumenical Councils", "status": "complete", "notes": null },
+    { "id": 17, "filename": "(c390-400AD)_The_Divine_Liturgy_St_John_Chrysostom.epub", "title": "The Divine Liturgy", "subtitle": null, "author": "St. John Chrysostom", "date_label": "c. 390–400 AD", "date_sort": 395, "series": "Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 18, "filename": "(c397-400AD)_Confessions_St_Augustine_of_Hippo.epub", "title": "Confessions", "subtitle": null, "author": "St. Augustine of Hippo", "date_label": "c. 397–400 AD", "date_sort": 398, "series": "Nicene Fathers", "status": "complete", "notes": null },
+    { "id": 19, "filename": "(c431AD)_Council_of_Ephesus.epub", "title": "Council of Ephesus", "subtitle": null, "author": null, "date_label": "c. 431 AD", "date_sort": 431, "series": "Ecumenical Councils", "status": "complete", "notes": null },
+    { "id": 20, "filename": "(c451AD)_Council_of_Chalcedon.epub", "title": "Council of Chalcedon", "subtitle": null, "author": null, "date_label": "c. 451 AD", "date_sort": 451, "series": "Ecumenical Councils", "status": "complete", "notes": null },
+    { "id": 21, "filename": "(c461-493AD)_Epistles_and_Hymn_St_Patrick_of_Ireland.epub", "title": "Epistles and Hymn", "subtitle": null, "author": "St. Patrick of Ireland", "date_label": "c. 461–493 AD", "date_sort": 470, "series": "The Early Church", "status": "complete", "notes": null },
+    { "id": 22, "filename": "(c530AD)_The_Rule_of_Saint_Benedict.epub", "title": "The Rule of Saint Benedict", "subtitle": null, "author": "St. Benedict of Nursia", "date_label": "c. 530 AD", "date_sort": 530, "series": "The Monastic Tradition", "status": "complete", "notes": null },
+    { "id": 23, "filename": "(c553AD)_Second_Council_of_Constantinople.epub", "title": "Second Council of Constantinople", "subtitle": null, "author": null, "date_label": "c. 553 AD", "date_sort": 553, "series": "Ecumenical Councils", "status": "needs-refresh", "notes": "Cover refresh needed" },
+    { "id": 24, "filename": "(c634AD)_On_the_Cosmic_Mystery_St_Maximus_the_Confessor.epub", "title": "On the Cosmic Mystery", "subtitle": null, "author": "St. Maximus the Confessor", "date_label": "c. 634 AD", "date_sort": 634, "series": "Byzantine Fathers", "status": "complete", "notes": null },
+    { "id": 25, "filename": "(c680AD)_Third_Council_of_Constantinople.epub", "title": "Third Council of Constantinople", "subtitle": null, "author": null, "date_label": "c. 680 AD", "date_sort": 680, "series": "Ecumenical Councils", "status": "needs-refresh", "notes": "Cover refresh needed" },
+    { "id": 26, "filename": "(c743-748AD)_An_Exact_Exposition_of_the_Orthodox_Faith_St_John_of_Damascus.epub", "title": "An Exact Exposition of the Orthodox Faith", "subtitle": null, "author": "St. John of Damascus", "date_label": "c. 743–748 AD", "date_sort": 745, "series": "Byzantine Fathers", "status": "complete", "notes": null },
+    { "id": 27, "filename": "(c787AD)_Second_Council_of_Nicaea.epub", "title": "Second Council of Nicaea", "subtitle": null, "author": null, "date_label": "c. 787 AD", "date_sort": 787, "series": "Ecumenical Councils", "status": "needs-refresh", "notes": "Cover refresh needed" },
+    { "id": 28, "filename": "(c817-830AD)_Vita_Karoli_Magni_Einhard.epub", "title": "Vita Karoli Magni", "subtitle": "The Life of Charlemagne", "author": "Einhard", "date_label": "c. 817–830 AD", "date_sort": 820, "series": "The History of Christendom", "status": "complete", "notes": "Bilingual cover" },
+    { "id": 29, "filename": "(c869AD)_Fourth_Council_of_Constantinople.epub", "title": "Fourth Council of Constantinople", "subtitle": null, "author": null, "date_label": "c. 869 AD", "date_sort": 869, "series": "Ecumenical Councils", "status": "needs-refresh", "notes": "Cover refresh needed" },
+    { "id": 30, "filename": "(c1098AD)_Cur_Deus_Homo_St_Anselm_of_Canterbury.epub", "title": "Cur Deus Homo", "subtitle": "Why God Became Man", "author": "St. Anselm of Canterbury", "date_label": "c. 1098 AD", "date_sort": 1098, "series": "The History of Christendom", "status": "complete", "notes": "Bilingual cover; series line: Father of Scholasticism" },
+    { "id": 31, "filename": "(c1338AD)_The_Triads_St_Gregory_Palamas.epub", "title": "The Triads", "subtitle": null, "author": "St. Gregory Palamas", "date_label": "c. 1338 AD", "date_sort": 1338, "series": "Byzantine Fathers", "status": "complete", "notes": null },
+    { "id": 32, "filename": null, "title": "The Divine Comedy", "subtitle": null, "author": "Dante Alighieri", "date_label": "c. 1321 AD", "date_sort": 1321, "series": "The History of Christendom", "status": "pending", "notes": null },
+    { "id": 33, "filename": null, "title": "95 Theses & Small Catechism", "subtitle": null, "author": "Martin Luther", "date_label": "1517 / 1529 AD", "date_sort": 1517, "series": "The History of Christendom", "status": "pending", "notes": "Two texts, one volume" },
+    { "id": 34, "filename": null, "title": "Dark Night of the Soul", "subtitle": "Noche Oscura del Alma", "author": "St. John of the Cross", "date_label": "c. 1579 AD", "date_sort": 1579, "series": "The History of Christendom", "status": "pending", "notes": "Possible bilingual cover — confirm" },
+    { "id": 35, "filename": null, "title": "The Practice of the Presence of God", "subtitle": null, "author": "Brother Lawrence", "date_label": "c. 1692 AD", "date_sort": 1692, "series": "The History of Christendom", "status": "pending", "notes": null },
+    { "id": 36, "filename": null, "title": "On the Acquisition of the Holy Spirit", "subtitle": null, "author": "St. Seraphim of Sarov", "date_label": "c. 1831 AD", "date_sort": 1831, "series": "Byzantine Fathers", "status": "pending", "notes": "Series unconfirmed" },
+    { "id": 37, "filename": null, "title": "Enuma Elish", "subtitle": "The Babylonian Epic of Creation", "author": "Anonymous", "date_label": "c. 1100 BC", "date_sort": -1100, "series": "Voices of the Ancient World", "status": "pending", "notes": null },
+    { "id": 38, "filename": null, "title": "Atrahasis", "subtitle": "The Epic of the Flood", "author": "Anonymous", "date_label": "c. 1700 BC", "date_sort": -1700, "series": "Voices of the Ancient World", "status": "pending", "notes": null },
+    { "id": 39, "filename": null, "title": "The Code of Hammurabi", "subtitle": null, "author": "Hammurabi", "date_label": "c. 1754 BC", "date_sort": -1754, "series": "Voices of the Ancient World", "status": "pending", "notes": null },
+    { "id": 40, "filename": null, "title": "The Tale of Sinuhe", "subtitle": null, "author": "Anonymous", "date_label": "c. 1875 BC", "date_sort": -1875, "series": "Voices of the Ancient World", "status": "pending", "notes": null }
+  ]
+};
+
+const SERIES_COLORS = {
+  'Ante-Nicene Fathers':        '#5c3d1e',
+  'Nicene Fathers':             '#1e3d5c',
+  'Ecumenical Councils':        '#3d1e5c',
+  'The Early Church':           '#1e5c3d',
+  'The Monastic Tradition':     '#5c4a1e',
+  'Byzantine Fathers':          '#5c1e1e',
+  'The History of Christendom': '#2e4a1e',
+  'Voices of the Ancient World':'#7a4f00',
+};
+
+const ERAS = [
+  { label: 'Ancient World',                from: -9999, to: 0    },
+  { label: 'Apostolic & Sub-Apostolic',    from: 0,     to: 150  },
+  { label: 'Early Ante-Nicene',            from: 150,   to: 325  },
+  { label: 'Nicene & Post-Nicene',         from: 325,   to: 500  },
+  { label: 'Late Antique & Early Medieval',from: 500,   to: 800  },
+  { label: 'Medieval',                     from: 800,   to: 1400 },
+  { label: 'Early Modern & Modern',        from: 1400,  to: 9999 },
+];
+
+let allVolumes = [];
+let currentFilter = 'all';
+let currentView = 'grid';
+
+function getEra(date_sort) {
+  return ERAS.find(e => date_sort >= e.from && date_sort < e.to) || ERAS[ERAS.length - 1];
+}
+
+function seriesColor(series) {
+  return SERIES_COLORS[series] || '#555';
+}
+
+function statusIcon(status) {
+  if (status === 'complete')      return '✓';
+  if (status === 'needs-refresh') return '⚠';
+  if (status === 'pending')       return '◦';
+  return '';
+}
+
+function buildLegend(volumes) {
+  const seen = new Set();
+  const legend = document.getElementById('series-legend');
+  legend.innerHTML = '';
+  volumes.forEach(v => {
+    if (!seen.has(v.series)) {
+      seen.add(v.series);
+      const item = document.createElement('div');
+      item.className = 'legend-item';
+      item.innerHTML = `<span class="legend-dot" style="background:${seriesColor(v.series)}"></span>${v.series}`;
+      legend.appendChild(item);
+    }
+  });
+}
+
+function filterVolumes(volumes) {
+  if (currentFilter === 'all') return volumes;
+  return volumes.filter(v => v.status === currentFilter);
+}
+
+function groupByEra(volumes) {
+  const groups = {};
+  ERAS.forEach(e => { groups[e.label] = []; });
+  volumes.forEach(v => {
+    const era = getEra(v.date_sort);
+    groups[era.label].push(v);
+  });
+  return groups;
+}
+
+function renderGrid(volumes) {
+  const container = document.getElementById('grid-view');
+  const filtered = filterVolumes(volumes);
+  const groups = groupByEra(filtered);
+
+  container.innerHTML = '';
+  let total = 0;
+  ERAS.forEach(era => {
+    const vols = groups[era.label];
+    if (!vols || vols.length === 0) return;
+    total += vols.length;
+    const section = document.createElement('div');
+    section.className = 'era-section';
+    section.innerHTML = `<div class="era-heading">${era.label}</div><div class="era-rule"></div>`;
+    const grid = document.createElement('div');
+    grid.className = 'volumes-grid';
+    vols.forEach(v => {
+      const card = document.createElement('div');
+      card.className = `vol-card ${v.status}`;
+      card.style.setProperty('--series-color', seriesColor(v.series));
+      card.innerHTML = `
+        <span class="status-icon" title="${v.status}">${statusIcon(v.status)}</span>
+        <div class="vol-date">${v.date_label}</div>
+        <div class="vol-title">${v.title}</div>
+        ${v.subtitle ? `<div class="vol-subtitle">${v.subtitle}</div>` : ''}
+        ${v.author ? `<div class="vol-author">${v.author}</div>` : ''}
+        <span class="series-badge" style="--series-color:${seriesColor(v.series)}">${v.series}</span>
+      `;
+      grid.appendChild(card);
+    });
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+
+  document.getElementById('empty-state').style.display = total === 0 ? 'block' : 'none';
+  updateStats(filtered);
+}
+
+function renderTimeline(volumes) {
+  const container = document.getElementById('timeline-view');
+  const filtered = filterVolumes(volumes);
+  const groups = groupByEra(filtered);
+
+  container.innerHTML = '';
+  let total = 0;
+  ERAS.forEach(era => {
+    const vols = groups[era.label];
+    if (!vols || vols.length === 0) return;
+    total += vols.length;
+    const section = document.createElement('div');
+    section.className = 'timeline-era era-section';
+    section.innerHTML = `<div class="era-heading">${era.label}</div><div class="era-rule"></div>`;
+    vols.forEach((v, i) => {
+      const row = document.createElement('div');
+      row.className = 'timeline-row';
+      const isLast = i === vols.length - 1;
+      row.innerHTML = `
+        <div class="tl-date">${v.date_label}</div>
+        <div class="tl-node-col">
+          <div class="tl-dot" style="background:${seriesColor(v.series)}"></div>
+          ${!isLast ? '<div class="tl-line"></div>' : ''}
+        </div>
+        <div class="tl-content">
+          <div class="tl-title">${v.title}${v.subtitle ? ` <span style="font-style:italic;font-weight:300;font-size:0.9em">— ${v.subtitle}</span>` : ''}</div>
+          ${v.author ? `<div class="tl-meta">${v.author} &nbsp;·&nbsp; <span style="opacity:0.6">${statusIcon(v.status)} ${v.status.replace('-',' ')}</span></div>` : `<div class="tl-meta"><span style="opacity:0.6">${statusIcon(v.status)} ${v.status.replace('-',' ')}</span></div>`}
+          <span class="tl-badge" style="--series-color:${seriesColor(v.series)}">${v.series}</span>
+          ${v.notes ? `<div style="font-family:'EB Garamond',serif;font-style:italic;font-size:12px;color:var(--brown-light);margin-top:4px">${v.notes}</div>` : ''}
+        </div>
+      `;
+      section.appendChild(row);
+    });
+    container.appendChild(section);
+  });
+
+  document.getElementById('empty-state').style.display = total === 0 ? 'block' : 'none';
+  updateStats(filtered);
+}
+
+function updateStats(filtered) {
+  const complete = filtered.filter(v => v.status === 'complete').length;
+  const refresh  = filtered.filter(v => v.status === 'needs-refresh').length;
+  const pending  = filtered.filter(v => v.status === 'pending').length;
+  document.getElementById('stats-bar').textContent =
+    `${filtered.length} volume${filtered.length !== 1 ? 's' : ''} — ${complete} complete, ${refresh} awaiting refresh, ${pending} pending build`;
+}
+
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function setView(view) {
+  currentView = view;
+  document.getElementById('btn-grid').classList.toggle('active', view === 'grid');
+  document.getElementById('btn-timeline').classList.toggle('active', view === 'timeline');
+  render();
+}
+
+function render() {
+  if (currentView === 'grid') {
+    document.getElementById('grid-view').style.display = 'block';
+    document.getElementById('timeline-view').style.display = 'none';
+    renderGrid(allVolumes);
+  } else {
+    document.getElementById('grid-view').style.display = 'none';
+    document.getElementById('timeline-view').style.display = 'block';
+    renderTimeline(allVolumes);
+  }
+}
+
+// Load from embedded data
+allVolumes = LIBRARY_DATA.volumes.sort((a, b) => a.date_sort - b.date_sort);
+buildLegend(allVolumes);
+render();
+</script>
+</body>
+</html>
