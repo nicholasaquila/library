@@ -881,10 +881,119 @@
   }
   .dl-toast.show { opacity: 1; }
 
+
+  /* ── DARK MODE ── */
+  [data-theme="dark"] {
+    --cream:       #1a1810;
+    --cream-dark:  #242218;
+    --ink:         #e8e0cc;
+    --brown:       #c8a96e;
+    --brown-light: #a88848;
+    --gold:        #c8a040;
+    --gold-light:  #e0b858;
+  }
+  [data-theme="dark"] body {
+    background-image: radial-gradient(ellipse at 20% 10%, rgba(200,160,64,.04) 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 90%, rgba(160,130,50,.03) 0%, transparent 50%);
+  }
+  [data-theme="dark"] .tl-card,
+  [data-theme="dark"] .vol-card,
+  [data-theme="dark"] .bible-card {
+    background: linear-gradient(150deg, #252318, #1e1c12);
+  }
+  [data-theme="dark"] .sig-tag {
+    background: #2a2510;
+    color: #d4b870;
+    border-color: rgba(200,160,64,0.5);
+  }
+  [data-theme="dark"] .pleroma-text {
+    background: #1a1810;
+  }
+  [data-theme="dark"] .scripture-note {
+    background: rgba(139,0,0,0.08);
+  }
+  [data-theme="dark"] header {
+    background: #1a1810;
+  }
+
+  [data-theme="dark"] .legend-bar,
+  [data-theme="dark"] .status-legend-bar,
+  [data-theme="dark"] .bible-legend-bar,
+  [data-theme="dark"] .controls-bar,
+  [data-theme="dark"] .controls,
+  [data-theme="dark"] .scripture-note {
+    background: var(--cream);
+    border-color: rgba(200,160,64,0.15);
+  }
+  [data-theme="dark"] .tl-card,
+  [data-theme="dark"] .vol-card {
+    background: linear-gradient(150deg, #252318, #1e1c12);
+    border-color: rgba(200,160,64,0.2);
+  }
+  [data-theme="dark"] .bible-card {
+    background: linear-gradient(150deg, #252318, #1e1c12);
+    border-color: rgba(200,160,64,0.2);
+  }
+  [data-theme="dark"] .tl-outer,
+  [data-theme="dark"] .timeline-outer,
+  [data-theme="dark"] #bible-view,
+  [data-theme="dark"] #grid-view,
+  [data-theme="dark"] #tl-outer {
+    background: var(--cream);
+  }
+  [data-theme="dark"] .era-section,
+  [data-theme="dark"] .volumes-grid .gcard {
+    background: linear-gradient(150deg, #252318, #1e1c12);
+    border-color: rgba(200,160,64,0.2);
+  }
+  [data-theme="dark"] .filter-btn,
+  [data-theme="dark"] .vbtn {
+    border-color: rgba(200,160,64,0.3);
+  }
+  [data-theme="dark"] .filter-btn.active {
+    background: var(--gold);
+    color: var(--cream);
+  }
+  [data-theme="dark"] .vbtn.active {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  [data-theme="dark"] .dl-toast {
+    background: rgba(232,224,204,0.92);
+    color: #1a1810;
+    border-color: rgba(200,160,64,0.4);
+  }
+
+  /* ── DARK MODE TOGGLE ── */
+  .dark-toggle {
+    position: fixed;
+    top: 12px;
+    right: 14px;
+    z-index: 300;
+    background: transparent;
+    border: 1px solid rgba(140,110,55,0.4);
+    color: var(--gold);
+    font-size: 14px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+  .dark-toggle:hover {
+    background: rgba(140,110,55,0.15);
+    border-color: var(--gold);
+  }
+
 </style>
 </head>
 <body>
 
+<button class="dark-toggle" id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()">☽</button>
 <header>
   <div class="header-title">The Clayton Historical Library</div>
 </header>
@@ -2164,6 +2273,23 @@ addWheelScroll(document.getElementById('bible-scroll'));
 buildLegend();
 render();
 
+// ── Dark mode ─────────────────────────────────────────────────────────────────
+function toggleDark() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('dark-toggle').textContent = isDark ? '☽' : '☀';
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+}
+// Restore saved preference
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('dark-toggle').textContent = '☀';
+  }
+})();
+
+
 // ── Download toast ────────────────────────────────────────────────────────────
 setTimeout(() => {
   const toast = document.getElementById('dl-toast');
@@ -2231,6 +2357,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v3.4 · 26 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v3.5 · 26 May 2026</div>
 </body>
 </html>
