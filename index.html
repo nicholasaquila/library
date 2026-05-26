@@ -727,6 +727,14 @@
     border-style: dashed;
   }
 
+
+  .tl-card.tbc, .vol-card.tbc { opacity: 0.4; filter: grayscale(0.7); border-style: dashed; }
+
+  @keyframes allPulse {
+    0%, 100% { border-color: rgba(140,110,55,0.4); box-shadow: none; color: var(--brown-light); }
+    50% { border-color: var(--gold); box-shadow: 0 0 10px rgba(140,110,55,0.25); color: var(--ink); }
+  }
+  .filter-btn.pulse-all { animation: allPulse 1.4s ease-in-out infinite; }
 </style>
 </head>
 <body>
@@ -739,7 +747,7 @@
 <div class="controls-bar">
   <div class="filter-group">
     <span class="filter-label">Filter</span>
-    <button class="filter-btn active" id="btn-all" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn active pulse-all" id="btn-all" onclick="setFilter('all',this)">All</button>
     <button class="filter-btn" onclick="setFilter('complete',this)">Complete</button>
     <button class="filter-btn" onclick="setFilter('needs-refresh',this)">Needs Refresh</button>
     <button class="filter-btn" onclick="setFilter('pending',this)">Pending</button>
@@ -796,7 +804,7 @@ const LIBRARY_DATA = { "volumes": [
   { "id":8, "title":"The First Epistle of Clement of Rome", "subtitle":null, "author":"St. Clement of Rome", "date_label":"c. 96 AD", "date_sort":96, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c96AD)_The_First_Epistle_of_Clement_of_Rome.epub"},
   { "id":9, "title":"The Letters of St. Ignatius of Antioch", "subtitle":null, "author":"St. Ignatius of Antioch", "date_label":"c. 105–115 AD", "date_sort":110, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c105-115AD)_The_Letters_of_St_Ignatius_of_Antioch.epub"},
   { "id":10, "title":"The Epistle and Martyrdom of St. Polycarp", "subtitle":null, "author":"St. Polycarp of Smyrna", "date_label":"c. 110–160 AD", "date_sort":135, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c110-160AD)_The_Epistle_and_Martyrdom_of_St_Polycarp_of_Smyrna.epub"},
-  { "id":11, "title":"The First and Second Apologies", "subtitle":null, "author":"Justin Martyr", "date_label":"c. 155 AD", "date_sort":155, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c155AD)_The_First_and_Second_Apologies_Justin_Martyr.epub"},
+  { "id":11, "title":"The First and Second Apologies", "subtitle":null, "author":"St. Justin Martyr", "date_label":"c. 155 AD", "date_sort":155, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c155AD)_The_First_and_Second_Apologies_Justin_Martyr.epub"},
   { "id":12, "title":"Against Heresies", "subtitle":null, "author":"St. Irenaeus of Lyons", "date_label":"c. 180 AD", "date_sort":180, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c180AD)_Against_Heresies_St_Irenaeus_of_Lyons.epub"},
   { "id":13, "title":"To Autolycus", "subtitle":null, "author":"St. Theophilus of Antioch", "date_label":"c. 181 AD", "date_sort":181, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c181AD)_To_Autolycus_St_Theophilus_of_Antioch.epub"},
   { "id":14, "title":"The Prescription Against Heretics", "subtitle":null, "author":"Tertullian", "date_label":"c. 200 AD", "date_sort":200, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c200AD)_The_Prescription_Against_Heretics_Tertullian.epub"},
@@ -827,7 +835,10 @@ const LIBRARY_DATA = { "volumes": [
   { "id":38, "title":"95 Theses & Small Catechism", "subtitle":null, "author":"Martin Luther", "date_label":"1517 / 1529 AD", "date_sort":1517, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
   { "id":39, "title":"Dark Night of the Soul", "subtitle":"Noche Oscura del Alma", "author":"St. John of the Cross", "date_label":"c. 1579 AD", "date_sort":1579, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
   { "id":40, "title":"The Practice of the Presence of God", "subtitle":null, "author":"Brother Lawrence", "date_label":"c. 1692 AD", "date_sort":1692, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
-  { "id":41, "title":"On the Acquisition of the Holy Spirit", "subtitle":null, "author":"St. Seraphim of Sarov", "date_label":"c. 1831 AD", "date_sort":1831, "series":"Byzantine Fathers", "status":"pending", "notes":null , "filename":null}
+  { "id":41, "title":"On the Acquisition of the Holy Spirit", "subtitle":null, "author":"St. Seraphim of Sarov", "date_label":"c. 1831 AD", "date_sort":1831, "series":"Byzantine Fathers", "status":"pending", "notes":null , "filename":null},
+  { "id":45, "title":"Orthodoxy and the Religion of the Future", "subtitle":null, "author":"Fr. Seraphim Rose", "date_label":"c. 1975 AD", "date_sort":1975, "series":"TBC", "status":"pending", "filename":null },
+  { "id":46, "title":"Theosis: The True Purpose of Human Life", "subtitle":null, "author":"Archimandrite George", "date_label":"c. 1992 AD", "date_sort":1992, "series":"TBC", "status":"pending", "filename":null },
+  { "id":47, "title":"Catechism of the Catholic Church", "subtitle":null, "author":null, "date_label":"c. 1992 AD", "date_sort":1993, "series":"TBC", "status":"pending", "filename":null }
 ]};
 
 const SERIES_COLORS = {
@@ -839,6 +850,7 @@ const SERIES_COLORS = {
   'Byzantine Fathers':          '#5c1e1e',
   'The History of Christendom': '#2e4a1e',
   'Voices of the Ancient World':'#7a4f00',
+  'TBC': '#888888',
   'The Scholastic Tradition':   '#3d2a5c',
   'TBC':                         '#888888',
   'The Scholastic Tradition':   '#3d2a5c',
@@ -1384,7 +1396,13 @@ function introShowcase() {
   // Step 2: after a beat, smoothly scroll back to start
   setTimeout(() => {
     tlScroll.style.scrollBehavior = 'smooth';
-    tlScroll.scrollLeft = 0;
+    const eraEls = document.querySelectorAll('#timeline-track .tl-era');
+      let targetX = 0;
+      eraEls.forEach(el => {
+        const ld = el.querySelector('div div');
+        if (ld && ld.textContent.includes('Apostolic')) targetX = Math.max(0, el.offsetLeft - 60);
+      });
+      tlScroll.scrollLeft = targetX;
   }, 300);
 
   // Step 3: after scroll settles, pulse tabs sequentially
@@ -1412,6 +1430,6 @@ function introShowcase() {
 setTimeout(introShowcase, 200);
 
 </script>
-  <div class="version-stamp">v1.7 · 26 May 2026</div>
+  <div class="version-stamp">v2.0 · 26 May 2026</div>
 </body>
 </html>
