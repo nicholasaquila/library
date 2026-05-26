@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -1090,7 +1090,7 @@
 </head>
 <body>
 
-<button class="dark-toggle" id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()">☽</button>
+<button class="dark-toggle" id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()">☀</button>
 <header>
   <div class="header-title">The Clayton Historical Library</div>
 </header>
@@ -1913,6 +1913,7 @@ function initMap() {
 
   document.getElementById('map-slider').max = mapSortedVols.length - 1;
   mapReset();
+  updateMapFilter();
 }
 
 function mapAddMarker(vol, animate) {
@@ -2572,19 +2573,31 @@ buildLegend();
 render();
 
 // ── Dark mode ─────────────────────────────────────────────────────────────────
+
+function updateMapFilter() {
+  if (!mapInstance) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  mapInstance.getContainer().style.filter = isDark
+    ? 'sepia(0.8) saturate(0.5) brightness(0.35) contrast(1.4) hue-rotate(180deg)'
+    : 'sepia(0.45) saturate(1.4) brightness(0.75) contrast(1.35) hue-rotate(-10deg)';
+}
+
 function toggleDark() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
   document.getElementById('dark-toggle').textContent = isDark ? '☽' : '☀';
   localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  updateMapFilter();
 }
 // Restore saved preference
 (function() {
   const saved = localStorage.getItem('theme');
-  if (saved === 'dark') {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    document.getElementById('dark-toggle').textContent = '☀';
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById('dark-toggle').textContent = '☽';
   }
+  // default is dark — already set on <html> element
+  updateMapFilter();
 })();
 
 
@@ -2655,6 +2668,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.7 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.9 · 27 May 2026</div>
 </body>
 </html>
