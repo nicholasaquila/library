@@ -1897,14 +1897,21 @@ function initMap() {
     attributionControl: true,
   });
 
-  // CartoDB Positron No Labels — clean, no borders, no clutter
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+  // Two tile layers — swap based on dark/light mode
+  window.mapLightLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
     attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
     subdomains: 'abcd',
     maxZoom: 19,
-  }).addTo(mapInstance);
+  });
+  window.mapDarkLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19,
+  });
 
-  // Warm antique tone
+  // Add correct layer for current theme
+  const initDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  (initDark ? window.mapDarkLayer : window.mapLightLayer).addTo(mapInstance);
   mapInstance.getContainer().style.filter = 'sepia(0.45) saturate(1.4) brightness(0.75) contrast(1.35) hue-rotate(-10deg)';
 
   mapSortedVols = [...LIBRARY_DATA.volumes]
@@ -2577,8 +2584,17 @@ render();
 function updateMapFilter() {
   if (!mapInstance) return;
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  // Swap tile layers
+  if (isDark) {
+    if (window.mapLightLayer) mapInstance.removeLayer(window.mapLightLayer);
+    if (window.mapDarkLayer && !mapInstance.hasLayer(window.mapDarkLayer)) window.mapDarkLayer.addTo(mapInstance);
+  } else {
+    if (window.mapDarkLayer) mapInstance.removeLayer(window.mapDarkLayer);
+    if (window.mapLightLayer && !mapInstance.hasLayer(window.mapLightLayer)) window.mapLightLayer.addTo(mapInstance);
+  }
+  // Apply filter
   mapInstance.getContainer().style.filter = isDark
-    ? 'sepia(0.8) saturate(0.5) brightness(0.35) contrast(1.4) hue-rotate(180deg)'
+    ? 'sepia(0.4) saturate(0.9) brightness(0.85) contrast(1.2) hue-rotate(10deg)'
     : 'sepia(0.45) saturate(1.4) brightness(0.75) contrast(1.35) hue-rotate(-10deg)';
 }
 
@@ -2668,6 +2684,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.9 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.0 · 27 May 2026</div>
 </body>
 </html>
