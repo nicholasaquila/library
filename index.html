@@ -1828,12 +1828,12 @@ const SIGNIFICANCE = {
 // ── MAP DATA ──────────────────────────────────────────────────────────────────
 // lat/lng for each volume's place of origin
 const MAP_LOCATIONS = {
-  "The Epic of Gilgamesh":                    { lat: 32.5,  lng: 45.4,  place: "Mesopotamia (modern Iraq)" },
-  "The Tale of Sinuhe":                       { lat: 29.9,  lng: 31.2,  place: "Egypt" },
-  "The Tale of the Shipwrecked Sailor":       { lat: 29.9,  lng: 31.2,  place: "Egypt" },
-  "The Code of Hammurabi":                    { lat: 32.5,  lng: 44.4,  place: "Babylon (modern Iraq)" },
-  "Atrahasis":                                { lat: 32.5,  lng: 44.4,  place: "Babylon (modern Iraq)" },
-  "Enuma Elish":                              { lat: 32.5,  lng: 44.4,  place: "Babylon (modern Iraq)" },
+  "The Epic of Gilgamesh":                    { lat: 31.3,  lng: 45.6,  place: "Uruk, ancient Mesopotamia" },
+  "The Tale of Sinuhe":                       { lat: 30.1,  lng: 31.4,  place: "Memphis, Egypt" },
+  "The Tale of the Shipwrecked Sailor":       { lat: 29.5,  lng: 31.0,  place: "Egypt (Nile Valley)" },
+  "The Code of Hammurabi":                    { lat: 32.5,  lng: 44.5,  place: "Babylon, Mesopotamia" },
+  "Atrahasis":                                { lat: 33.0,  lng: 44.3,  place: "Nippur, Mesopotamia" },
+  "Enuma Elish":                              { lat: 32.2,  lng: 44.8,  place: "Babylon, Mesopotamia" },
   "The Iliad":                                { lat: 38.9,  lng: 26.9,  place: "Ancient Greece / Troy" },
   "The Odyssey":                              { lat: 38.9,  lng: 26.9,  place: "Ancient Greece" },
   "The Didache":                              { lat: 36.2,  lng: 37.1,  place: "Syria / Antioch" },
@@ -1891,7 +1891,7 @@ function initMap() {
   if (mapInstance) return;
 
   mapInstance = L.map('map-container', {
-    center: [38, 25],
+    center: [36, 28],
     zoom: 4,
     zoomControl: true,
     attributionControl: true,
@@ -2684,6 +2684,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.0 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.2 · 27 May 2026</div>
 </body>
 </html>
