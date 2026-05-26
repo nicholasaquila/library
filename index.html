@@ -186,6 +186,7 @@
 
   /* Scrollable track */
   .timeline-scroll {
+    scroll-behavior: smooth;
     flex: 1;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -467,6 +468,7 @@
     flex-direction: column;
   }
   .bible-scroll {
+    scroll-behavior: smooth;
     flex: 1;
     overflow-x: scroll;
     overflow-y: hidden;
@@ -682,6 +684,17 @@
     z-index: 100;
   }
 
+
+  /* ── TAB INTRO ANIMATION ── */
+  @keyframes tabPulse {
+    0%   { background: transparent; color: var(--brown-light); border-color: rgba(140,110,55,0.4); }
+    50%  { background: rgba(140,110,55,0.18); color: var(--ink); border-color: var(--gold); box-shadow: 0 0 8px rgba(140,110,55,0.25); }
+    100% { background: transparent; color: var(--brown-light); border-color: rgba(140,110,55,0.4); }
+  }
+  .vbtn.pulse {
+    animation: tabPulse 0.7s ease-in-out;
+  }
+
 </style>
 </head>
 <body>
@@ -689,7 +702,6 @@
 <header>
   <div class="header-eyebrow">Compiled by Nicholas</div>
   <div class="header-title">The Clayton Historical Library</div>
-  <div class="header-sub">The divine revealing itself through history</div>
 </header>
 
 <div class="controls-bar">
@@ -1302,7 +1314,50 @@ addWheelScroll(document.getElementById('bible-scroll'));
 
 buildLegend();
 render();
+
+// ── INTRO SHOWCASE ────────────────────────────────────────────────────────────
+// After render, scroll timeline to the end then smoothly reel back to start
+// Then sequentially pulse the tabs to invite exploration
+
+function introShowcase() {
+  const tlScroll = document.getElementById('timeline-scroll');
+  const bsScroll = document.getElementById('bible-scroll');
+
+  // Step 1: instantly jump to end (no smooth so user doesn't see it)
+  tlScroll.style.scrollBehavior = 'auto';
+  tlScroll.scrollLeft = tlScroll.scrollWidth;
+
+  // Step 2: after a beat, smoothly scroll back to start
+  setTimeout(() => {
+    tlScroll.style.scrollBehavior = 'smooth';
+    tlScroll.scrollLeft = 0;
+  }, 300);
+
+  // Step 3: after scroll settles, pulse tabs sequentially
+  // Scripture → Library (already active) → Grid
+  const btnBible    = document.getElementById('btn-bible');
+  const btnTimeline = document.getElementById('btn-timeline');
+  const btnGrid     = document.getElementById('btn-grid');
+
+  function pulseBtn(btn, delay) {
+    setTimeout(() => {
+      btn.classList.add('pulse');
+      btn.addEventListener('animationend', () => btn.classList.remove('pulse'), { once: true });
+    }, delay);
+  }
+
+  // Stagger: start after the scroll animation (~1.8s), then each tab 700ms apart
+  const baseDelay = 2200;
+  pulseBtn(btnBible,    baseDelay);
+  pulseBtn(btnGrid,     baseDelay + 800);
+  pulseBtn(btnBible,    baseDelay + 1600);
+  pulseBtn(btnGrid,     baseDelay + 2400);
+}
+
+// Run showcase after a short delay to let render settle
+setTimeout(introShowcase, 200);
+
 </script>
-  <div class="version-stamp">v1.0 · 26 May 2026</div>
+  <div class="version-stamp">v1.1 · 26 May 2026</div>
 </body>
 </html>
