@@ -573,6 +573,32 @@
     line-height: 1.4;
   }
 
+
+  /* ── DOWNLOAD LINK ── */
+  .dl-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-decoration: none;
+    margin-top: 5px;
+    padding: 2px 6px;
+    border: 0.5px solid rgba(140,110,55,0.35);
+    transition: background 0.18s, color 0.18s;
+  }
+  .dl-link:hover {
+    background: var(--gold);
+    color: var(--cream);
+  }
+  .dl-link svg {
+    width: 8px; height: 8px;
+    fill: currentColor;
+    flex-shrink: 0;
+  }
+
 </style>
 </head>
 <body>
@@ -586,8 +612,8 @@
 <div class="controls-bar">
   <div class="filter-group">
     <span class="filter-label">Filter</span>
-    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
-    <button class="filter-btn" onclick="setFilter('complete',this)">Complete</button>
+    <button class="filter-btn" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn active" onclick="setFilter('complete',this)">Complete</button>
     <button class="filter-btn" onclick="setFilter('needs-refresh',this)">Needs Refresh</button>
     <button class="filter-btn" onclick="setFilter('pending',this)">Pending</button>
   </div>
@@ -696,7 +722,7 @@ const ERAS = [
 ];
 
 let allVolumes = LIBRARY_DATA.volumes.sort((a,b) => a.date_sort - b.date_sort);
-let currentFilter = 'all';
+let currentFilter = 'complete';
 let currentView = 'timeline';
 
 function sc(series) { return SERIES_COLORS[series] || '#666'; }
@@ -717,6 +743,12 @@ function groupByEra(vols) {
 }
 
 // ── TIMELINE RENDER ──────────────────────────────────────────────────────────
+
+function dlLink(filename) {
+  if (!filename) return '';
+  return `<a class="dl-link" href="./${filename}" download title="Download EPUB"><svg viewBox="0 0 10 10"><path d="M5 1v6M2 7l3 3 3-3M1 9h8"/><path d="M2 7l3 2.5L8 7" stroke="currentColor" stroke-width="1" fill="none"/></svg>Download</a>`;
+}
+
 function renderTimeline() {
   const track = document.getElementById('timeline-track');
   track.innerHTML = '';
@@ -779,6 +811,7 @@ function renderTimeline() {
         ${v.subtitle ? `<div class="tl-card-subtitle">${v.subtitle}</div>` : ''}
         ${v.author ? `<div class="tl-card-author">${v.author}</div>` : ''}
         <div class="tl-card-badge" style="--sc:${sc(v.series)};border-color:${sc(v.series)};color:${sc(v.series)}">${v.series}</div>
+        ${v.filename ? dlLink(v.filename) : ''}
       `;
 
       const stem = document.createElement('div');
@@ -874,6 +907,7 @@ function renderGrid() {
         ${v.subtitle?`<div class="vol-subtitle">${v.subtitle}</div>`:''}
         ${v.author?`<div class="vol-author">${v.author}</div>`:''}
         <span class="series-badge" style="color:${sc(v.series)};border-color:${sc(v.series)}">${v.series}</span>
+        ${v.filename ? dlLink(v.filename) : ''}
       `;
       grid.appendChild(card);
     });
