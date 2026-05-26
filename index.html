@@ -4,6 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>The Clayton Historical Library</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -989,6 +991,101 @@
     border-color: var(--gold);
   }
 
+
+  #map-view { flex: 1; flex-direction: column; overflow: hidden; }
+  #map-container { flex: 1; min-height: 0; background: #d4c49a; }
+
+  .map-controls-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    border-bottom: 1px solid rgba(140,110,55,0.15);
+    background: var(--cream);
+    flex-wrap: wrap;
+  }
+  .map-btn-group { display: flex; gap: 6px; flex-shrink: 0; }
+  .map-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    padding: 5px 14px;
+    border: 1px solid rgba(140,110,55,0.4);
+    background: transparent;
+    color: var(--brown-light);
+    cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .map-btn:hover { background: rgba(140,110,55,0.1); border-color: var(--gold); color: var(--ink); }
+  .map-slider-wrap { flex: 1; min-width: 120px; }
+  .map-slider { width: 100%; accent-color: var(--gold); cursor: pointer; }
+  .map-info { display: flex; flex-direction: column; align-items: flex-end; min-width: 120px; }
+  .map-year {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .map-vol-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--brown-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  }
+  .map-marker-inner {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--cream);
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .map-marker-inner:hover { transform: scale(1.5); }
+  .map-popup {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: #1e1910;
+    line-height: 1.4;
+    max-width: 220px;
+  }
+  .map-popup-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 3px;
+    color: #1e1910;
+  }
+  .map-popup-date {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    color: #8c6e37;
+    margin-bottom: 4px;
+  }
+  .map-popup-sig {
+    font-style: italic;
+    font-size: 11px;
+    color: #6e5a28;
+    margin-top: 4px;
+    border-top: 0.5px solid rgba(140,110,55,0.2);
+    padding-top: 4px;
+  }
+  [data-theme="dark"] #map-container { background: #1a1408; }
+  [data-theme="dark"] .map-controls-bar { background: var(--cream); border-color: rgba(200,160,64,0.15); }
+
+  @media (max-width: 768px) {
+    .map-controls-bar { padding: 6px 12px; gap: 8px; }
+    .map-btn { font-size: 8px; padding: 4px 10px; }
+    .map-vol-name { max-width: 120px; font-size: 10px; }
+    .map-info { min-width: 80px; }
+  }
+
 </style>
 </head>
 <body>
@@ -1011,6 +1108,7 @@
     <button class="view-btn" id="btn-bible" onclick="setView('bible')">Scripture</button>
     <button class="view-btn active" id="btn-timeline" onclick="setView('timeline')">Library</button>
     <button class="view-btn" id="btn-grid" onclick="setView('grid')">Grid</button>
+    <button class="view-btn" id="btn-map" onclick="setView('map')">Map</button>
   </div>
 </div>
 
@@ -1020,6 +1118,19 @@
   <div class="timeline-scroll" id="timeline-scroll">
     <div class="timeline-track" id="timeline-track"></div>
   </div>
+</div>
+
+
+<!-- MAP VIEW -->
+<div id="map-view" style="display:none;flex:1;flex-direction:column;overflow:hidden;height:100%;">
+  <div class="map-controls-bar">
+    <button id="map-play-btn" class="view-btn" onclick="mapPlay()" style="flex-shrink:0;">▶ Play</button>
+    <button class="view-btn" onclick="mapReset()" style="flex-shrink:0;">↺ Reset</button>
+    <input type="range" id="map-slider" min="0" max="100" value="0" class="map-slider" oninput="mapSlide(this.value)" style="flex:1;min-width:80px;accent-color:var(--gold);cursor:pointer;">
+    <span id="map-year-label" class="map-year" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.12em;color:var(--gold);white-space:nowrap;flex-shrink:0;">← play or drag</span>
+    <span id="map-vol-label" class="map-vol-name" style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:11px;color:var(--brown-light);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px;"></span>
+  </div>
+  <div id="map-container"></div>
 </div>
 
 <!-- GRID VIEW -->
@@ -1713,6 +1824,192 @@ const SIGNIFICANCE = {
   // History of Christendom
   "Cur Deus Homo":                             "Satisfaction theory of atonement; necessity of the Incarnation by reason",
 };
+
+// ── MAP DATA ──────────────────────────────────────────────────────────────────
+// lat/lng for each volume's place of origin
+const MAP_LOCATIONS = {
+  "The Epic of Gilgamesh":                    { lat: 32.5,  lng: 45.4,  place: "Mesopotamia (modern Iraq)" },
+  "The Tale of Sinuhe":                       { lat: 29.9,  lng: 31.2,  place: "Egypt" },
+  "The Tale of the Shipwrecked Sailor":       { lat: 29.9,  lng: 31.2,  place: "Egypt" },
+  "The Code of Hammurabi":                    { lat: 32.5,  lng: 44.4,  place: "Babylon (modern Iraq)" },
+  "Atrahasis":                                { lat: 32.5,  lng: 44.4,  place: "Babylon (modern Iraq)" },
+  "Enuma Elish":                              { lat: 32.5,  lng: 44.4,  place: "Babylon (modern Iraq)" },
+  "The Iliad":                                { lat: 38.9,  lng: 26.9,  place: "Ancient Greece / Troy" },
+  "The Odyssey":                              { lat: 38.9,  lng: 26.9,  place: "Ancient Greece" },
+  "The Didache":                              { lat: 36.2,  lng: 37.1,  place: "Syria / Antioch" },
+  "The Epistle of Barnabas":                  { lat: 31.2,  lng: 29.9,  place: "Alexandria, Egypt" },
+  "The First Epistle of Clement of Rome":     { lat: 41.9,  lng: 12.5,  place: "Rome" },
+  "The Letters of St. Ignatius of Antioch":   { lat: 36.2,  lng: 36.2,  place: "Antioch, Syria" },
+  "The Epistle and Martyrdom of St. Polycarp":{ lat: 38.4,  lng: 27.1,  place: "Smyrna (modern İzmir)" },
+  "The First and Second Apologies":           { lat: 41.9,  lng: 12.5,  place: "Rome" },
+  "Against Heresies":                         { lat: 45.7,  lng: 4.8,   place: "Lugdunum (Lyon, France)" },
+  "To Autolycus":                             { lat: 36.2,  lng: 36.2,  place: "Antioch, Syria" },
+  "The Prescription Against Heretics":        { lat: 36.8,  lng: 10.2,  place: "Carthage (modern Tunisia)" },
+  "De Principiis":                            { lat: 31.2,  lng: 29.9,  place: "Alexandria, Egypt" },
+  "The Unity of the Church":                  { lat: 36.8,  lng: 10.2,  place: "Carthage (modern Tunisia)" },
+  "First Council of Nicaea":                  { lat: 40.4,  lng: 29.7,  place: "Nicaea (modern İznik)" },
+  "On the Incarnation":                       { lat: 31.2,  lng: 29.9,  place: "Alexandria, Egypt" },
+  "Five Theological Orations":                { lat: 41.0,  lng: 28.9,  place: "Constantinople" },
+  "Ad Ablabium":                              { lat: 40.6,  lng: 32.9,  place: "Cappadocia (modern Turkey)" },
+  "First Council of Constantinople":          { lat: 41.0,  lng: 28.9,  place: "Constantinople" },
+  "The Divine Liturgy":                       { lat: 41.0,  lng: 28.9,  place: "Constantinople" },
+  "Confessions":                              { lat: 36.4,  lng: 6.6,   place: "Hippo (modern Algeria)" },
+  "Council of Ephesus":                       { lat: 37.9,  lng: 27.3,  place: "Ephesus (modern Turkey)" },
+  "Council of Chalcedon":                     { lat: 40.9,  lng: 29.4,  place: "Chalcedon (modern Kadıköy)" },
+  "Epistles and Hymn":                        { lat: 53.3,  lng: -6.2,  place: "Ireland" },
+  "The Rule of Saint Benedict":               { lat: 41.5,  lng: 14.0,  place: "Monte Cassino, Italy" },
+  "Second Council of Constantinople":         { lat: 41.0,  lng: 28.9,  place: "Constantinople" },
+  "On the Cosmic Mystery":                    { lat: 41.0,  lng: 28.9,  place: "Constantinople" },
+  "Third Council of Constantinople":          { lat: 41.0,  lng: 28.9,  place: "Constantinople" },
+  "An Exact Exposition of the Orthodox Faith":{ lat: 31.7,  lng: 35.2,  place: "Mar Saba Monastery, Palestine" },
+  "Second Council of Nicaea":                 { lat: 40.4,  lng: 29.7,  place: "Nicaea (modern İznik)" },
+  "Vita Karoli Magni":                        { lat: 49.9,  lng: 8.9,   place: "Seligenstadt (modern Germany)" },
+  "Fourth Council of Constantinople":         { lat: 41.0,  lng: 28.9,  place: "Constantinople" },
+  "Cur Deus Homo":                            { lat: 51.1,  lng: 0.9,   place: "Canterbury, England" },
+  "Summa Theologiae":                         { lat: 48.8,  lng: 2.3,   place: "Paris, France" },
+  "The Divine Comedy":                        { lat: 43.7,  lng: 11.2,  place: "Florence, Italy" },
+  "The Triads":                               { lat: 41.0,  lng: 28.9,  place: "Constantinople" },
+  "95 Theses & Small Catechism":              { lat: 51.8,  lng: 12.6,  place: "Wittenberg, Germany" },
+  "Dark Night of the Soul":                   { lat: 39.8,  lng: -3.0,  place: "Toledo, Spain" },
+  "The Practice of the Presence of God":      { lat: 48.8,  lng: 2.3,   place: "Paris, France" },
+  "On the Acquisition of the Holy Spirit":    { lat: 54.9,  lng: 43.3,  place: "Sarov, Russia" },
+  "Orthodoxy and the Religion of the Future": { lat: 37.7,  lng: -122.4,place: "Platina, California" },
+  "Theosis: The True Purpose of Human Life":  { lat: 40.3,  lng: 22.9,  place: "Mount Athos, Greece" },
+  "Catechism of the Catholic Church":         { lat: 41.9,  lng: 12.5,  place: "Rome" },
+};
+
+
+// ── LEAFLET WATERCOLOR MAP ────────────────────────────────────────────────────
+let mapInstance = null;
+let mapPlaying = false;
+let mapPlayInterval = null;
+let mapCurrentIdx = 0;
+let mapSortedVols = [];
+let mapMarkers = [];
+
+function initMap() {
+  if (mapInstance) return;
+
+  mapInstance = L.map('map-container', {
+    center: [38, 25],
+    zoom: 4,
+    zoomControl: true,
+    attributionControl: true,
+  });
+
+  // Stadia watercolor tiles (hosted Stamen watercolor)
+  L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', {
+    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, hosted by <a href="https://stadiamaps.com/">Stadia Maps</a>. Data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    minZoom: 1,
+    maxZoom: 16,
+  }).addTo(mapInstance);
+
+  // Label overlay
+  L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png', {
+    opacity: 0.4,
+    attribution: '',
+  }).addTo(mapInstance);
+
+  mapSortedVols = [...LIBRARY_DATA.volumes]
+    .filter(v => MAP_LOCATIONS[v.title])
+    .sort((a, b) => a.date_sort - b.date_sort);
+
+  document.getElementById('map-slider').max = mapSortedVols.length - 1;
+  mapReset();
+}
+
+function mapAddMarker(vol, animate) {
+  const loc = MAP_LOCATIONS[vol.title];
+  if (!loc) return;
+  const color = SERIES_COLORS[vol.series] || '#8c6e37';
+
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="width:12px;height:12px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,0.8);box-shadow:0 0 6px ${color}88;${animate ? 'opacity:0;transition:opacity 0.5s' : ''}"></div>`,
+    iconSize: [12, 12],
+    iconAnchor: [6, 6],
+  });
+
+  const marker = L.marker([loc.lat, loc.lng], { icon });
+  const sig = SIGNIFICANCE[vol.title] ? `<div style="font-style:italic;font-size:11px;color:#6e5a28;margin-top:4px;border-top:0.5px solid rgba(140,110,55,0.2);padding-top:4px;">${SIGNIFICANCE[vol.title]}</div>` : '';
+  marker.bindPopup(`
+    <div style="font-family:'EB Garamond',serif;">
+      <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:0.1em;color:#8c6e37;">${vol.date_label}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:#1e1910;margin:2px 0;">${vol.title}</div>
+      ${vol.author ? `<div style="font-size:11px;color:#50410a;">${vol.author}</div>` : ''}
+      <div style="font-size:10px;color:#6e5a28;margin-top:2px;">${loc.place}</div>
+      ${sig}
+    </div>
+  `, { maxWidth: 260 });
+
+  marker.addTo(mapInstance);
+  mapMarkers.push(marker);
+
+  if (animate) {
+    setTimeout(() => {
+      const el = marker.getElement();
+      if (el) { const d = el.querySelector('div'); if (d) d.style.opacity = '1'; }
+    }, 50);
+  }
+  return marker;
+}
+
+function mapReset() {
+  mapMarkers.forEach(m => { if (mapInstance) mapInstance.removeLayer(m); });
+  mapMarkers = [];
+  mapCurrentIdx = 0;
+  document.getElementById('map-slider').value = 0;
+  document.getElementById('map-year-label').textContent = '← play or drag';
+  document.getElementById('map-vol-label').textContent = '';
+  document.getElementById('map-play-btn').textContent = '▶ Play';
+  mapPlaying = false;
+  if (mapPlayInterval) { clearInterval(mapPlayInterval); mapPlayInterval = null; }
+}
+
+function mapShowUpTo(idx) {
+  mapMarkers.forEach(m => { if (mapInstance) mapInstance.removeLayer(m); });
+  mapMarkers = [];
+  for (let i = 0; i <= idx && i < mapSortedVols.length; i++) {
+    mapAddMarker(mapSortedVols[i], false);
+  }
+  const vol = mapSortedVols[idx];
+  if (vol) {
+    document.getElementById('map-year-label').textContent = vol.date_label;
+    document.getElementById('map-vol-label').textContent = vol.title;
+  }
+}
+
+
+function mapSlide(val) {
+  mapCurrentIdx = parseInt(val);
+  mapShowUpTo(mapCurrentIdx);
+}
+
+function mapPlay() {
+  if (mapPlaying) {
+    mapPlaying = false;
+    clearInterval(mapPlayInterval); mapPlayInterval = null;
+    document.getElementById('map-play-btn').textContent = '▶ Play';
+    return;
+  }
+  if (mapCurrentIdx >= mapSortedVols.length - 1) mapReset();
+  mapPlaying = true;
+  document.getElementById('map-play-btn').textContent = '⏸ Pause';
+  mapPlayInterval = setInterval(() => {
+    if (mapCurrentIdx >= mapSortedVols.length - 1) {
+      mapPlaying = false; clearInterval(mapPlayInterval); mapPlayInterval = null;
+      document.getElementById('map-play-btn').textContent = '▶ Play';
+      return;
+    }
+    mapCurrentIdx++;
+    document.getElementById('map-slider').value = mapCurrentIdx;
+    mapAddMarker(mapSortedVols[mapCurrentIdx], true);
+    const vol = mapSortedVols[mapCurrentIdx];
+    document.getElementById('map-year-label').textContent = vol.date_label;
+    document.getElementById('map-vol-label').textContent = vol.title + ' · ' + (MAP_LOCATIONS[vol.title] ? MAP_LOCATIONS[vol.title].place : '');
+  }, 700);
+}
+
 // ── TIMELINE RENDER ──────────────────────────────────────────────────────────
 
 function makeCard(tag, filename, classes, styleAttr, innerHtml) {
@@ -2218,17 +2515,21 @@ function renderBiblical() {
 function setView(view) {
   currentView = view;
   document.getElementById('btn-timeline').classList.toggle('active', view==='timeline');
+  document.getElementById('btn-map').classList.toggle('active', view==='map');
   document.getElementById('btn-bible').classList.toggle('active', view==='bible');
   document.getElementById('btn-grid').classList.toggle('active', view==='grid');
-  document.getElementById('timeline-view').style.display = view==='timeline' ? 'flex' : 'none';
-  document.getElementById('bible-view').style.display    = view==='bible'    ? 'flex' : 'none';
+  document.getElementById('timeline-view').style.display = view==='timeline' ? 'flex'  : 'none';
+  document.getElementById('bible-view').style.display    = view==='bible'    ? 'flex'  : 'none';
   document.getElementById('grid-view').style.display     = view==='grid'     ? 'block' : 'none';
+  document.getElementById('map-view').style.display      = view==='map'      ? 'flex'  : 'none';
+  if (view === 'map') { setTimeout(() => { initMap(); if (mapInstance) mapInstance.invalidateSize(); }, 100); }
   render();
 }
 
 function render() {
   if (currentView === 'timeline') renderTimeline();
   else if (currentView === 'bible') renderBiblical();
+  else if (currentView === 'map') { /* map handles itself */ }
   else renderGrid();
 }
 
@@ -2357,6 +2658,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v3.5 · 26 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.2 · 26 May 2026</div>
 </body>
 </html>
