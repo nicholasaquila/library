@@ -599,6 +599,75 @@
     flex-shrink: 0;
   }
 
+
+  /* ── MOBILE RESPONSIVE ── */
+  @media (max-width: 768px) {
+    header { padding: 16px 20px 12px; }
+    .h-title { font-size: 18px; }
+    .h-sub { font-size: 12px; }
+
+    .controls {
+      padding: 6px 14px;
+      gap: 6px;
+    }
+    .fbtn { font-size: 11px; padding: 3px 9px; }
+    .vbtn { font-size: 8px; padding: 3px 9px; }
+    .stats { display: none; }
+
+    .legend-bar { padding: 5px 14px; gap: 8px; }
+    .lg-item { font-size: 10px; }
+
+    /* On mobile, grid is the default visible view — timeline still accessible */
+    .tl-card { width: 120px; }
+    .tl-card-title { font-size: 9px; }
+    .tl-card-date  { font-size: 6px; }
+    .tl-card-author { font-size: 8px; }
+    .tl-card-badge { font-size: 5.5px; }
+    .dl-link { font-size: 6px; padding: 2px 4px; }
+
+    /* Grid on mobile — single column */
+    .volumes-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    #grid-view { padding: 16px 14px 40px; }
+    .vol-title { font-size: 13px; }
+    .vol-date  { font-size: 8px; }
+    .era-heading { font-size: 8px; letter-spacing: 0.2em; }
+
+    /* Scripture note wraps nicely */
+    .scripture-note { flex-direction: column; gap: 4px; padding: 8px 14px; }
+    .scripture-note-text { font-size: 11px; }
+
+    .status-legend-bar { padding: 4px 14px; }
+    .sl-item { font-size: 10px; }
+
+    /* Timeline mobile hint */
+    .mobile-timeline-hint {
+      display: flex !important;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .mobile-timeline-hint { display: none !important; }
+  }
+
+  /* Mobile swipe hint banner */
+  .mobile-timeline-hint {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px;
+    background: rgba(140,110,55,0.06);
+    border-bottom: 1px solid rgba(140,110,55,0.15);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--brown-light);
+    flex-shrink: 0;
+  }
+
 </style>
 </head>
 <body>
@@ -627,6 +696,7 @@
 
 <!-- TIMELINE VIEW (default) -->
 <div class="timeline-outer" id="timeline-view">
+  <div class="mobile-timeline-hint">← swipe to explore the timeline →</div>
   <div class="timeline-scroll" id="timeline-scroll">
     <div class="timeline-track" id="timeline-track"></div>
   </div>
@@ -637,6 +707,7 @@
 
 <!-- BIBLICAL VIEW -->
 <div id="bible-view">
+  <div class="mobile-timeline-hint">← swipe to explore the scripture timeline →</div>
   <div class="scripture-note">
     <span class="scripture-note-title">The Scripture Timeline</span>
     <span class="scripture-note-text">Provided for context and reference — tracing the narrative arc of the Bible from Abraham to the Apostolic Age. These are not library volumes but the historical and theological backdrop against which the collection is read.</span>
@@ -1201,6 +1272,19 @@ bscroll.addEventListener('mousedown', e => { bDown=true; bscroll.style.cursor='g
 bscroll.addEventListener('mouseleave', () => { bDown=false; bscroll.style.cursor='grab'; });
 bscroll.addEventListener('mouseup',   () => { bDown=false; bscroll.style.cursor='grab'; });
 bscroll.addEventListener('mousemove', e => { if(!bDown) return; e.preventDefault(); bscroll.scrollLeft=bScrollLeft-(e.pageX-bscroll.offsetLeft-bStartX)*1.2; });
+
+
+// ── Mouse wheel → horizontal scroll ──────────────────────────────────────────
+function addWheelScroll(el) {
+  el.addEventListener('wheel', e => {
+    // If user is scrolling mostly horizontally already, let it be
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    e.preventDefault();
+    el.scrollLeft += e.deltaY * 2;
+  }, { passive: false });
+}
+addWheelScroll(document.getElementById('timeline-scroll'));
+addWheelScroll(document.getElementById('bible-scroll'));
 
 buildLegend();
 render();
