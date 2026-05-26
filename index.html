@@ -576,31 +576,6 @@
   }
 
 
-  /* ── DOWNLOAD LINK ── */
-  .dl-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: 'Cinzel', serif;
-    font-size: 7px;
-    letter-spacing: 0.12em;
-    color: var(--gold);
-    text-decoration: none;
-    margin-top: 5px;
-    padding: 2px 6px;
-    border: 0.5px solid rgba(140,110,55,0.35);
-    transition: background 0.18s, color 0.18s;
-  }
-  .dl-link:hover {
-    background: var(--gold);
-    color: var(--cream);
-  }
-  .dl-link svg {
-    width: 8px; height: 8px;
-    fill: currentColor;
-    flex-shrink: 0;
-  }
-
 
   /* ── MOBILE RESPONSIVE ── */
   @media (max-width: 768px) {
@@ -695,6 +670,63 @@
     animation: tabPulse 0.7s ease-in-out;
   }
 
+
+  /* ── CARD AS DOWNLOAD LINK ── */
+  a.tl-card, a.vol-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+  a.tl-card:hover, a.vol-card:hover {
+    border-color: rgba(140,110,55,0.7);
+  }
+  a.tl-card.no-download, a.vol-card.no-download {
+    cursor: default;
+    pointer-events: none;
+  }
+  /* Subtle download indicator on cards that have a file */
+  a.tl-card::after, a.vol-card::after {
+    content: '↓';
+    position: absolute;
+    bottom: 5px;
+    right: 6px;
+    font-size: 9px;
+    color: var(--gold);
+    opacity: 0.5;
+    font-family: 'Cinzel', serif;
+  }
+  a.tl-card:hover::after, a.vol-card:hover::after {
+    opacity: 1;
+  }
+
+
+  /* ── ALL FILTER PULSE ── */
+  @keyframes allPulse {
+    0%   { border-color: rgba(140,110,55,0.4); box-shadow: none; }
+    50%  { border-color: var(--gold); box-shadow: 0 0 10px rgba(140,110,55,0.3); color: var(--ink); }
+    100% { border-color: rgba(140,110,55,0.4); box-shadow: none; }
+  }
+  .fbtn.pulse-all {
+    animation: allPulse 1.2s ease-in-out infinite;
+  }
+
+
+  /* ── ALL FILTER PULSE ── */
+  @keyframes allPulse {
+    0%, 100% { border-color: rgba(140,110,55,0.4); box-shadow: none; color: var(--brown-light); }
+    50%       { border-color: var(--gold); box-shadow: 0 0 10px rgba(140,110,55,0.25); color: var(--ink); }
+  }
+  .filter-btn.pulse-all { animation: allPulse 1.4s ease-in-out infinite; }
+
+
+  /* ── TBC / PLACEHOLDER CARDS ── */
+  .tl-card.tbc, .vol-card.tbc {
+    opacity: 0.4;
+    filter: grayscale(0.7);
+    border-style: dashed;
+  }
+
 </style>
 </head>
 <body>
@@ -707,8 +739,8 @@
 <div class="controls-bar">
   <div class="filter-group">
     <span class="filter-label">Filter</span>
-    <button class="filter-btn" onclick="setFilter('all',this)">All</button>
-    <button class="filter-btn active" onclick="setFilter('complete',this)">Complete</button>
+    <button class="filter-btn active" id="btn-all" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('complete',this)">Complete</button>
     <button class="filter-btn" onclick="setFilter('needs-refresh',this)">Needs Refresh</button>
     <button class="filter-btn" onclick="setFilter('pending',this)">Pending</button>
   </div>
@@ -752,49 +784,50 @@
 
 <script>
 const LIBRARY_DATA = { "volumes": [
-  { "id":1, "title":"The Epic of Gilgamesh", "subtitle":"The Oldest Story Ever Told", "author":"Anonymous", "date_label":"c. 2100 BC", "date_sort":-2100, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
-  { "id":2, "title":"The Tale of Sinuhe", "subtitle":null, "author":"Anonymous", "date_label":"c. 1875 BC", "date_sort":-1875, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
-  { "id":3, "title":"The Code of Hammurabi", "subtitle":null, "author":"Hammurabi", "date_label":"c. 1754 BC", "date_sort":-1754, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
-  { "id":4, "title":"Atrahasis", "subtitle":"The Epic of the Flood", "author":"Anonymous", "date_label":"c. 1700 BC", "date_sort":-1700, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
-  { "id":5, "title":"Enuma Elish", "subtitle":"The Babylonian Epic of Creation", "author":"Anonymous", "date_label":"c. 1100 BC", "date_sort":-1100, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
-  { "id":5, "title":"The Iliad", "subtitle":null, "author":"Homer", "date_label":"c. 750–650 BC", "date_sort":-700, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
-  { "id":5, "title":"The Odyssey", "subtitle":null, "author":"Homer", "date_label":"c. 725–675 BC", "date_sort":-700, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
-  { "id":6, "title":"The Didache", "subtitle":null, "author":"Anonymous", "date_label":"c. 50–100 AD", "date_sort":75, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":7, "title":"The Epistle of Barnabas", "subtitle":null, "author":"Anonymous", "date_label":"c. 70–132 AD", "date_sort":100, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":8, "title":"The First Epistle of Clement of Rome", "subtitle":null, "author":"St. Clement of Rome", "date_label":"c. 96 AD", "date_sort":96, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":9, "title":"The Letters of St. Ignatius of Antioch", "subtitle":null, "author":"St. Ignatius of Antioch", "date_label":"c. 105–115 AD", "date_sort":110, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":10, "title":"The Epistle and Martyrdom of St. Polycarp", "subtitle":null, "author":"St. Polycarp of Smyrna", "date_label":"c. 110–160 AD", "date_sort":135, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":11, "title":"The First and Second Apologies", "subtitle":null, "author":"Justin Martyr", "date_label":"c. 155 AD", "date_sort":155, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":12, "title":"Against Heresies", "subtitle":null, "author":"St. Irenaeus of Lyons", "date_label":"c. 180 AD", "date_sort":180, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":13, "title":"To Autolycus", "subtitle":null, "author":"St. Theophilus of Antioch", "date_label":"c. 181 AD", "date_sort":181, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":14, "title":"The Prescription Against Heretics", "subtitle":null, "author":"Tertullian", "date_label":"c. 200 AD", "date_sort":200, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":15, "title":"De Principiis", "subtitle":"On First Principles", "author":"Origen of Alexandria", "date_label":"c. 230 AD", "date_sort":230, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":16, "title":"The Unity of the Church", "subtitle":null, "author":"St. Cyprian of Carthage", "date_label":"c. 250 AD", "date_sort":250, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
-  { "id":17, "title":"First Council of Nicaea", "subtitle":null, "author":null, "date_label":"325 AD", "date_sort":325, "series":"Ecumenical Councils", "status":"complete", "notes":null },
-  { "id":18, "title":"On the Incarnation", "subtitle":null, "author":"St. Athanasius of Alexandria", "date_label":"c. 335 AD", "date_sort":335, "series":"Nicene Fathers", "status":"complete", "notes":null },
-  { "id":19, "title":"Five Theological Orations", "subtitle":null, "author":"St. Gregory of Nazianzus", "date_label":"c. 380 AD", "date_sort":380, "series":"Nicene Fathers", "status":"complete", "notes":null },
-  { "id":20, "title":"Ad Ablabium", "subtitle":"On Not Three Gods", "author":"St. Gregory of Nyssa", "date_label":"c. 380–383 AD", "date_sort":381, "series":"Nicene Fathers", "status":"complete", "notes":null },
-  { "id":21, "title":"First Council of Constantinople", "subtitle":null, "author":null, "date_label":"381 AD", "date_sort":381, "series":"Ecumenical Councils", "status":"complete", "notes":null },
-  { "id":22, "title":"The Divine Liturgy", "subtitle":null, "author":"St. John Chrysostom", "date_label":"c. 390–400 AD", "date_sort":395, "series":"Nicene Fathers", "status":"complete", "notes":null },
-  { "id":23, "title":"Confessions", "subtitle":null, "author":"St. Augustine of Hippo", "date_label":"c. 397–400 AD", "date_sort":398, "series":"Nicene Fathers", "status":"complete", "notes":null },
-  { "id":24, "title":"Council of Ephesus", "subtitle":null, "author":null, "date_label":"431 AD", "date_sort":431, "series":"Ecumenical Councils", "status":"complete", "notes":null },
-  { "id":25, "title":"Council of Chalcedon", "subtitle":null, "author":null, "date_label":"451 AD", "date_sort":451, "series":"Ecumenical Councils", "status":"complete", "notes":null },
-  { "id":26, "title":"Epistles and Hymn", "subtitle":null, "author":"St. Patrick of Ireland", "date_label":"c. 461–493 AD", "date_sort":470, "series":"The Early Church", "status":"complete", "notes":null },
-  { "id":27, "title":"The Rule of Saint Benedict", "subtitle":null, "author":"St. Benedict of Nursia", "date_label":"c. 530 AD", "date_sort":530, "series":"The Monastic Tradition", "status":"complete", "notes":null },
-  { "id":28, "title":"Second Council of Constantinople", "subtitle":null, "author":null, "date_label":"553 AD", "date_sort":553, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null },
-  { "id":29, "title":"On the Cosmic Mystery", "subtitle":null, "author":"St. Maximus the Confessor", "date_label":"c. 634 AD", "date_sort":634, "series":"Byzantine Fathers", "status":"complete", "notes":null },
-  { "id":30, "title":"Third Council of Constantinople", "subtitle":null, "author":null, "date_label":"680 AD", "date_sort":680, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null },
-  { "id":31, "title":"An Exact Exposition of the Orthodox Faith", "subtitle":null, "author":"St. John of Damascus", "date_label":"c. 743–748 AD", "date_sort":745, "series":"Byzantine Fathers", "status":"complete", "notes":null },
-  { "id":32, "title":"Second Council of Nicaea", "subtitle":null, "author":null, "date_label":"787 AD", "date_sort":787, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null },
-  { "id":33, "title":"Vita Karoli Magni", "subtitle":"The Life of Charlemagne", "author":"Einhard", "date_label":"c. 817–830 AD", "date_sort":820, "series":"The History of Christendom", "status":"complete", "notes":null },
-  { "id":34, "title":"Fourth Council of Constantinople", "subtitle":null, "author":null, "date_label":"869 AD", "date_sort":869, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null },
-  { "id":35, "title":"Cur Deus Homo", "subtitle":"Why God Became Man", "author":"St. Anselm of Canterbury", "date_label":"c. 1098 AD", "date_sort":1098, "series":"The History of Christendom", "status":"complete", "notes":null },
-  { "id":36, "title":"The Divine Comedy", "subtitle":null, "author":"Dante Alighieri", "date_label":"c. 1321 AD", "date_sort":1321, "series":"The History of Christendom", "status":"pending", "notes":null },
-  { "id":37, "title":"The Triads", "subtitle":null, "author":"St. Gregory Palamas", "date_label":"c. 1338 AD", "date_sort":1338, "series":"Byzantine Fathers", "status":"complete", "notes":null },
-  { "id":38, "title":"95 Theses & Small Catechism", "subtitle":null, "author":"Martin Luther", "date_label":"1517 / 1529 AD", "date_sort":1517, "series":"The History of Christendom", "status":"pending", "notes":null },
-  { "id":39, "title":"Dark Night of the Soul", "subtitle":"Noche Oscura del Alma", "author":"St. John of the Cross", "date_label":"c. 1579 AD", "date_sort":1579, "series":"The History of Christendom", "status":"pending", "notes":null },
-  { "id":40, "title":"The Practice of the Presence of God", "subtitle":null, "author":"Brother Lawrence", "date_label":"c. 1692 AD", "date_sort":1692, "series":"The History of Christendom", "status":"pending", "notes":null },
-  { "id":41, "title":"On the Acquisition of the Holy Spirit", "subtitle":null, "author":"St. Seraphim of Sarov", "date_label":"c. 1831 AD", "date_sort":1831, "series":"Byzantine Fathers", "status":"pending", "notes":null }
+  { "id":1, "title":"The Epic of Gilgamesh", "subtitle":"The Oldest Story Ever Told", "author":"Anonymous", "date_label":"c. 2100 BC", "date_sort":-2100, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
+  { "id":2, "title":"The Tale of Sinuhe", "subtitle":null, "author":"Anonymous", "date_label":"c. 1875 BC", "date_sort":-1875, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
+  { "id":3, "title":"The Code of Hammurabi", "subtitle":null, "author":"Hammurabi", "date_label":"c. 1754 BC", "date_sort":-1754, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
+  { "id":4, "title":"Atrahasis", "subtitle":"The Epic of the Flood", "author":"Anonymous", "date_label":"c. 1700 BC", "date_sort":-1700, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
+  { "id":5, "title":"Enuma Elish", "subtitle":"The Babylonian Epic of Creation", "author":"Anonymous", "date_label":"c. 1100 BC", "date_sort":-1100, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
+  { "id":5, "title":"The Iliad", "subtitle":null, "author":"Homer", "date_label":"c. 750–650 BC", "date_sort":-700, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
+  { "id":5, "title":"The Odyssey", "subtitle":null, "author":"Homer", "date_label":"c. 725–675 BC", "date_sort":-700, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
+  { "id":6, "title":"The Didache", "subtitle":null, "author":"Anonymous", "date_label":"c. 50–100 AD", "date_sort":75, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c50-100AD)_The_Didache.epub"},
+  { "id":7, "title":"The Epistle of Barnabas", "subtitle":null, "author":"Anonymous", "date_label":"c. 70–132 AD", "date_sort":100, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c70-132AD)_The_Epistle_of_Barnabas.epub"},
+  { "id":8, "title":"The First Epistle of Clement of Rome", "subtitle":null, "author":"St. Clement of Rome", "date_label":"c. 96 AD", "date_sort":96, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c96AD)_The_First_Epistle_of_Clement_of_Rome.epub"},
+  { "id":9, "title":"The Letters of St. Ignatius of Antioch", "subtitle":null, "author":"St. Ignatius of Antioch", "date_label":"c. 105–115 AD", "date_sort":110, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c105-115AD)_The_Letters_of_St_Ignatius_of_Antioch.epub"},
+  { "id":10, "title":"The Epistle and Martyrdom of St. Polycarp", "subtitle":null, "author":"St. Polycarp of Smyrna", "date_label":"c. 110–160 AD", "date_sort":135, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c110-160AD)_The_Epistle_and_Martyrdom_of_St_Polycarp_of_Smyrna.epub"},
+  { "id":11, "title":"The First and Second Apologies", "subtitle":null, "author":"Justin Martyr", "date_label":"c. 155 AD", "date_sort":155, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c155AD)_The_First_and_Second_Apologies_Justin_Martyr.epub"},
+  { "id":12, "title":"Against Heresies", "subtitle":null, "author":"St. Irenaeus of Lyons", "date_label":"c. 180 AD", "date_sort":180, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c180AD)_Against_Heresies_St_Irenaeus_of_Lyons.epub"},
+  { "id":13, "title":"To Autolycus", "subtitle":null, "author":"St. Theophilus of Antioch", "date_label":"c. 181 AD", "date_sort":181, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c181AD)_To_Autolycus_St_Theophilus_of_Antioch.epub"},
+  { "id":14, "title":"The Prescription Against Heretics", "subtitle":null, "author":"Tertullian", "date_label":"c. 200 AD", "date_sort":200, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c200AD)_The_Prescription_Against_Heretics_Tertullian.epub"},
+  { "id":15, "title":"De Principiis", "subtitle":"On First Principles", "author":"Origen of Alexandria", "date_label":"c. 230 AD", "date_sort":230, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c230AD)_De_Principiis_Origen_of_Alexandria.epub"},
+  { "id":16, "title":"The Unity of the Church", "subtitle":null, "author":"St. Cyprian of Carthage", "date_label":"c. 250 AD", "date_sort":250, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c250AD)_The_Unity_of_the_Church_St_Cyprian_of_Carthage.epub"},
+  { "id":17, "title":"First Council of Nicaea", "subtitle":null, "author":null, "date_label":"325 AD", "date_sort":325, "series":"Ecumenical Councils", "status":"complete", "notes":null , "filename":"(c325AD)_First_Council_of_Nicaea.epub"},
+  { "id":18, "title":"On the Incarnation", "subtitle":null, "author":"St. Athanasius of Alexandria", "date_label":"c. 335 AD", "date_sort":335, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c335AD)_On_the_Incarnation_St_Athanasius_of_Alexandria.epub"},
+  { "id":19, "title":"Five Theological Orations", "subtitle":null, "author":"St. Gregory of Nazianzus", "date_label":"c. 380 AD", "date_sort":380, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c380AD)_Five_Theological_Orations_St_Gregory_of_Nazianzus.epub"},
+  { "id":20, "title":"Ad Ablabium", "subtitle":"On Not Three Gods", "author":"St. Gregory of Nyssa", "date_label":"c. 380–383 AD", "date_sort":381, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c380-383AD)_Ad_Ablabium_Not_Three_Gods_St_Gregory_of_Nyssa.epub"},
+  { "id":21, "title":"First Council of Constantinople", "subtitle":null, "author":null, "date_label":"381 AD", "date_sort":381, "series":"Ecumenical Councils", "status":"complete", "notes":null , "filename":"(c381AD)_First_Council_of_Constantinople.epub"},
+  { "id":22, "title":"The Divine Liturgy", "subtitle":null, "author":"St. John Chrysostom", "date_label":"c. 390–400 AD", "date_sort":395, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c390-400AD)_The_Divine_Liturgy_St_John_Chrysostom.epub"},
+  { "id":23, "title":"Confessions", "subtitle":null, "author":"St. Augustine of Hippo", "date_label":"c. 397–400 AD", "date_sort":398, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c397-400AD)_Confessions_St_Augustine_of_Hippo.epub"},
+  { "id":24, "title":"Council of Ephesus", "subtitle":null, "author":null, "date_label":"431 AD", "date_sort":431, "series":"Ecumenical Councils", "status":"complete", "notes":null , "filename":"(c431AD)_Council_of_Ephesus.epub"},
+  { "id":25, "title":"Council of Chalcedon", "subtitle":null, "author":null, "date_label":"451 AD", "date_sort":451, "series":"Ecumenical Councils", "status":"complete", "notes":null , "filename":"(c451AD)_Council_of_Chalcedon.epub"},
+  { "id":26, "title":"Epistles and Hymn", "subtitle":null, "author":"St. Patrick of Ireland", "date_label":"c. 461–493 AD", "date_sort":470, "series":"The Early Church", "status":"complete", "notes":null , "filename":"(c461-493AD)_Epistles_and_Hymn_St_Patrick_of_Ireland.epub"},
+  { "id":27, "title":"The Rule of Saint Benedict", "subtitle":null, "author":"St. Benedict of Nursia", "date_label":"c. 530 AD", "date_sort":530, "series":"The Monastic Tradition", "status":"complete", "notes":null , "filename":"(c530AD)_The_Rule_of_Saint_Benedict.epub"},
+  { "id":28, "title":"Second Council of Constantinople", "subtitle":null, "author":null, "date_label":"553 AD", "date_sort":553, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null , "filename":"(c553AD)_Second_Council_of_Constantinople.epub"},
+  { "id":29, "title":"On the Cosmic Mystery", "subtitle":null, "author":"St. Maximus the Confessor", "date_label":"c. 634 AD", "date_sort":634, "series":"Byzantine Fathers", "status":"complete", "notes":null , "filename":"(c634AD)_On_the_Cosmic_Mystery_St_Maximus_the_Confessor.epub"},
+  { "id":30, "title":"Third Council of Constantinople", "subtitle":null, "author":null, "date_label":"680 AD", "date_sort":680, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null , "filename":"(c680AD)_Third_Council_of_Constantinople.epub"},
+  { "id":31, "title":"An Exact Exposition of the Orthodox Faith", "subtitle":null, "author":"St. John of Damascus", "date_label":"c. 743–748 AD", "date_sort":745, "series":"Byzantine Fathers", "status":"complete", "notes":null , "filename":"(c743-748AD)_An_Exact_Exposition_of_the_Orthodox_Faith_St_John_of_Damascus.epub"},
+  { "id":32, "title":"Second Council of Nicaea", "subtitle":null, "author":null, "date_label":"787 AD", "date_sort":787, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null , "filename":"(c787AD)_Second_Council_of_Nicaea.epub"},
+  { "id":33, "title":"Vita Karoli Magni", "subtitle":"The Life of Charlemagne", "author":"Einhard", "date_label":"c. 817–830 AD", "date_sort":820, "series":"The History of Christendom", "status":"complete", "notes":null , "filename":"(c817-830AD)_Vita_Karoli_Magni_Einhard.epub"},
+  { "id":34, "title":"Fourth Council of Constantinople", "subtitle":null, "author":null, "date_label":"869 AD", "date_sort":869, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null , "filename":"(c869AD)_Fourth_Council_of_Constantinople.epub"},
+  { "id":35, "title":"Cur Deus Homo", "subtitle":"Why God Became Man", "author":"St. Anselm of Canterbury", "date_label":"c. 1098 AD", "date_sort":1098, "series":"The Scholastic Tradition", "status":"complete", "notes":null , "filename":"(c1098AD)_Cur_Deus_Homo_St_Anselm_of_Canterbury.epub"},
+  { "id":36, "title":"Summa Theologiae", "subtitle":"The Complete Theological Synthesis", "author":"St. Thomas Aquinas", "date_label":"c. 1265–1274 AD", "date_sort":1265, "series":"The Scholastic Tradition", "status":"pending", "notes":null, "filename":null },
+  { "id":37, "title":"The Divine Comedy", "subtitle":null, "author":"Dante Alighieri", "date_label":"c. 1321 AD", "date_sort":1321, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
+  { "id":37, "title":"The Triads", "subtitle":null, "author":"St. Gregory Palamas", "date_label":"c. 1338 AD", "date_sort":1338, "series":"Byzantine Fathers", "status":"complete", "notes":null , "filename":"(c1338AD)_The_Triads_St_Gregory_Palamas.epub"},
+  { "id":38, "title":"95 Theses & Small Catechism", "subtitle":null, "author":"Martin Luther", "date_label":"1517 / 1529 AD", "date_sort":1517, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
+  { "id":39, "title":"Dark Night of the Soul", "subtitle":"Noche Oscura del Alma", "author":"St. John of the Cross", "date_label":"c. 1579 AD", "date_sort":1579, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
+  { "id":40, "title":"The Practice of the Presence of God", "subtitle":null, "author":"Brother Lawrence", "date_label":"c. 1692 AD", "date_sort":1692, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
+  { "id":41, "title":"On the Acquisition of the Holy Spirit", "subtitle":null, "author":"St. Seraphim of Sarov", "date_label":"c. 1831 AD", "date_sort":1831, "series":"Byzantine Fathers", "status":"pending", "notes":null , "filename":null}
 ]};
 
 const SERIES_COLORS = {
@@ -806,6 +839,10 @@ const SERIES_COLORS = {
   'Byzantine Fathers':          '#5c1e1e',
   'The History of Christendom': '#2e4a1e',
   'Voices of the Ancient World':'#7a4f00',
+  'The Scholastic Tradition':   '#3d2a5c',
+  'TBC':                         '#888888',
+  'The Scholastic Tradition':   '#3d2a5c',
+  'TBC':                         '#888888',
 };
 
 const ERAS = [
@@ -816,10 +853,13 @@ const ERAS = [
   { label: 'Late Antique & Early Medieval', from: 500,   to: 800  },
   { label: 'Medieval',                      from: 800,   to: 1400 },
   { label: 'Early Modern & Modern',         from: 1400,  to: 9999 },
-];
+,
+  { "id":45, "title":"Orthodoxy and the Religion of the Future", "subtitle":null, "author":"Fr. Seraphim Rose", "date_label":"c. 1975 AD", "date_sort":1975, "series":"TBC", "status":"pending", "notes":null, "filename":null },
+  { "id":46, "title":"Theosis: The True Purpose of Human Life", "subtitle":null, "author":"Archimandrite George", "date_label":"c. 1992 AD", "date_sort":1992, "series":"TBC", "status":"pending", "notes":null, "filename":null },
+  { "id":47, "title":"Catechism of the Catholic Church", "subtitle":null, "author":null, "date_label":"c. 1992 AD", "date_sort":1993, "series":"TBC", "status":"pending", "notes":null, "filename":null }];
 
 let allVolumes = LIBRARY_DATA.volumes.sort((a,b) => a.date_sort - b.date_sort);
-let currentFilter = 'complete';
+let currentFilter = 'all';
 let currentView = 'timeline';
 
 function sc(series) { return SERIES_COLORS[series] || '#666'; }
@@ -841,9 +881,13 @@ function groupByEra(vols) {
 
 // ── TIMELINE RENDER ──────────────────────────────────────────────────────────
 
-function dlLink(filename) {
-  if (!filename) return '';
-  return `<a class="dl-link" href="./${filename}" download title="Download EPUB"><svg viewBox="0 0 10 10"><path d="M5 1v6M2 7l3 3 3-3M1 9h8"/><path d="M2 7l3 2.5L8 7" stroke="currentColor" stroke-width="1" fill="none"/></svg>Download</a>`;
+function makeCard(tag, filename, classes, styleAttr, innerHtml) {
+  // If filename, make the whole card a download anchor
+  if (filename) {
+    return `<a class="${classes}" style="${styleAttr}" href="./${filename}" download title="Download EPUB">${innerHtml}</a>`;
+  } else {
+    return `<${tag} class="${classes} no-download" style="${styleAttr}">${innerHtml}</${tag}>`;
+  }
 }
 
 function renderTimeline() {
@@ -898,9 +942,14 @@ function renderTimeline() {
       const col = document.createElement('div');
       col.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
 
-      const card = document.createElement('div');
-      card.className = `tl-card ${v.status}`;
+      const card = document.createElement(v.filename ? 'a' : 'div');
+      card.className = `tl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}`;
       card.style.setProperty('--sc', sc(v.series));
+      if (v.filename) {
+        card.href = './' + v.filename;
+        card.setAttribute('download', '');
+        card.title = 'Download EPUB';
+      }
       card.innerHTML = `
         <div class="tl-card-status">${statusIcon(v.status)}</div>
         <div class="tl-card-date">${v.date_label}</div>
@@ -908,7 +957,6 @@ function renderTimeline() {
         ${v.subtitle ? `<div class="tl-card-subtitle">${v.subtitle}</div>` : ''}
         ${v.author ? `<div class="tl-card-author">${v.author}</div>` : ''}
         <div class="tl-card-badge" style="--sc:${sc(v.series)};border-color:${sc(v.series)};color:${sc(v.series)}">${v.series}</div>
-        ${v.filename ? dlLink(v.filename) : ''}
       `;
 
       const stem = document.createElement('div');
@@ -994,9 +1042,14 @@ function renderGrid() {
     const grid = document.createElement('div');
     grid.className = 'volumes-grid';
     vols.forEach(v => {
-      const card = document.createElement('div');
-      card.className = `vol-card ${v.status}`;
+      const card = document.createElement(v.filename ? 'a' : 'div');
+      card.className = `vol-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}`;
       card.style.setProperty('--series-color', sc(v.series));
+      if (v.filename) {
+        card.href = './' + v.filename;
+        card.setAttribute('download', '');
+        card.title = 'Download EPUB';
+      }
       card.innerHTML = `
         <span class="status-icon">${statusIcon(v.status)}</span>
         <div class="vol-date">${v.date_label}</div>
@@ -1004,7 +1057,6 @@ function renderGrid() {
         ${v.subtitle?`<div class="vol-subtitle">${v.subtitle}</div>`:''}
         ${v.author?`<div class="vol-author">${v.author}</div>`:''}
         <span class="series-badge" style="color:${sc(v.series)};border-color:${sc(v.series)}">${v.series}</span>
-        ${v.filename ? dlLink(v.filename) : ''}
       `;
       grid.appendChild(card);
     });
@@ -1041,6 +1093,8 @@ function setFilter(filter, btn) {
   currentFilter = filter;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  const allBtn = document.getElementById('btn-all');
+  if (allBtn) allBtn.classList.toggle('pulse-all', filter !== 'all');
   render();
 }
 
@@ -1358,6 +1412,6 @@ function introShowcase() {
 setTimeout(introShowcase, 200);
 
 </script>
-  <div class="version-stamp">v1.1 · 26 May 2026</div>
+  <div class="version-stamp">v1.7 · 26 May 2026</div>
 </body>
 </html>
