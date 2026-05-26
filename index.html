@@ -459,150 +459,118 @@
   }
   .sl-item { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 12px; color: var(--brown-light); }
 
-  /* ── EVENT CARDS (sideways, burgundy) ── */
-  .ev-col {
-    position: absolute;
-    top: 50%;
-    display: flex;
-    align-items: center;
+  /* ── BIBLICAL TIMELINE VIEW ── */
+  #bible-view {
+    flex: 1;
+    overflow: hidden;
+    display: none;
     flex-direction: column;
   }
-  .ev-col.up { flex-direction: column-reverse; }
-  .ev-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    background: #6b1a2a;
-    border: 1.5px solid var(--cream);
-    box-shadow: 0 0 0 1px #6b1a2a;
-    flex-shrink: 0;
-    z-index: 3;
+  .bible-scroll {
+    flex: 1;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    cursor: grab;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(140,110,55,0.3) transparent;
   }
-  .ev-stem {
-    width: 1px;
-    height: 22px;
-    background: rgba(107,26,42,0.35);
-    flex-shrink: 0;
+  .bible-scroll:active { cursor: grabbing; }
+  .bible-scroll::-webkit-scrollbar { height: 5px; }
+  .bible-scroll::-webkit-scrollbar-thumb { background: rgba(140,110,55,0.3); border-radius: 3px; }
+  .bible-track {
+    display: inline-flex;
+    flex-direction: row;
+    padding: 16px 120px 16px 60px;
+    min-height: 100%;
   }
-  .ev-card {
-    width: 28px;
-    padding: 10px 6px;
-    background: #6b1a2a;
-    border: 0.5px solid #8a2438;
+  /* reuse tl-era, tl-card etc — bible cards get a distinct top accent via --sc */
+  .bible-card {
+    padding: 7px 9px 6px;
+    width: 148px;
+    background: linear-gradient(150deg, #faf6ea, #ede5cc);
+    border: 0.5px solid rgba(140,110,55,0.32);
     position: relative;
     flex-shrink: 0;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    transform: rotate(180deg);
-    cursor: default;
-    transition: transform 0.18s, box-shadow 0.18s;
+    transition: box-shadow 0.18s, transform 0.18s;
   }
-  .ev-card:hover {
-    box-shadow: 0 4px 16px rgba(107,26,42,0.35);
-    z-index: 20;
-    transform: rotate(180deg) scale(1.05);
-  }
-  .ev-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 10px;
-    font-weight: 600;
-    color: #f5ded4;
-    line-height: 1.2;
-    white-space: nowrap;
-  }
-  .ev-dot-sep {
-    display: inline-block;
-    width: 3px; height: 3px;
-    border-radius: 50%;
-    background: rgba(245,222,212,0.4);
-    margin: 4px 0;
-    flex-shrink: 0;
-  }
-  .ev-book {
-    font-family: 'EB Garamond', serif;
-    font-style: italic;
-    font-size: 8.5px;
-    color: rgba(245,222,212,0.7);
-    line-height: 1.2;
-    white-space: nowrap;
-  }
-  .ev-greek {
-    font-family: 'EB Garamond', serif;
-    font-size: 8px;
-    color: rgba(245,222,212,0.5);
-    white-space: nowrap;
-    margin-top: 3px;
-  }
-  .ev-note {
-    font-family: 'EB Garamond', serif;
-    font-style: italic;
-    font-size: 7.5px;
-    color: rgba(245,222,212,0.55);
-    margin-top: 4px;
-    white-space: nowrap;
-  }
-  /* Genesis anchor */
-  .genesis-anchor {
+  .bible-card::before {
+    content: '';
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 12px;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--bc, #6b1a2a);
+    opacity: 0.85;
+  }
+  .bible-card:hover { transform: scale(1.04); box-shadow: 0 5px 20px rgba(80,65,40,0.18); z-index: 20; }
+  .bc-date  { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 3px; }
+  .bc-event { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 600; color: var(--ink); line-height: 1.25; margin-bottom: 2px; }
+  .bc-book  { font-family: 'EB Garamond', serif; font-size: 9px; color: var(--brown-light); margin-bottom: 1px; }
+  .bc-greek { font-family: 'EB Garamond', serif; font-style: italic; font-size: 8.5px; color: var(--gold); margin-bottom: 3px; }
+  .bc-note  { font-family: 'EB Garamond', serif; font-style: italic; font-size: 8px; color: var(--brown-light); }
+  .bc-badge { font-family: 'Cinzel', serif; font-size: 6.5px; letter-spacing: 0.07em; padding: 1px 5px; border: 0.5px solid var(--bc, #6b1a2a); color: var(--bc, #6b1a2a); display: inline-block; }
+  /* genesis anchor */
+  .genesis-anchor {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    padding: 0 24px 0 0;
+    flex-shrink: 0;
+    align-self: center;
+  }
+  .genesis-anchor-text {
     font-family: 'Cinzel', serif;
     font-size: 9px;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.18em;
     color: #6b1a2a;
     white-space: nowrap;
-    z-index: 5;
+    opacity: 0.85;
   }
-  .genesis-arrow {
-    font-size: 12px;
-    color: #6b1a2a;
-    opacity: 0.7;
-  }
-  /* absolute-positioned timeline container */
-  .abs-timeline {
-    position: relative;
+  /* bible legend bar */
+  .bible-legend-bar {
     flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 6px 24px;
+    border-bottom: 1px solid rgba(140,110,55,0.12);
   }
-  .abs-spine {
-    position: absolute;
-    left: 0; right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 1px;
-    background: rgba(140,110,55,0.25);
-  }
-  .abs-vol-col {
-    position: absolute;
-    top: 50%;
+  .bl-item {
     display: flex;
     align-items: center;
-    flex-direction: column;
+    gap: 5px;
+    font-family: 'EB Garamond', serif;
+    font-size: 11px;
+    color: var(--brown);
   }
-  .abs-vol-col.up { flex-direction: column-reverse; }
-  /* Era label strip */
-  .era-strip {
-    position: relative;
-    height: 18px;
+  .bl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+
+  /* ── SCRIPTURE CONTEXT NOTE ── */
+  .scripture-note {
     flex-shrink: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 8px 24px;
+    background: rgba(107,26,42,0.04);
+    border-bottom: 1px solid rgba(107,26,42,0.12);
   }
-  .era-strip-seg {
-    position: absolute;
-    top: 0;
+  .scripture-note-title {
     font-family: 'Cinzel', serif;
-    font-size: 8px;
-    letter-spacing: 0.2em;
-    color: var(--gold);
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: #6b1a2a;
     text-transform: uppercase;
     white-space: nowrap;
-    overflow: hidden;
-    padding-left: 6px;
-    border-left: 1px solid rgba(140,110,55,0.2);
-    height: 100%;
-    display: flex;
-    align-items: center;
+    flex-shrink: 0;
+  }
+  .scripture-note-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--brown-light);
+    line-height: 1.4;
   }
 
 </style>
@@ -625,7 +593,8 @@
   </div>
   <div class="stats-text" id="stats-bar"></div>
   <div class="view-toggle">
-    <button class="view-btn active" id="btn-timeline" onclick="setView('timeline')">Timeline</button>
+    <button class="view-btn" id="btn-bible" onclick="setView('bible')">Scripture</button>
+    <button class="view-btn active" id="btn-timeline" onclick="setView('timeline')">Library</button>
     <button class="view-btn" id="btn-grid" onclick="setView('grid')">Grid</button>
   </div>
 </div>
@@ -639,6 +608,18 @@
 
 <!-- GRID VIEW -->
 <div id="grid-view"></div>
+
+<!-- BIBLICAL VIEW -->
+<div id="bible-view">
+  <div class="scripture-note">
+    <span class="scripture-note-title">The Scripture Timeline</span>
+    <span class="scripture-note-text">Provided for context and reference — tracing the narrative arc of the Bible from Abraham to the Apostolic Age. These are not library volumes but the historical and theological backdrop against which the collection is read.</span>
+  </div>
+  <div class="bible-legend-bar" id="bible-legend-bar"></div>
+  <div class="bible-scroll" id="bible-scroll">
+    <div class="bible-track" id="bible-track"></div>
+  </div>
+</div>
 <div class="empty-state" id="empty-state">No volumes match the current filter.</div>
 
 <div class="legend-bar" id="series-legend"></div>
@@ -653,6 +634,8 @@ const LIBRARY_DATA = { "volumes": [
   { "id":3, "title":"The Code of Hammurabi", "subtitle":null, "author":"Hammurabi", "date_label":"c. 1754 BC", "date_sort":-1754, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
   { "id":4, "title":"Atrahasis", "subtitle":"The Epic of the Flood", "author":"Anonymous", "date_label":"c. 1700 BC", "date_sort":-1700, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
   { "id":5, "title":"Enuma Elish", "subtitle":"The Babylonian Epic of Creation", "author":"Anonymous", "date_label":"c. 1100 BC", "date_sort":-1100, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
+  { "id":5, "title":"The Iliad", "subtitle":null, "author":"Homer", "date_label":"c. 750–650 BC", "date_sort":-700, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
+  { "id":5, "title":"The Odyssey", "subtitle":null, "author":"Homer", "date_label":"c. 725–675 BC", "date_sort":-700, "series":"Voices of the Ancient World", "status":"pending", "notes":null },
   { "id":6, "title":"The Didache", "subtitle":null, "author":"Anonymous", "date_label":"c. 50–100 AD", "date_sort":75, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
   { "id":7, "title":"The Epistle of Barnabas", "subtitle":null, "author":"Anonymous", "date_label":"c. 70–132 AD", "date_sort":100, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
   { "id":8, "title":"The First Epistle of Clement of Rome", "subtitle":null, "author":"St. Clement of Rome", "date_label":"c. 96 AD", "date_sort":96, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null },
@@ -733,45 +716,6 @@ function groupByEra(vols) {
   return g;
 }
 
-
-const BURGUNDY = '#6b1a2a';
-
-// narrative_year = the year from the "Narrative Time" column in the catalogue
-const BIBLICAL_EVENTS = [
-  { name: 'Creation & Fall',          book: 'Genesis',                  greek: 'ΓΕΝΕΣΙΣ',              note: null,               yr: -4000 },
-  { name: 'The Flood',                book: 'Genesis',                  greek: 'ΓΕΝΕΣΙΣ',              note: null,               yr: -2400 },
-  { name: 'Abraham & the Covenant',   book: 'Genesis',                  greek: 'ΓΕΝΕΣΙΣ',              note: null,               yr: -2000 },
-  { name: 'Joseph in Egypt',          book: 'Genesis',                  greek: 'ΓΕΝΕΣΙΣ',              note: null,               yr: -1800 },
-  { name: 'The Exodus',               book: 'Exodus',                   greek: 'ΕΞΟΔΟΣ',               note: null,               yr: -1446 },
-  { name: 'The Law at Sinai',         book: 'Exodus · Leviticus',       greek: 'ΕΞΟΔΟΣ · ΛΕΥΙΤΙΚΟΝ',  note: null,               yr: -1446 },
-  { name: 'Conquest of Canaan',       book: 'Joshua',                   greek: 'ΙΗΣΟΥΣ ΝΑΥΗ',          note: null,               yr: -1406 },
-  { name: 'The Judges',               book: 'Judges',                   greek: 'ΚΡΙΤΑΙ',               note: null,               yr: -1200 },
-  { name: 'David & Goliath',          book: '1 Kingdoms',               greek: 'ΒΑΣΙΛΕΙΩΝ Α΄',         note: null,               yr: -1020 },
-  { name: "David's Reign",            book: '2 Kingdoms',               greek: 'ΒΑΣΙΛΕΙΩΝ Β΄',         note: null,               yr: -1010 },
-  { name: 'Solomon & First Temple',   book: '3 Kingdoms',               greek: 'ΒΑΣΙΛΕΙΩΝ Γ΄',         note: null,               yr: -970  },
-  { name: 'The Kingdom Divided',      book: '3–4 Kingdoms',             greek: 'ΒΑΣΙΛΕΙΩΝ Γ΄–Δ΄',      note: null,               yr: -930  },
-  { name: 'Elijah & the Prophets',    book: '4 Kingdoms',               greek: 'ΒΑΣΙΛΕΙΩΝ Δ΄',         note: null,               yr: -875  },
-  { name: "Isaiah's Prophecy",        book: 'Isaiah',                   greek: 'ΗΣΑΙΑΣ',               note: null,               yr: -740  },
-  { name: 'Fall of Jerusalem',        book: 'Jeremiah · Lamentations',  greek: 'ΙΕΡΕΜΙΑΣ · ΘΡΗΝΟΙ',   note: null,               yr: -586  },
-  { name: 'The Babylonian Exile',     book: 'Daniel · Ezekiel',         greek: 'ΔΑΝΙΗΛ · ΙΕΖΕΚΙΗΛ',   note: null,               yr: -586  },
-  { name: 'Return from Exile',        book: 'Ezra / Nehemiah',          greek: 'ΕΣΔΡΑΣ Β΄',            note: null,               yr: -538  },
-  { name: 'The Maccabean Revolt',     book: '1–2 Maccabees',            greek: 'ΜΑΚΚΑΒΑΙΩΝ Α΄–Β΄',     note: null,               yr: -167  },
-  { name: 'The Gospel Era',           book: 'Matthew · Mark · Luke · John', greek: 'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',note: null,             yr: -6    },
-  { name: 'Pentecost & Early Church', book: 'Acts',                     greek: 'ΠΡΑΞΕΙΣ ΑΠΟΣΤΟΛΩΝ',    note: null,               yr: 30    },
-  { name: "Paul's Missions",          book: 'Romans · Corinthians',     greek: 'ΡΩΜΑΙΟΥΣ · ΚΟΡΙΝΘΙΟΥΣ',note: null,              yr: 50    },
-  { name: 'The Apocalypse',           book: 'Revelation',               greek: 'ΑΠΟΚΑΛΥΨΙΣ',           note: 'John on Patmos',   yr: 96    },
-];
-
-// Piecewise scale: px per year — matches volumes data_sort positioning
-// Ancient World era volumes span from -2100 to 0, Christian from 75 to 1831
-// We need a consistent scale. Use the same approach as the era-based column widths:
-// each era gets (vols.length * 160 + 40)px, so we derive px/year per era
-// For events we'll use a simpler uniform-ish scale anchored to keep them in the right era block.
-
-// Actually: we compute event x positions by mapping into era positions.
-// For each event, find its era, find that era's x-start and x-width from rendered eras.
-// We'll store era positions after render. 
-
 // ── TIMELINE RENDER ──────────────────────────────────────────────────────────
 function renderTimeline() {
   const track = document.getElementById('timeline-track');
@@ -779,148 +723,129 @@ function renderTimeline() {
   const filtered = filterVolumes(allVolumes);
   const groups = groupByEra(filtered);
 
-  // ── PASS 1: measure era widths ────────────────────────────────────────────
-  // Each era block = vols.length * 160 + 40 px (same as column layout)
-  // Build a map: era label -> {xStart, width, from, to}
-  const eraMap = {};
-  let xCursor = 0;
-  // Genesis anchor block width
-  const GENESIS_ANCHOR_W = 160;
-  xCursor += GENESIS_ANCHOR_W;
-
   ERAS.forEach(era => {
-    const vols = groups[era.label] || [];
-    // events in this era
-    const evs = BIBLICAL_EVENTS.filter(e => e.yr >= era.from && e.yr < era.to);
-    // minimum width = max(vols, events) * 160 + 40, at least 80
-    const itemCount = Math.max(vols.length, evs.length, 1);
-    const w = itemCount * 160 + 40;
-    eraMap[era.label] = { xStart: xCursor, width: w, from: era.from, to: era.to };
-    xCursor += w;
-  });
-  const TOTAL_W = xCursor + 80;
+    const vols = groups[era.label];
+    if (!vols || vols.length === 0) return;
 
-  function yearToX(yr) {
-    // find era
-    for (const era of ERAS) {
-      if (yr >= era.from && yr < era.to) {
-        const em = eraMap[era.label];
-        const frac = (yr - era.from) / (era.to - era.from);
-        return em.xStart + frac * em.width;
+    const eraEl = document.createElement('div');
+    eraEl.className = 'tl-era';
+    eraEl.style.minWidth = (vols.length * 160 + 40) + 'px';
+
+    // Era label
+    const labelEl = document.createElement('div');
+    labelEl.style.cssText = 'padding: 0 20px 6px; flex-shrink:0;';
+    labelEl.innerHTML = `
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.25em;color:var(--gold);text-transform:uppercase;white-space:nowrap;">${era.label}</div>
+      <div style="height:1px;background:linear-gradient(90deg,var(--gold-light),transparent);margin-top:4px;"></div>
+    `;
+    eraEl.appendChild(labelEl);
+
+    // Build alternating above/below layout
+    // Split into two rows: odd-indexed above, even-indexed below
+    const above = []; const below = [];
+    vols.forEach((v, i) => { if (i % 2 === 0) below.push(v); else above.push(v); });
+
+    // Container for the full two-row layout
+    const layoutEl = document.createElement('div');
+    layoutEl.style.cssText = 'display:flex;flex-direction:column;padding:0 20px;';
+
+    // Above row
+    const aboveRow = document.createElement('div');
+    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;min-height:160px;';
+
+    // Spine row
+    const spineRow = document.createElement('div');
+    spineRow.style.cssText = 'position:relative;height:24px;display:flex;align-items:center;';
+    const spineLine = document.createElement('div');
+    spineLine.style.cssText = 'position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:1px;background:rgba(140,110,55,0.25);';
+    spineRow.appendChild(spineLine);
+
+    // Below row
+    const belowRow = document.createElement('div');
+    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:160px;';
+
+    // Place all vols in order, alternating
+    vols.forEach((v, i) => {
+      const col = document.createElement('div');
+      col.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
+
+      const card = document.createElement('div');
+      card.className = `tl-card ${v.status}`;
+      card.style.setProperty('--sc', sc(v.series));
+      card.innerHTML = `
+        <div class="tl-card-status">${statusIcon(v.status)}</div>
+        <div class="tl-card-date">${v.date_label}</div>
+        <div class="tl-card-title">${v.title}</div>
+        ${v.subtitle ? `<div class="tl-card-subtitle">${v.subtitle}</div>` : ''}
+        ${v.author ? `<div class="tl-card-author">${v.author}</div>` : ''}
+        <div class="tl-card-badge" style="--sc:${sc(v.series)};border-color:${sc(v.series)};color:${sc(v.series)}">${v.series}</div>
+      `;
+
+      const stem = document.createElement('div');
+      stem.className = 'tl-stem';
+      stem.style.height = '20px';
+      stem.style.background = 'rgba(140,110,55,0.28)';
+      stem.style.width = '1px';
+
+      const dot = document.createElement('div');
+      dot.className = 'tl-dot';
+      dot.style.cssText = `background:${sc(v.series)};box-shadow:0 0 0 1px ${sc(v.series)};--dc:${sc(v.series)};`;
+
+      if (i % 2 === 0) {
+        // below spine
+        const bc = document.createElement('div');
+        bc.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
+        bc.appendChild(dot.cloneNode());
+        bc.appendChild(stem.cloneNode());
+        bc.appendChild(card);
+        bc.querySelector('.tl-dot').style.cssText = dot.style.cssText;
+        belowRow.appendChild(bc);
+
+        // placeholder in above row
+        const ph = document.createElement('div');
+        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        aboveRow.appendChild(ph);
+      } else {
+        // above spine
+        const ac = document.createElement('div');
+        ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
+        ac.appendChild(dot.cloneNode());
+        ac.appendChild(stem.cloneNode());
+        ac.appendChild(card);
+        ac.querySelector('.tl-dot').style.cssText = dot.style.cssText;
+        aboveRow.appendChild(ac);
+
+        // placeholder in below row
+        const ph = document.createElement('div');
+        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        belowRow.appendChild(ph);
       }
-    }
-    // before first era
-    return GENESIS_ANCHOR_W / 2;
-  }
 
-  // ── ERA STRIP ─────────────────────────────────────────────────────────────
-  const eraStrip = document.createElement('div');
-  eraStrip.className = 'era-strip';
-  eraStrip.style.width = TOTAL_W + 'px';
-  ERAS.forEach(era => {
-    const em = eraMap[era.label];
-    const seg = document.createElement('div');
-    seg.className = 'era-strip-seg';
-    seg.style.left = em.xStart + 'px';
-    seg.style.width = em.width + 'px';
-    seg.textContent = era.label;
-    eraStrip.appendChild(seg);
-  });
-  track.appendChild(eraStrip);
+      // Add dot to spine row at the right x position
+      const spineDot = document.createElement('div');
+      spineDot.style.cssText = `width:160px;display:flex;justify-content:center;flex-shrink:0;`;
+      const sd = document.createElement('div');
+      sd.style.cssText = `width:8px;height:8px;border-radius:50%;background:${sc(v.series)};border:2px solid var(--cream);box-shadow:0 0 0 1px ${sc(v.series)};z-index:2;`;
+      spineDot.appendChild(sd);
+      spineRow.appendChild(spineDot);
+    });
 
-  // ── COMBINED SPINE (volumes + events on same line) ─────────────────────────
-  const spineH = 480; // total height: above + spine + below
-  const absTimeline = document.createElement('div');
-  absTimeline.className = 'abs-timeline';
-  absTimeline.style.height = spineH + 'px';
-  absTimeline.style.width = TOTAL_W + 'px';
+    layoutEl.appendChild(aboveRow);
+    layoutEl.appendChild(spineRow);
+    layoutEl.appendChild(belowRow);
+    eraEl.appendChild(layoutEl);
 
-  const absSpine = document.createElement('div');
-  absSpine.className = 'abs-spine';
-  absTimeline.appendChild(absSpine);
+    // Era divider
+    const div = document.createElement('div');
+    div.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(140,110,55,0.2);';
+    eraEl.style.position = 'relative';
+    eraEl.appendChild(div);
 
-  // ── GENESIS ANCHOR ─────────────────────────────────────────────────────────
-  const genesisAnchor = document.createElement('div');
-  genesisAnchor.className = 'genesis-anchor';
-  genesisAnchor.innerHTML = '<span class="genesis-arrow">←</span> Genesis';
-  absTimeline.appendChild(genesisAnchor);
-
-  // ── PLACE VOLUMES ─────────────────────────────────────────────────────────
-  // Track last placed x per above/below to avoid overlap
-  const COL_W = 160;
-  // Group all filtered volumes, sort by date_sort
-  const sortedVols = [...filtered].sort((a,b) => a.date_sort - b.date_sort);
-  // Assign above/below alternating
-  sortedVols.forEach((v, i) => {
-    const x = yearToX(v.date_sort);
-    const isAbove = i % 2 !== 0;
-    const color = sc(v.series);
-
-    const col = document.createElement('div');
-    col.className = 'abs-vol-col' + (isAbove ? ' up' : '');
-    col.style.left = (x - COL_W/2) + 'px';
-    col.style.width = COL_W + 'px';
-
-    const dot = document.createElement('div');
-    dot.className = 'tl-dot';
-    dot.style.cssText = \`background:\${color};box-shadow:0 0 0 1px \${color};\`;
-
-    const stem = document.createElement('div');
-    stem.className = 'tl-stem';
-    stem.style.height = '20px';
-    stem.style.background = 'rgba(140,110,55,0.28)';
-    stem.style.width = '1px';
-
-    const card = document.createElement('div');
-    card.className = \`tl-card \${v.status}\`;
-    card.style.setProperty('--sc', color);
-    card.innerHTML = \`
-      <div class="tl-card-status">\${statusIcon(v.status)}</div>
-      <div class="tl-card-date">\${v.date_label}</div>
-      <div class="tl-card-title">\${v.title}</div>
-      \${v.subtitle ? \`<div class="tl-card-subtitle">\${v.subtitle}</div>\` : ''}
-      \${v.author ? \`<div class="tl-card-author">\${v.author}</div>\` : ''}
-      <div class="tl-card-badge" style="border-color:\${color};color:\${color}">\${v.series}</div>
-    \`;
-
-    col.appendChild(dot);
-    col.appendChild(stem);
-    col.appendChild(card);
-    absTimeline.appendChild(col);
+    track.appendChild(eraEl);
   });
 
-  // ── PLACE BIBLICAL EVENTS ─────────────────────────────────────────────────
-  // Events go on same spine, alternating direction opposite to volumes
-  BIBLICAL_EVENTS.forEach((ev, i) => {
-    const x = yearToX(ev.yr);
-    // Alternate starting from below (opposite to volumes which start above at odd)
-    const isAbove = i % 2 === 0;
-
-    const col = document.createElement('div');
-    col.className = 'ev-col' + (isAbove ? ' up' : '');
-    col.style.left = (x - 14) + 'px'; // center the 28px card
-
-    const dot = document.createElement('div');
-    dot.className = 'ev-dot';
-
-    const stem = document.createElement('div');
-    stem.className = 'ev-stem';
-
-    const card = document.createElement('div');
-    card.className = 'ev-card';
-    card.innerHTML = \`<span class="ev-name">\${ev.name}</span><span class="ev-dot-sep"></span><span class="ev-book">\${ev.book}</span><span class="ev-greek">\${ev.greek}</span>\${ev.note ? \`<span class="ev-note">\${ev.note}</span>\` : ''}\`;
-
-    col.appendChild(dot);
-    col.appendChild(stem);
-    col.appendChild(card);
-    absTimeline.appendChild(col);
-  });
-
-  track.appendChild(absTimeline);
   updateStats(filtered);
 }
-
-// OLD renderTimeline replaced — grid render follows
 
 // ── GRID RENDER ───────────────────────────────────────────────────────────────
 function renderGrid() {
@@ -988,17 +913,233 @@ function setFilter(filter, btn) {
   render();
 }
 
+
+// ── BIBLICAL ERAS ─────────────────────────────────────────────────────────────
+const BIBLICAL_ERAS = [
+  { label: 'Patriarchal Age',                    from: -9999, to: -1446 },
+  { label: 'Exodus & Conquest',                  from: -1446, to: -1050 },
+  { label: 'The Monarchy',                       from: -1050, to: -931  },
+  { label: 'Divided Kingdom & Prophets',         from: -931,  to: -586  },
+  { label: 'Exile & Return',                     from: -586,  to: -167  },
+  { label: 'Intertestamental',                   from: -167,  to: -6    },
+  { label: 'Gospel Era & Apostolic Age',         from: -6,    to: 100   },
+];
+
+// accent colour per era
+const BIBLE_ERA_COLORS = {
+  'Patriarchal Age':                 '#5c3d1e',
+  'Exodus & Conquest':               '#4a3000',
+  'The Monarchy':                    '#2e4a1e',
+  'Divided Kingdom & Prophets':      '#1e3a5c',
+  'Exile & Return':                  '#3d1e5c',
+  'Intertestamental':                '#5c1e3d',
+  'Gospel Era & Apostolic Age':      '#6b1a2a',
+};
+
+// ── BIBLICAL EVENTS ───────────────────────────────────────────────────────────
+// narrative_yr from catalogue. Where two events share a year they get offset.
+const BIBLICAL_EVENTS = [
+  // Patriarchal Age
+  { event:'Abraham & the Covenant',   book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-2000 },
+  { event:'Sodom & Gomorrah',         book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-1900 },
+  { event:'Isaac & Jacob',            book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-1800 },
+  { event:'Joseph in Egypt',          book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-1700 },
+  // Exodus & Conquest
+  { event:'The Exodus',               book:'Exodus',                         greek:'ΕΞΟΔΟΣ',                       note:null,              yr:-1446 },
+  { event:'The Law at Sinai',         book:'Exodus · Leviticus',             greek:'ΕΞΟΔΟΣ · ΛΕΥΙΤΙΚΟΝ',           note:null,              yr:-1445 },
+  { event:'Wilderness Wanderings',    book:'Numbers',                        greek:'ΑΡΙΘΜΟΙ',                      note:'40 years',        yr:-1444 },
+  { event:'Conquest of Canaan',       book:'Joshua',                         greek:'ΙΗΣΟΥΣ ΝΑΥΗ',                  note:null,              yr:-1406 },
+  { event:'The Judges',               book:'Judges',                         greek:'ΚΡΙΤΑΙ',                       note:null,              yr:-1200 },
+  { event:'Ruth',                     book:'Ruth',                           greek:'ΡΟΥΘ',                         note:null,              yr:-1100 },
+  // The Monarchy
+  { event:'Samuel & Saul',            book:'1 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Α΄',                 note:null,              yr:-1050 },
+  { event:'David & Goliath',          book:'1 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Α΄',                 note:null,              yr:-1020 },
+  { event:"David's Reign",            book:'2 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Β΄',                 note:null,              yr:-1010 },
+  { event:'Solomon & First Temple',   book:'3 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Γ΄',                 note:null,              yr:-970  },
+  // Divided Kingdom
+  { event:'The Kingdom Divided',      book:'3–4 Kingdoms',                   greek:'ΒΑΣΙΛΕΙΩΝ Γ΄–Δ΄',              note:null,              yr:-931  },
+  { event:'Elijah & the Prophets',    book:'4 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Δ΄',                 note:null,              yr:-875  },
+  { event:'Amos & Hosea',             book:'Amos · Hosea',                   greek:'ΑΜΩΣ · ΩΣΗΕ',                  note:null,              yr:-760  },
+  { event:"Isaiah's Prophecy",        book:'Isaiah',                         greek:'ΗΣΑΙΑΣ',                       note:null,              yr:-740  },
+  { event:'Fall of the North',        book:'4 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Δ΄',                 note:'Assyrian conquest', yr:-722 },
+  { event:'Jeremiah & Zephaniah',     book:'Jeremiah · Zephaniah',           greek:'ΙΕΡΕΜΙΑΣ · ΣΟΦΟΝΙΑΣ',          note:null,              yr:-627  },
+  { event:'Fall of Jerusalem',        book:'Jeremiah · Lamentations',        greek:'ΙΕΡΕΜΙΑΣ · ΘΡΗΝΟΙ',            note:'587 BC',          yr:-587  },
+  // Exile & Return
+  { event:'The Babylonian Exile',     book:'Daniel · Ezekiel',               greek:'ΔΑΝΙΗΛ · ΙΕΖΕΚΙΗΛ',            note:null,              yr:-586  },
+  { event:'Return from Exile',        book:'Ezra / Nehemiah',                greek:'ΕΣΔΡΑΣ Β΄',                    note:'Cyrus decree',    yr:-538  },
+  { event:'Rebuilding the Temple',    book:'Haggai · Zechariah',             greek:'ΑΓΓΑΙΟΣ · ΖΑΧΑΡΙΑΣ',           note:'Second Temple',   yr:-520  },
+  { event:'Esther in Persia',         book:'Esther',                         greek:'ΕΣΘΗΡ',                        note:null,              yr:-483  },
+  { event:'Malachi — Last Prophet',   book:'Malachi',                        greek:'ΜΑΛΑΧΙΑΣ',                     note:null,              yr:-450  },
+  // Intertestamental
+  { event:'The Maccabean Revolt',     book:'1–2 Maccabees',                  greek:'ΜΑΚΚΑΒΑΙΩΝ Α΄–Β΄',             note:null,              yr:-167  },
+  { event:'Rededication of Temple',   book:'1 Maccabees',                    greek:'ΜΑΚΚΑΒΑΙΩΝ Α΄',                note:'Hanukkah',        yr:-164  },
+  { event:'Wisdom of Solomon',        book:'Wisdom of Solomon',              greek:'ΣΟΦΙΑ ΣΑΛΟΜΩΝΤΟΣ',             note:null,              yr:-50   },
+  // Gospel Era
+  { event:'The Nativity',             book:'Matthew · Luke',                 greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ · ΛΟΥΚΑΝ',       note:null,              yr:-6    },
+  { event:'Baptism of Jesus',         book:'Matthew · Mark · Luke · John',   greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:27    },
+  { event:'The Sermon on the Mount',  book:'Matthew',                        greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ',                note:null,              yr:28    },
+  { event:'The Last Supper',          book:'Matthew · Mark · Luke · John',   greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:33    },
+  { event:'Crucifixion & Resurrection',book:'Matthew · Mark · Luke · John',  greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:33    },
+  { event:'Pentecost',                book:'Acts',                           greek:'ΠΡΑΞΕΙΣ ΑΠΟΣΤΟΛΩΝ',            note:null,              yr:33    },
+  { event:"Paul's Missions",          book:'Acts · Romans · Corinthians',    greek:'ΠΡΑΞΕΙΣ · ΡΩΜΑΙΟΥΣ κ.α.',     note:null,              yr:47    },
+  { event:'Council of Jerusalem',     book:'Acts',                           greek:'ΠΡΑΞΕΙΣ ΑΠΟΣΤΟΛΩΝ',            note:null,              yr:49    },
+  { event:'The Apocalypse',           book:'Revelation',                     greek:'ΑΠΟΚΑΛΥΨΙΣ',                   note:'John on Patmos',  yr:96    },
+];
+
+// ── BIBLICAL TIMELINE RENDER ──────────────────────────────────────────────────
+function renderBiblical() {
+  const track = document.getElementById('bible-track');
+  track.innerHTML = '';
+
+  // Build legend
+  const legendBar = document.getElementById('bible-legend-bar');
+  legendBar.innerHTML = '';
+  BIBLICAL_ERAS.forEach(era => {
+    const item = document.createElement('div');
+    item.className = 'bl-item';
+    item.innerHTML = `<span class="bl-dot" style="background:${BIBLE_ERA_COLORS[era.label]}"></span>${era.label}`;
+    legendBar.appendChild(item);
+  });
+
+  // Group events by era
+  const groups = {};
+  BIBLICAL_ERAS.forEach(e => { groups[e.label] = []; });
+  BIBLICAL_EVENTS.forEach(ev => {
+    const era = BIBLICAL_ERAS.find(e => ev.yr >= e.from && ev.yr < e.to);
+    if (era) groups[era.label].push(ev);
+  });
+
+  BIBLICAL_ERAS.forEach(era => {
+    const evs = groups[era.label];
+    if (!evs || evs.length === 0) return;
+
+    const color = BIBLE_ERA_COLORS[era.label] || '#5c3d1e';
+
+    const eraEl = document.createElement('div');
+    eraEl.className = 'tl-era';
+    // Width: enough for all events + genesis anchor on first era
+    const isFirst = era.label === BIBLICAL_ERAS[0].label; // Patriarchal Age — shows Genesis anchor
+    eraEl.style.minWidth = ((evs.length * 160) + (isFirst ? 200 : 40)) + 'px';
+    eraEl.style.position = 'relative';
+
+    // Era label
+    const labelEl = document.createElement('div');
+    labelEl.style.cssText = 'padding: 0 20px 6px; flex-shrink:0;';
+    labelEl.innerHTML = `
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.25em;color:${color};text-transform:uppercase;white-space:nowrap;">${era.label}</div>
+      <div style="height:1px;background:linear-gradient(90deg,${color},transparent);margin-top:4px;opacity:0.6;"></div>
+    `;
+    eraEl.appendChild(labelEl);
+
+    const layoutEl = document.createElement('div');
+    layoutEl.style.cssText = 'display:flex;flex-direction:column;padding:0 20px;';
+
+    const aboveRow = document.createElement('div');
+    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;min-height:160px;';
+
+    const spineRow = document.createElement('div');
+    spineRow.style.cssText = 'position:relative;height:24px;display:flex;align-items:center;';
+    const spineLine = document.createElement('div');
+    spineLine.style.cssText = 'position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);height:1px;background:rgba(140,110,55,0.25);';
+    spineRow.appendChild(spineLine);
+
+    const belowRow = document.createElement('div');
+    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:160px;';
+
+    // Genesis anchor on first era
+    if (isFirst) {
+      const anch = document.createElement('div');
+      anch.className = 'genesis-anchor';
+      anch.innerHTML = `<span style="font-size:14px;color:#6b1a2a;opacity:0.6;">←</span><span class="genesis-anchor-text">Genesis</span>`;
+      aboveRow.appendChild(anch);
+      const anchS = document.createElement('div');
+      anchS.style.cssText = 'width:180px;flex-shrink:0;display:flex;justify-content:center;';
+      spineRow.appendChild(anchS);
+      const anchB = document.createElement('div');
+      anchB.style.cssText = 'width:180px;flex-shrink:0;';
+      belowRow.appendChild(anchB);
+    }
+
+    // Place events alternating above/below
+    evs.forEach((ev, i) => {
+      const isAbove = i % 2 !== 0;
+
+      const card = document.createElement('div');
+      card.className = 'bible-card';
+      card.style.setProperty('--bc', color);
+      card.innerHTML = `
+        <div class="bc-date">${ev.yr < 0 ? 'c. ' + Math.abs(ev.yr) + ' BC' : 'c. ' + ev.yr + ' AD'}</div>
+        <div class="bc-event">${ev.event}</div>
+        <div class="bc-book">${ev.book}</div>
+        <div class="bc-greek">${ev.greek}</div>
+        ${ev.note ? `<div class="bc-note">${ev.note}</div>` : ''}
+        <div class="bc-badge">${era.label}</div>
+      `;
+
+      const stem = document.createElement('div');
+      stem.style.cssText = 'width:1px;height:20px;background:rgba(140,110,55,0.28);flex-shrink:0;';
+
+      const dot = document.createElement('div');
+      dot.style.cssText = `width:8px;height:8px;border-radius:50%;background:${color};border:1.5px solid var(--cream);box-shadow:0 0 0 1px ${color};flex-shrink:0;z-index:2;`;
+
+      // spine dot
+      const spineDotWrap = document.createElement('div');
+      spineDotWrap.style.cssText = 'width:160px;display:flex;justify-content:center;flex-shrink:0;';
+      const sd = dot.cloneNode();
+      spineDotWrap.appendChild(sd);
+      spineRow.appendChild(spineDotWrap);
+
+      if (isAbove) {
+        const ac = document.createElement('div');
+        ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
+        ac.appendChild(dot);
+        ac.appendChild(stem);
+        ac.appendChild(card);
+        aboveRow.appendChild(ac);
+        const ph = document.createElement('div');
+        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        belowRow.appendChild(ph);
+      } else {
+        const bc = document.createElement('div');
+        bc.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
+        bc.appendChild(dot);
+        bc.appendChild(stem);
+        bc.appendChild(card);
+        belowRow.appendChild(bc);
+        const ph = document.createElement('div');
+        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        aboveRow.appendChild(ph);
+      }
+    });
+
+    layoutEl.appendChild(aboveRow);
+    layoutEl.appendChild(spineRow);
+    layoutEl.appendChild(belowRow);
+    eraEl.appendChild(layoutEl);
+
+    // Era divider
+    const div = document.createElement('div');
+    div.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(140,110,55,0.2);';
+    eraEl.appendChild(div);
+
+    track.appendChild(eraEl);
+  });
+}
+
 function setView(view) {
   currentView = view;
   document.getElementById('btn-timeline').classList.toggle('active', view==='timeline');
+  document.getElementById('btn-bible').classList.toggle('active', view==='bible');
   document.getElementById('btn-grid').classList.toggle('active', view==='grid');
   document.getElementById('timeline-view').style.display = view==='timeline' ? 'flex' : 'none';
-  document.getElementById('grid-view').style.display = view==='grid' ? 'block' : 'none';
+  document.getElementById('bible-view').style.display    = view==='bible'    ? 'flex' : 'none';
+  document.getElementById('grid-view').style.display     = view==='grid'     ? 'block' : 'none';
   render();
 }
 
 function render() {
   if (currentView === 'timeline') renderTimeline();
+  else if (currentView === 'bible') renderBiblical();
   else renderGrid();
 }
 
@@ -1018,6 +1159,14 @@ scroll.addEventListener('mousemove', e => {
   const x = e.pageX - scroll.offsetLeft;
   scroll.scrollLeft = scrollLeft - (x - startX) * 1.2;
 });
+
+// Bible scroll drag
+const bscroll = document.getElementById('bible-scroll');
+let bDown = false, bStartX, bScrollLeft;
+bscroll.addEventListener('mousedown', e => { bDown=true; bscroll.style.cursor='grabbing'; bStartX=e.pageX-bscroll.offsetLeft; bScrollLeft=bscroll.scrollLeft; });
+bscroll.addEventListener('mouseleave', () => { bDown=false; bscroll.style.cursor='grab'; });
+bscroll.addEventListener('mouseup',   () => { bDown=false; bscroll.style.cursor='grab'; });
+bscroll.addEventListener('mousemove', e => { if(!bDown) return; e.preventDefault(); bscroll.scrollLeft=bScrollLeft-(e.pageX-bscroll.offsetLeft-bStartX)*1.2; });
 
 buildLegend();
 render();
