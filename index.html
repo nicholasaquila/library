@@ -209,6 +209,15 @@
   }
 
   /* Era group */
+  .tl-era-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 10px;
+    color: rgba(140,110,55,0.7);
+    letter-spacing: 0.05em;
+    padding: 0 0 5px 0;
+    white-space: nowrap;
+  }
   .tl-era {
     display: flex;
     flex-direction: column;
@@ -292,14 +301,14 @@
 
   .tl-card-date {
     font-family: 'Cinzel', serif;
-    font-size: 9px;
+    font-size: 11px;
     letter-spacing: 0.12em;
     color: var(--gold);
     margin-bottom: 5px;
   }
   .tl-card-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--ink);
     line-height: 1.3;
@@ -308,7 +317,7 @@
   .tl-card-subtitle {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 11px;
+    font-size: 13px;
     color: var(--brown-light);
     margin-bottom: 3px;
     line-height: 1.2;
@@ -321,7 +330,7 @@
   }
   .tl-card-badge {
     font-family: 'Cinzel', serif;
-    font-size: 7px;
+    font-size: 8px;
     letter-spacing: 0.1em;
     padding: 2px 6px;
     border: 1px solid var(--sc);
@@ -414,11 +423,11 @@
   .vol-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(80,65,40,0.14); }
   .vol-card.pending { opacity: 0.65; }
   .vol-card.needs-refresh { border-color: rgba(180,120,30,0.4); }
-  .vol-date { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.12em; color: var(--gold); margin-bottom: 6px; }
+  .vol-date { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.12em; color: var(--gold); margin-bottom: 6px; }
   .vol-title { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 2px; flex: 1; }
   .vol-subtitle { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 12px; color: var(--brown-light); margin-bottom: 4px; }
   .vol-author { font-family: 'EB Garamond', serif; font-size: 12px; color: var(--brown); margin-bottom: 8px; }
-  .series-badge { font-family: 'Cinzel', serif; font-size: 7.5px; letter-spacing: 0.1em; padding: 2px 7px; border: 1px solid; display: inline-block; margin-top: auto; align-self: flex-start; }
+  .series-badge { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.1em; padding: 2px 7px; border: 1px solid; display: inline-block; margin-top: auto; align-self: flex-start; }
   .status-icon { position: absolute; top: 9px; right: 9px; font-size: 11px; opacity: 0.65; }
 
   .empty-state {
@@ -490,7 +499,7 @@
   /* reuse tl-era, tl-card etc — bible cards get a distinct top accent via --sc */
   .bible-card {
     padding: 7px 9px 6px;
-    width: 148px;
+    width: 160px;
     background: linear-gradient(150deg, #faf6ea, #ede5cc);
     border: 0.5px solid rgba(140,110,55,0.32);
     position: relative;
@@ -506,12 +515,12 @@
     opacity: 0.85;
   }
   .bible-card:hover { transform: scale(1.04); box-shadow: 0 5px 20px rgba(80,65,40,0.18); z-index: 20; }
-  .bc-date  { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 3px; }
-  .bc-event { font-family: 'Cormorant Garamond', serif; font-size: 11px; font-weight: 600; color: var(--ink); line-height: 1.25; margin-bottom: 2px; }
-  .bc-book  { font-family: 'EB Garamond', serif; font-size: 9px; color: var(--brown-light); margin-bottom: 1px; }
-  .bc-greek { font-family: 'EB Garamond', serif; font-style: italic; font-size: 8.5px; color: var(--gold); margin-bottom: 3px; }
+  .bc-date  { font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 3px; }
+  .bc-event { font-family: 'Cormorant Garamond', serif; font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.25; margin-bottom: 2px; }
+  .bc-book  { font-family: 'EB Garamond', serif; font-size: 12px; color: var(--brown-light); margin-bottom: 1px; }
+  .bc-greek { font-family: 'EB Garamond', serif; font-style: italic; font-size: 11px; color: var(--gold); margin-bottom: 3px; }
   .bc-note  { font-family: 'EB Garamond', serif; font-style: italic; font-size: 8px; color: var(--brown-light); }
-  .bc-badge { font-family: 'Cinzel', serif; font-size: 6.5px; letter-spacing: 0.07em; padding: 1px 5px; border: 0.5px solid var(--bc, #6b1a2a); color: var(--bc, #6b1a2a); display: inline-block; }
+  .bc-badge { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.07em; padding: 1px 5px; border: 0.5px solid var(--bc, #6b1a2a); color: var(--bc, #6b1a2a); display: inline-block; }
   /* genesis anchor */
   .genesis-anchor {
     display: flex;
@@ -597,10 +606,10 @@
 
     /* On mobile, grid is the default visible view — timeline still accessible */
     .tl-card { width: 120px; }
-    .tl-card-title { font-size: 9px; }
-    .tl-card-date  { font-size: 6px; }
-    .tl-card-author { font-size: 8px; }
-    .tl-card-badge { font-size: 5.5px; }
+    .tl-card-title { font-size: 11px; }
+    .tl-card-date  { font-size: 8px; }
+    .tl-card-author { font-size: 10px; }
+    .tl-card-badge { font-size: 7px; }
     .dl-link { font-size: 6px; padding: 2px 4px; }
 
     /* Grid on mobile — single column */
@@ -623,12 +632,12 @@
 
     /* Scripture timeline mobile */
     .bible-card { width: 110px; padding: 5px 7px 4px; }
-    .bc-date  { font-size: 6px; }
-    .bc-event { font-size: 9px; }
-    .bc-book  { font-size: 7.5px; }
-    .bc-greek { font-size: 7px; }
+    .bc-date  { font-size: 9px; }
+    .bc-event { font-size: 12px; }
+    .bc-book  { font-size: 10px; }
+    .bc-greek { font-size: 9px; }
     .bc-note  { font-size: 6.5px; }
-    .bc-badge { font-size: 5.5px; }
+    .bc-badge { font-size: 7px; }
     .bible-legend-bar { padding: 5px 14px; gap: 8px; flex-wrap: wrap; }
     .bl-item { font-size: 9px; }
     .tl-era-spine-line, .tl-spine-row { height: 16px; }
@@ -668,13 +677,15 @@
   .version-stamp {
     position: fixed;
     bottom: 10px;
-    right: 14px;
+    left: 50%;
+    transform: translateX(-50%);
     font-family: 'Cinzel', serif;
     font-size: 8px;
     letter-spacing: 0.12em;
     color: rgba(140,110,55,0.4);
     pointer-events: none;
     z-index: 100;
+    white-space: nowrap;
   }
 
 
@@ -753,12 +764,128 @@
     50% { border-color: var(--gold); box-shadow: 0 0 10px rgba(140,110,55,0.25); color: var(--ink); }
   }
   .filter-btn.pulse-all { animation: allPulse 1.4s ease-in-out infinite; }
+
+  .sig-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .sig-wrap.up { flex-direction: column-reverse; }
+  .sig-line {
+    width: 1px;
+    height: 16px;
+    border-left: 1px dashed rgba(140,110,55,0.5);
+    flex-shrink: 0;
+  }
+  .sig-tag {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: #2a1a05;
+    background: #ede0b8;
+    border: 1px dashed #8c6e37;
+    padding: 4px 8px;
+    max-width: 155px;
+    text-align: center;
+    line-height: 1.4;
+    white-space: normal;
+    flex-shrink: 0;
+    box-shadow: 0 1px 4px rgba(80,65,40,0.12);
+  }
+  @media (max-width: 768px) {
+    .sig-tag { font-size: 9px; max-width: 120px; padding: 2px 5px; }
+    .sig-line { height: 8px; }
+  }
+
+
+  /* ── FULLNESS OF TIME MARKER — dedicated column ── */
+  .pleroma-col {
+    width: 130px;
+    flex-shrink: 0;
+    position: relative;
+    align-self: stretch;
+  }
+  .pleroma-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, transparent 0%, #8b0000 15%, #8b0000 85%, transparent 100%);
+  }
+  .pleroma-line.left  { left: 0; }
+  .pleroma-line.right { right: 0; }
+  .pleroma-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background: var(--cream);
+    padding: 10px 8px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    gap: 4px;
+    border-top: 1px solid rgba(139,0,0,0.25);
+    border-bottom: 1px solid rgba(139,0,0,0.25);
+    width: 120px;
+  }
+  .pleroma-greek {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: #8b0000;
+    font-style: italic;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+  .pleroma-latin {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px;
+    font-style: italic;
+    color: #8b0000;
+    opacity: 0.75;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .pleroma-ref {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    color: rgba(139,0,0,0.45);
+    white-space: nowrap;
+    margin-top: 2px;
+  }
+
+
+  /* ── DOWNLOAD TOAST ── */
+  .dl-toast {
+    position: fixed;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(30,25,16,0.92);
+    color: var(--cream);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    padding: 10px 20px;
+    border: 0.5px solid rgba(140,110,55,0.4);
+    white-space: nowrap;
+    z-index: 200;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .dl-toast.show { opacity: 1; }
+
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-eyebrow">Compiled by Nicholas</div>
   <div class="header-title">The Clayton Historical Library</div>
 </header>
 
@@ -809,69 +936,593 @@
 </div>
 
 <script>
-const LIBRARY_DATA = { "volumes": [
-  { "id":1, "title":"The Epic of Gilgamesh", "subtitle":"The Oldest Story Ever Told", "author":"Anonymous", "date_label":"c. 2100 BC", "date_sort":-2100, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
-  { "id":2, "title":"The Tale of Sinuhe", "subtitle":null, "author":"Anonymous", "date_label":"c. 1875 BC", "date_sort":-1875, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
-  { "id":3, "title":"The Code of Hammurabi", "subtitle":null, "author":"Hammurabi", "date_label":"c. 1754 BC", "date_sort":-1754, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
-  { "id":4, "title":"Atrahasis", "subtitle":"The Epic of the Flood", "author":"Anonymous", "date_label":"c. 1700 BC", "date_sort":-1700, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
-  { "id":5, "title":"Enuma Elish", "subtitle":"The Babylonian Epic of Creation", "author":"Anonymous", "date_label":"c. 1100 BC", "date_sort":-1100, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
-  { "id":5, "title":"The Iliad", "subtitle":null, "author":"Homer", "date_label":"c. 750–650 BC", "date_sort":-700, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
-  { "id":5, "title":"The Odyssey", "subtitle":null, "author":"Homer", "date_label":"c. 725–675 BC", "date_sort":-700, "series":"Voices of the Ancient World", "status":"pending", "notes":null , "filename":null},
-  { "id":6, "title":"The Didache", "subtitle":null, "author":"Anonymous", "date_label":"c. 50–100 AD", "date_sort":75, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c50-100AD)_The_Didache.epub"},
-  { "id":7, "title":"The Epistle of Barnabas", "subtitle":null, "author":"Anonymous", "date_label":"c. 70–132 AD", "date_sort":100, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c70-132AD)_The_Epistle_of_Barnabas.epub"},
-  { "id":8, "title":"The First Epistle of Clement of Rome", "subtitle":null, "author":"St. Clement of Rome", "date_label":"c. 96 AD", "date_sort":96, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c96AD)_The_First_Epistle_of_Clement_of_Rome.epub"},
-  { "id":9, "title":"The Letters of St. Ignatius of Antioch", "subtitle":null, "author":"St. Ignatius of Antioch", "date_label":"c. 105–115 AD", "date_sort":110, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c105-115AD)_The_Letters_of_St_Ignatius_of_Antioch.epub"},
-  { "id":10, "title":"The Epistle and Martyrdom of St. Polycarp", "subtitle":null, "author":"St. Polycarp of Smyrna", "date_label":"c. 110–160 AD", "date_sort":135, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c110-160AD)_The_Epistle_and_Martyrdom_of_St_Polycarp_of_Smyrna.epub"},
-  { "id":11, "title":"The First and Second Apologies", "subtitle":null, "author":"St. Justin Martyr", "date_label":"c. 155 AD", "date_sort":155, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c155AD)_The_First_and_Second_Apologies_Justin_Martyr.epub"},
-  { "id":12, "title":"Against Heresies", "subtitle":null, "author":"St. Irenaeus of Lyons", "date_label":"c. 180 AD", "date_sort":180, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c180AD)_Against_Heresies_St_Irenaeus_of_Lyons.epub"},
-  { "id":13, "title":"To Autolycus", "subtitle":null, "author":"St. Theophilus of Antioch", "date_label":"c. 181 AD", "date_sort":181, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c181AD)_To_Autolycus_St_Theophilus_of_Antioch.epub"},
-  { "id":14, "title":"The Prescription Against Heretics", "subtitle":null, "author":"Tertullian", "date_label":"c. 200 AD", "date_sort":200, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c200AD)_The_Prescription_Against_Heretics_Tertullian.epub"},
-  { "id":15, "title":"De Principiis", "subtitle":"On First Principles", "author":"Origen of Alexandria", "date_label":"c. 230 AD", "date_sort":230, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c230AD)_De_Principiis_Origen_of_Alexandria.epub"},
-  { "id":16, "title":"The Unity of the Church", "subtitle":null, "author":"St. Cyprian of Carthage", "date_label":"c. 250 AD", "date_sort":250, "series":"Ante-Nicene Fathers", "status":"complete", "notes":null , "filename":"(c250AD)_The_Unity_of_the_Church_St_Cyprian_of_Carthage.epub"},
-  { "id":17, "title":"First Council of Nicaea", "subtitle":null, "author":null, "date_label":"325 AD", "date_sort":325, "series":"Ecumenical Councils", "status":"complete", "notes":null , "filename":"(c325AD)_First_Council_of_Nicaea.epub"},
-  { "id":18, "title":"On the Incarnation", "subtitle":null, "author":"St. Athanasius of Alexandria", "date_label":"c. 335 AD", "date_sort":335, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c335AD)_On_the_Incarnation_St_Athanasius_of_Alexandria.epub"},
-  { "id":19, "title":"Five Theological Orations", "subtitle":null, "author":"St. Gregory of Nazianzus", "date_label":"c. 380 AD", "date_sort":380, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c380AD)_Five_Theological_Orations_St_Gregory_of_Nazianzus.epub"},
-  { "id":20, "title":"Ad Ablabium", "subtitle":"On Not Three Gods", "author":"St. Gregory of Nyssa", "date_label":"c. 380–383 AD", "date_sort":381, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c380-383AD)_Ad_Ablabium_Not_Three_Gods_St_Gregory_of_Nyssa.epub"},
-  { "id":21, "title":"First Council of Constantinople", "subtitle":null, "author":null, "date_label":"381 AD", "date_sort":381, "series":"Ecumenical Councils", "status":"complete", "notes":null , "filename":"(c381AD)_First_Council_of_Constantinople.epub"},
-  { "id":22, "title":"The Divine Liturgy", "subtitle":null, "author":"St. John Chrysostom", "date_label":"c. 390–400 AD", "date_sort":395, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c390-400AD)_The_Divine_Liturgy_St_John_Chrysostom.epub"},
-  { "id":23, "title":"Confessions", "subtitle":null, "author":"St. Augustine of Hippo", "date_label":"c. 397–400 AD", "date_sort":398, "series":"Nicene Fathers", "status":"complete", "notes":null , "filename":"(c397-400AD)_Confessions_St_Augustine_of_Hippo.epub"},
-  { "id":24, "title":"Council of Ephesus", "subtitle":null, "author":null, "date_label":"431 AD", "date_sort":431, "series":"Ecumenical Councils", "status":"complete", "notes":null , "filename":"(c431AD)_Council_of_Ephesus.epub"},
-  { "id":25, "title":"Council of Chalcedon", "subtitle":null, "author":null, "date_label":"451 AD", "date_sort":451, "series":"Ecumenical Councils", "status":"complete", "notes":null , "filename":"(c451AD)_Council_of_Chalcedon.epub"},
-  { "id":26, "title":"Epistles and Hymn", "subtitle":null, "author":"St. Patrick of Ireland", "date_label":"c. 461–493 AD", "date_sort":470, "series":"The Early Church", "status":"complete", "notes":null , "filename":"(c461-493AD)_Epistles_and_Hymn_St_Patrick_of_Ireland.epub"},
-  { "id":27, "title":"The Rule of Saint Benedict", "subtitle":null, "author":"St. Benedict of Nursia", "date_label":"c. 530 AD", "date_sort":530, "series":"The Monastic Tradition", "status":"complete", "notes":null , "filename":"(c530AD)_The_Rule_of_Saint_Benedict.epub"},
-  { "id":28, "title":"Second Council of Constantinople", "subtitle":null, "author":null, "date_label":"553 AD", "date_sort":553, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null , "filename":"(c553AD)_Second_Council_of_Constantinople.epub"},
-  { "id":29, "title":"On the Cosmic Mystery", "subtitle":null, "author":"St. Maximus the Confessor", "date_label":"c. 634 AD", "date_sort":634, "series":"Byzantine Fathers", "status":"complete", "notes":null , "filename":"(c634AD)_On_the_Cosmic_Mystery_St_Maximus_the_Confessor.epub"},
-  { "id":30, "title":"Third Council of Constantinople", "subtitle":null, "author":null, "date_label":"680 AD", "date_sort":680, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null , "filename":"(c680AD)_Third_Council_of_Constantinople.epub"},
-  { "id":31, "title":"An Exact Exposition of the Orthodox Faith", "subtitle":null, "author":"St. John of Damascus", "date_label":"c. 743–748 AD", "date_sort":745, "series":"Byzantine Fathers", "status":"complete", "notes":null , "filename":"(c743-748AD)_An_Exact_Exposition_of_the_Orthodox_Faith_St_John_of_Damascus.epub"},
-  { "id":32, "title":"Second Council of Nicaea", "subtitle":null, "author":null, "date_label":"787 AD", "date_sort":787, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null , "filename":"(c787AD)_Second_Council_of_Nicaea.epub"},
-  { "id":33, "title":"Vita Karoli Magni", "subtitle":"The Life of Charlemagne", "author":"Einhard", "date_label":"c. 817–830 AD", "date_sort":820, "series":"The History of Christendom", "status":"complete", "notes":null , "filename":"(c817-830AD)_Vita_Karoli_Magni_Einhard.epub"},
-  { "id":34, "title":"Fourth Council of Constantinople", "subtitle":null, "author":null, "date_label":"869 AD", "date_sort":869, "series":"Ecumenical Councils", "status":"needs-refresh", "notes":null , "filename":"(c869AD)_Fourth_Council_of_Constantinople.epub"},
-  { "id":35, "title":"Cur Deus Homo", "subtitle":"Why God Became Man", "author":"St. Anselm of Canterbury", "date_label":"c. 1098 AD", "date_sort":1098, "series":"The Scholastic Tradition", "status":"complete", "notes":null , "filename":"(c1098AD)_Cur_Deus_Homo_St_Anselm_of_Canterbury.epub"},
-  { "id":36, "title":"Summa Theologiae", "subtitle":"The Complete Theological Synthesis", "author":"St. Thomas Aquinas", "date_label":"c. 1265–1274 AD", "date_sort":1265, "series":"The Scholastic Tradition", "status":"pending", "notes":null, "filename":null },
-  { "id":37, "title":"The Divine Comedy", "subtitle":null, "author":"Dante Alighieri", "date_label":"c. 1321 AD", "date_sort":1321, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
-  { "id":37, "title":"The Triads", "subtitle":null, "author":"St. Gregory Palamas", "date_label":"c. 1338 AD", "date_sort":1338, "series":"Byzantine Fathers", "status":"complete", "notes":null , "filename":"(c1338AD)_The_Triads_St_Gregory_Palamas.epub"},
-  { "id":38, "title":"95 Theses & Small Catechism", "subtitle":null, "author":"Martin Luther", "date_label":"1517 / 1529 AD", "date_sort":1517, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
-  { "id":39, "title":"Dark Night of the Soul", "subtitle":"Noche Oscura del Alma", "author":"St. John of the Cross", "date_label":"c. 1579 AD", "date_sort":1579, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
-  { "id":40, "title":"The Practice of the Presence of God", "subtitle":null, "author":"Brother Lawrence", "date_label":"c. 1692 AD", "date_sort":1692, "series":"The History of Christendom", "status":"pending", "notes":null , "filename":null},
-  { "id":41, "title":"On the Acquisition of the Holy Spirit", "subtitle":null, "author":"St. Seraphim of Sarov", "date_label":"c. 1831 AD", "date_sort":1831, "series":"Byzantine Fathers", "status":"pending", "notes":null , "filename":null},
-  { "id":45, "title":"Orthodoxy and the Religion of the Future", "subtitle":null, "author":"Fr. Seraphim Rose", "date_label":"c. 1975 AD", "date_sort":1975, "series":"TBC", "status":"pending", "filename":null },
-  { "id":46, "title":"Theosis: The True Purpose of Human Life", "subtitle":null, "author":"Archimandrite George", "date_label":"c. 1992 AD", "date_sort":1992, "series":"TBC", "status":"pending", "filename":null },
-  { "id":47, "title":"Catechism of the Catholic Church", "subtitle":null, "author":null, "date_label":"c. 1992 AD", "date_sort":1993, "series":"TBC", "status":"pending", "filename":null }
-]};
-
+const LIBRARY_DATA = {
+  "volumes": [
+    {
+      "id": 1,
+      "title": "The Epic of Gilgamesh",
+      "subtitle": "The Oldest Story Ever Told",
+      "author": "Anonymous",
+      "date_label": "c. 2100 BC",
+      "date_sort": -2100,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 2,
+      "title": "The Tale of Sinuhe",
+      "subtitle": null,
+      "author": "Anonymous",
+      "date_label": "c. 1875 BC",
+      "date_sort": -1875,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 48,
+      "title": "The Tale of the Shipwrecked Sailor",
+      "subtitle": "The Talking Snake",
+      "author": "Anonymous",
+      "date_label": "c. 1900 BC",
+      "date_sort": -1900,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "filename": null
+    },
+    {
+      "id": 3,
+      "title": "The Code of Hammurabi",
+      "subtitle": null,
+      "author": "Hammurabi",
+      "date_label": "c. 1754 BC",
+      "date_sort": -1754,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 4,
+      "title": "Atrahasis",
+      "subtitle": "The Epic of the Flood",
+      "author": "Anonymous",
+      "date_label": "c. 1700 BC",
+      "date_sort": -1700,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 5,
+      "title": "Enuma Elish",
+      "subtitle": "The Babylonian Epic of Creation",
+      "author": "Anonymous",
+      "date_label": "c. 1100 BC",
+      "date_sort": -1100,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 5,
+      "title": "The Iliad",
+      "subtitle": null,
+      "author": "Homer",
+      "date_label": "c. 750\u2013650 BC",
+      "date_sort": -700,
+      "series": "TBC",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 5,
+      "title": "The Odyssey",
+      "subtitle": null,
+      "author": "Homer",
+      "date_label": "c. 725\u2013675 BC",
+      "date_sort": -700,
+      "series": "TBC",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 6,
+      "title": "The Didache",
+      "subtitle": null,
+      "author": "Anonymous",
+      "date_label": "c. 50\u2013100 AD",
+      "date_sort": 75,
+      "series": "Apostolic Fathers",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c50-100AD)_The_Didache.epub"
+    },
+    {
+      "id": 7,
+      "title": "The Epistle of Barnabas",
+      "subtitle": null,
+      "author": "Anonymous",
+      "date_label": "c. 70\u2013132 AD",
+      "date_sort": 100,
+      "series": "Apostolic Fathers",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c70-132AD)_The_Epistle_of_Barnabas.epub"
+    },
+    {
+      "id": 8,
+      "title": "The First Epistle of Clement of Rome",
+      "subtitle": null,
+      "author": "St. Clement of Rome",
+      "date_label": "c. 96 AD",
+      "date_sort": 96,
+      "series": "Apostolic Fathers",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c96AD)_The_First_Epistle_of_Clement_of_Rome.epub"
+    },
+    {
+      "id": 9,
+      "title": "The Letters of St. Ignatius of Antioch",
+      "subtitle": null,
+      "author": "St. Ignatius of Antioch",
+      "date_label": "c. 105\u2013115 AD",
+      "date_sort": 110,
+      "series": "Apostolic Fathers",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c105-115AD)_The_Letters_of_St_Ignatius_of_Antioch.epub"
+    },
+    {
+      "id": 10,
+      "title": "The Epistle and Martyrdom of St. Polycarp",
+      "subtitle": null,
+      "author": "St. Polycarp of Smyrna",
+      "date_label": "c. 110\u2013160 AD",
+      "date_sort": 135,
+      "series": "Apostolic Fathers",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c110-160AD)_The_Epistle_and_Martyrdom_of_St_Polycarp_of_Smyrna.epub"
+    },
+    {
+      "id": 11,
+      "title": "The First and Second Apologies",
+      "subtitle": null,
+      "author": "St. Justin Martyr",
+      "date_label": "c. 155 AD",
+      "date_sort": 155,
+      "series": "Ante-Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c155AD)_The_First_and_Second_Apologies_Justin_Martyr.epub"
+    },
+    {
+      "id": 12,
+      "title": "Against Heresies",
+      "subtitle": null,
+      "author": "St. Irenaeus of Lyons",
+      "date_label": "c. 180 AD",
+      "date_sort": 180,
+      "series": "Ante-Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c180AD)_Against_Heresies_St_Irenaeus_of_Lyons.epub"
+    },
+    {
+      "id": 13,
+      "title": "To Autolycus",
+      "subtitle": null,
+      "author": "St. Theophilus of Antioch",
+      "date_label": "c. 181 AD",
+      "date_sort": 181,
+      "series": "Ante-Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c181AD)_To_Autolycus_St_Theophilus_of_Antioch.epub"
+    },
+    {
+      "id": 14,
+      "title": "The Prescription Against Heretics",
+      "subtitle": null,
+      "author": "Tertullian",
+      "date_label": "c. 200 AD",
+      "date_sort": 200,
+      "series": "Ante-Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c200AD)_The_Prescription_Against_Heretics_Tertullian.epub"
+    },
+    {
+      "id": 15,
+      "title": "De Principiis",
+      "subtitle": "On First Principles",
+      "author": "Origen of Alexandria",
+      "date_label": "c. 230 AD",
+      "date_sort": 230,
+      "series": "Ante-Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c230AD)_De_Principiis_Origen_of_Alexandria.epub"
+    },
+    {
+      "id": 16,
+      "title": "The Unity of the Church",
+      "subtitle": null,
+      "author": "St. Cyprian of Carthage",
+      "date_label": "c. 250 AD",
+      "date_sort": 250,
+      "series": "Ante-Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c250AD)_The_Unity_of_the_Church_St_Cyprian_of_Carthage.epub"
+    },
+    {
+      "id": 17,
+      "title": "First Council of Nicaea",
+      "subtitle": null,
+      "author": null,
+      "date_label": "325 AD",
+      "date_sort": 325,
+      "series": "Ecumenical Councils",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c325AD)_First_Council_of_Nicaea.epub"
+    },
+    {
+      "id": 18,
+      "title": "On the Incarnation",
+      "subtitle": null,
+      "author": "St. Athanasius of Alexandria",
+      "date_label": "c. 335 AD",
+      "date_sort": 335,
+      "series": "Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c335AD)_On_the_Incarnation_St_Athanasius_of_Alexandria.epub"
+    },
+    {
+      "id": 19,
+      "title": "Five Theological Orations",
+      "subtitle": null,
+      "author": "St. Gregory of Nazianzus",
+      "date_label": "c. 380 AD",
+      "date_sort": 380,
+      "series": "Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c380AD)_Five_Theological_Orations_St_Gregory_of_Nazianzus.epub"
+    },
+    {
+      "id": 20,
+      "title": "Ad Ablabium",
+      "subtitle": "On Not Three Gods",
+      "author": "St. Gregory of Nyssa",
+      "date_label": "c. 380\u2013383 AD",
+      "date_sort": 381,
+      "series": "Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c380-383AD)_Ad_Ablabium_Not_Three_Gods_St_Gregory_of_Nyssa.epub"
+    },
+    {
+      "id": 21,
+      "title": "First Council of Constantinople",
+      "subtitle": null,
+      "author": null,
+      "date_label": "381 AD",
+      "date_sort": 381,
+      "series": "Ecumenical Councils",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c381AD)_First_Council_of_Constantinople.epub"
+    },
+    {
+      "id": 22,
+      "title": "The Divine Liturgy",
+      "subtitle": null,
+      "author": "St. John Chrysostom",
+      "date_label": "c. 390\u2013400 AD",
+      "date_sort": 395,
+      "series": "Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c390-400AD)_The_Divine_Liturgy_St_John_Chrysostom.epub"
+    },
+    {
+      "id": 23,
+      "title": "Confessions",
+      "subtitle": null,
+      "author": "St. Augustine of Hippo",
+      "date_label": "c. 397\u2013400 AD",
+      "date_sort": 398,
+      "series": "Nicene",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c397-400AD)_Confessions_St_Augustine_of_Hippo.epub"
+    },
+    {
+      "id": 24,
+      "title": "Council of Ephesus",
+      "subtitle": null,
+      "author": null,
+      "date_label": "431 AD",
+      "date_sort": 431,
+      "series": "Ecumenical Councils",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c431AD)_Council_of_Ephesus.epub"
+    },
+    {
+      "id": 25,
+      "title": "Council of Chalcedon",
+      "subtitle": null,
+      "author": null,
+      "date_label": "451 AD",
+      "date_sort": 451,
+      "series": "Ecumenical Councils",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c451AD)_Council_of_Chalcedon.epub"
+    },
+    {
+      "id": 26,
+      "title": "Epistles and Hymn",
+      "subtitle": null,
+      "author": "St. Patrick of Ireland",
+      "date_label": "c. 461\u2013493 AD",
+      "date_sort": 470,
+      "series": "Early Church",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c461-493AD)_Epistles_and_Hymn_St_Patrick_of_Ireland.epub"
+    },
+    {
+      "id": 27,
+      "title": "The Rule of Saint Benedict",
+      "subtitle": null,
+      "author": "St. Benedict of Nursia",
+      "date_label": "c. 530 AD",
+      "date_sort": 530,
+      "series": "Monastic",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c530AD)_The_Rule_of_Saint_Benedict.epub"
+    },
+    {
+      "id": 28,
+      "title": "Second Council of Constantinople",
+      "subtitle": null,
+      "author": null,
+      "date_label": "553 AD",
+      "date_sort": 553,
+      "series": "Ecumenical Councils",
+      "status": "needs-refresh",
+      "notes": null,
+      "filename": "(c553AD)_Second_Council_of_Constantinople.epub"
+    },
+    {
+      "id": 29,
+      "title": "On the Cosmic Mystery",
+      "subtitle": null,
+      "author": "St. Maximus the Confessor",
+      "date_label": "c. 634 AD",
+      "date_sort": 634,
+      "series": "Byzantine",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c634AD)_On_the_Cosmic_Mystery_St_Maximus_the_Confessor.epub"
+    },
+    {
+      "id": 30,
+      "title": "Third Council of Constantinople",
+      "subtitle": null,
+      "author": null,
+      "date_label": "680 AD",
+      "date_sort": 680,
+      "series": "Ecumenical Councils",
+      "status": "needs-refresh",
+      "notes": null,
+      "filename": "(c680AD)_Third_Council_of_Constantinople.epub"
+    },
+    {
+      "id": 31,
+      "title": "An Exact Exposition of the Orthodox Faith",
+      "subtitle": null,
+      "author": "St. John of Damascus",
+      "date_label": "c. 743\u2013748 AD",
+      "date_sort": 745,
+      "series": "Byzantine",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c743-748AD)_An_Exact_Exposition_of_the_Orthodox_Faith_St_John_of_Damascus.epub"
+    },
+    {
+      "id": 32,
+      "title": "Second Council of Nicaea",
+      "subtitle": null,
+      "author": null,
+      "date_label": "787 AD",
+      "date_sort": 787,
+      "series": "Ecumenical Councils",
+      "status": "needs-refresh",
+      "notes": null,
+      "filename": "(c787AD)_Second_Council_of_Nicaea.epub"
+    },
+    {
+      "id": 33,
+      "title": "Vita Karoli Magni",
+      "subtitle": "The Life of Charlemagne",
+      "author": "Einhard",
+      "date_label": "c. 817\u2013830 AD",
+      "date_sort": 820,
+      "series": "History",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c817-830AD)_Vita_Karoli_Magni_Einhard.epub"
+    },
+    {
+      "id": 34,
+      "title": "Fourth Council of Constantinople",
+      "subtitle": null,
+      "author": null,
+      "date_label": "869 AD",
+      "date_sort": 869,
+      "series": "Ecumenical Councils",
+      "status": "needs-refresh",
+      "notes": null,
+      "filename": "(c869AD)_Fourth_Council_of_Constantinople.epub"
+    },
+    {
+      "id": 35,
+      "title": "Cur Deus Homo",
+      "subtitle": "Why God Became Man",
+      "author": "St. Anselm of Canterbury",
+      "date_label": "c. 1098 AD",
+      "date_sort": 1098,
+      "series": "Scholastic",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c1098AD)_Cur_Deus_Homo_St_Anselm_of_Canterbury.epub"
+    },
+    {
+      "id": 36,
+      "title": "Summa Theologiae",
+      "subtitle": "The Complete Theological Synthesis",
+      "author": "St. Thomas Aquinas",
+      "date_label": "c. 1265\u20131274 AD",
+      "date_sort": 1265,
+      "series": "Scholastic",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 37,
+      "title": "The Divine Comedy",
+      "subtitle": null,
+      "author": "Dante Alighieri",
+      "date_label": "c. 1321 AD",
+      "date_sort": 1321,
+      "series": "History",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 37,
+      "title": "The Triads",
+      "subtitle": null,
+      "author": "St. Gregory Palamas",
+      "date_label": "c. 1338 AD",
+      "date_sort": 1338,
+      "series": "Byzantine",
+      "status": "complete",
+      "notes": null,
+      "filename": "(c1338AD)_The_Triads_St_Gregory_Palamas.epub"
+    },
+    {
+      "id": 38,
+      "title": "95 Theses & Small Catechism",
+      "subtitle": null,
+      "author": "Martin Luther",
+      "date_label": "1517 / 1529 AD",
+      "date_sort": 1517,
+      "series": "History",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 39,
+      "title": "Dark Night of the Soul",
+      "subtitle": "Noche Oscura del Alma",
+      "author": "St. John of the Cross",
+      "date_label": "c. 1579 AD",
+      "date_sort": 1579,
+      "series": "History",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 40,
+      "title": "The Practice of the Presence of God",
+      "subtitle": null,
+      "author": "Brother Lawrence",
+      "date_label": "c. 1692 AD",
+      "date_sort": 1692,
+      "series": "History",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 41,
+      "title": "On the Acquisition of the Holy Spirit",
+      "subtitle": null,
+      "author": "St. Seraphim of Sarov",
+      "date_label": "c. 1831 AD",
+      "date_sort": 1831,
+      "series": "Byzantine",
+      "status": "pending",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 45,
+      "title": "Orthodoxy and the Religion of the Future",
+      "subtitle": null,
+      "author": "Fr. Seraphim Rose",
+      "date_label": "c. 1975 AD",
+      "date_sort": 1975,
+      "series": "TBC",
+      "status": "pending",
+      "filename": null
+    },
+    {
+      "id": 46,
+      "title": "Theosis: The True Purpose of Human Life",
+      "subtitle": null,
+      "author": "Archimandrite George",
+      "date_label": "c. 1992 AD",
+      "date_sort": 1992,
+      "series": "TBC",
+      "status": "pending",
+      "filename": null
+    },
+    {
+      "id": 47,
+      "title": "Catechism of the Catholic Church",
+      "subtitle": null,
+      "author": null,
+      "date_label": "c. 1992 AD",
+      "date_sort": 1993,
+      "series": "TBC",
+      "status": "pending",
+      "filename": null
+    }
+  ]
+};
 const SERIES_COLORS = {
-  'Ante-Nicene Fathers':        '#5c3d1e',
-  'Nicene Fathers':             '#1e3d5c',
-  'Ecumenical Councils':        '#3d1e5c',
-  'The Early Church':           '#1e5c3d',
-  'The Monastic Tradition':     '#5c4a1e',
-  'Byzantine Fathers':          '#5c1e1e',
-  'The History of Christendom': '#2e4a1e',
-  'Voices of the Ancient World':'#7a4f00',
-  'TBC': '#888888',
-  'The Scholastic Tradition':   '#3d2a5c',
-  'TBC':                         '#888888',
-  'The Scholastic Tradition':   '#3d2a5c',
+  'Apostolic Fathers':           '#5c3d1e',
+  'Ante-Nicene':                 '#7a4a1e',
+  'Nicene':                      '#1e3d5c',
+  'Ecumenical Councils':         '#3d1e5c',
+  'Early Church':                '#1e5c3d',
+  'Monastic':                    '#5c4a1e',
+  'Byzantine':                   '#5c1e1e',
+  'History':                     '#2e4a1e',
+  'Voices of the Ancient World': '#7a4f00',
+  'Scholastic':                  '#3d2a5c',
   'TBC':                         '#888888',
 };
 
@@ -909,6 +1560,49 @@ function groupByEra(vols) {
   return g;
 }
 
+
+const SIGNIFICANCE = {
+  // Voices of the Ancient World
+  "The Epic of Gilgamesh":                     "Oldest surviving epic; flood and creation themes; mortality and the search for eternal life",
+  "The Tale of Sinuhe":                        "Masterpiece of Egyptian literature; exile, identity and return",
+  "The Tale of the Shipwrecked Sailor":        "Earliest known talking snake narrative; paradise island; divine encounter",
+  "The Code of Hammurabi":                     "Earliest comprehensive law code; 'eye for an eye' (lex talionis); precedes Mosaic law",
+  "Atrahasis":                                 "Flood myth predating Genesis by centuries; human creation from clay; divine council",
+  "Enuma Elish":                               "Babylonian creation epic; Marduk defeats Tiamat; cosmos from chaos; parallels Genesis 1",
+
+  // Ante-Nicene Fathers — verified milestones
+  "The First Epistle of Clement of Rome":      "Earliest affirmation of apostolic succession; Rome's authority beyond its own church",
+  "The Letters of St. Ignatius of Antioch":    "Earliest use of the term 'Catholic Church'",
+  "The Epistle and Martyrdom of St. Polycarp": "Earliest martyrdom account outside NT; earliest evidence of saint veneration",
+  "To Autolycus":                              "Earliest extant use of the word 'Trinity' (Greek: Trias)",
+  "Against Heresies":                          "First unambiguous attestation of NT canon texts; four Gospels affirmed",
+  "The Prescription Against Heretics":         "Scripture & tradition as dual authority; rule of faith defined",
+  "The Unity of the Church":                   "'No salvation outside the Church' (Salus extra ecclesiam non est); primacy of the Roman Church",
+
+  // Ecumenical Councils
+  "First Council of Nicaea":                   "Nicene Creed; divinity of Christ defined; Arianism condemned",
+  "First Council of Constantinople":           "Holy Spirit defined as God; Creed expanded; Macedonianism condemned",
+  "Council of Ephesus":                        "Mary declared Theotokos (God-bearer); Nestorianism condemned",
+  "Council of Chalcedon":                      "Two natures in one person; Chalcedonian Definition; Monophysitism condemned",
+  "Second Council of Constantinople":          "Three Chapters condemned; Origenism condemned",
+  "Third Council of Constantinople":           "Two wills in Christ; Monothelitism condemned",
+  "Second Council of Nicaea":                  "Iconoclasm condemned; veneration of icons restored",
+  "Fourth Council of Constantinople":          "Photian schism; East-West tensions crystallise",
+
+  // Nicene Fathers
+  "On the Incarnation":                        "Theosis (deification) articulated; 'God became man that man might become God'",
+  "Five Theological Orations":                 "Trinity fully articulated; Holy Spirit's divinity defended",
+  "Ad Ablabium":                               "Three persons, one essence (ousia) defined",
+  "Confessions":                               "Original sin and grace; first autobiography in Western literature",
+
+  // Byzantine Fathers
+  "On the Cosmic Mystery":                     "Cosmic Christology; deification of all creation",
+  "An Exact Exposition of the Orthodox Faith": "Systematic Orthodox theology; icons theologically defended",
+  "The Triads":                                "Hesychasm; uncreated light of Tabor; Palamite theology",
+
+  // History of Christendom
+  "Cur Deus Homo":                             "Satisfaction theory of atonement; necessity of the Incarnation by reason",
+};
 // ── TIMELINE RENDER ──────────────────────────────────────────────────────────
 
 function makeCard(tag, filename, classes, styleAttr, innerHtml) {
@@ -937,8 +1631,10 @@ function renderTimeline() {
     // Era label
     const labelEl = document.createElement('div');
     labelEl.style.cssText = 'padding: 0 20px 6px; flex-shrink:0;';
+    const isAncientEra = era.label === 'Ancient World';
     labelEl.innerHTML = `
       <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.25em;color:var(--gold);text-transform:uppercase;white-space:nowrap;">${era.label}</div>
+      ${isAncientEra ? '<div class="tl-era-subtitle">præambula fidei — preambles of faith</div>' : ''}
       <div style="height:1px;background:linear-gradient(90deg,var(--gold-light),transparent);margin-top:4px;"></div>
     `;
     eraEl.appendChild(labelEl);
@@ -999,6 +1695,21 @@ function renderTimeline() {
       dot.className = 'tl-dot';
       dot.style.cssText = `background:${sc(v.series)};box-shadow:0 0 0 1px ${sc(v.series)};--dc:${sc(v.series)};`;
 
+      const sigText = SIGNIFICANCE[v.title] || null;
+      function makeSigTag(isUp) {
+        if (!sigText) return null;
+        const wrap = document.createElement('div');
+        wrap.className = 'sig-wrap' + (isUp ? ' up' : '');
+        const line = document.createElement('div');
+        line.className = 'sig-line';
+        const tag = document.createElement('div');
+        tag.className = 'sig-tag';
+        tag.textContent = sigText;
+        wrap.appendChild(line);
+        wrap.appendChild(tag);
+        return wrap;
+      }
+
       if (i % 2 === 0) {
         // below spine
         const bc = document.createElement('div');
@@ -1006,10 +1717,10 @@ function renderTimeline() {
         bc.appendChild(dot.cloneNode());
         bc.appendChild(stem.cloneNode());
         bc.appendChild(card);
+        const st = makeSigTag(false);
+        if (st) bc.appendChild(st);
         bc.querySelector('.tl-dot').style.cssText = dot.style.cssText;
         belowRow.appendChild(bc);
-
-        // placeholder in above row
         const ph = document.createElement('div');
         ph.style.cssText = 'width:160px;flex-shrink:0;';
         aboveRow.appendChild(ph);
@@ -1020,10 +1731,10 @@ function renderTimeline() {
         ac.appendChild(dot.cloneNode());
         ac.appendChild(stem.cloneNode());
         ac.appendChild(card);
+        const st = makeSigTag(true);
+        if (st) ac.appendChild(st);
         ac.querySelector('.tl-dot').style.cssText = dot.style.cssText;
         aboveRow.appendChild(ac);
-
-        // placeholder in below row
         const ph = document.createElement('div');
         ph.style.cssText = 'width:160px;flex-shrink:0;';
         belowRow.appendChild(ph);
@@ -1048,6 +1759,57 @@ function renderTimeline() {
     div.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(140,110,55,0.2);';
     eraEl.style.position = 'relative';
     eraEl.appendChild(div);
+
+    // Fullness of Time — insert dedicated column BEFORE Apostolic era
+    if (era.label === 'Apostolic & Sub-Apostolic' || era.label === 'Apostolic Fathers') {
+      // Pleroma column — mirrors era layout so spine aligns perfectly
+      const pcol = document.createElement('div');
+      pcol.style.cssText = 'display:flex;flex-direction:column;flex-shrink:0;width:140px;position:relative;';
+      pcol.id = 'pleroma-col';
+
+      // Era label spacer — same as era label height
+      const pLabelSpacer = document.createElement('div');
+      pLabelSpacer.style.cssText = 'flex-shrink:0;height:32px;';
+      pcol.appendChild(pLabelSpacer);
+
+      // Layout mirrors above/spine/below
+      const pLayout = document.createElement('div');
+      pLayout.style.cssText = 'display:flex;flex-direction:column;padding:0 20px;flex:1;';
+
+      // Above row spacer
+      const pAbove = document.createElement('div');
+      pAbove.style.cssText = 'min-height:160px;flex-shrink:0;';
+      pLayout.appendChild(pAbove);
+
+      // Spine row — crimson lines + text at spine level
+      const pSpine = document.createElement('div');
+      pSpine.style.cssText = 'height:24px;position:relative;display:flex;align-items:center;justify-content:center;';
+
+      // Left line
+      const ll = document.createElement('div');
+      ll.style.cssText = 'position:absolute;left:0;top:-9999px;bottom:-9999px;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 15%,#8b0000 85%,transparent 100%);';
+      pSpine.appendChild(ll);
+
+      // Right line
+      const rl = document.createElement('div');
+      rl.style.cssText = 'position:absolute;right:0;top:-9999px;bottom:-9999px;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 15%,#8b0000 85%,transparent 100%);';
+      pSpine.appendChild(rl);
+
+      // Text centred on spine
+      const ptxt = document.createElement('div');
+      ptxt.className = 'pleroma-text';
+      ptxt.innerHTML = '<span class="pleroma-greek">πλήρωμα τοῦ χρόνου</span><span class="pleroma-latin">the fullness of time</span><span class="pleroma-ref">Galatians 4:4</span>';
+      pSpine.appendChild(ptxt);
+      pLayout.appendChild(pSpine);
+
+      // Below row spacer
+      const pBelow = document.createElement('div');
+      pBelow.style.cssText = 'min-height:160px;flex-shrink:0;';
+      pLayout.appendChild(pBelow);
+
+      pcol.appendChild(pLayout);
+      track.appendChild(pcol);
+    }
 
     track.appendChild(eraEl);
   });
@@ -1240,8 +2002,10 @@ function renderBiblical() {
     // Era label
     const labelEl = document.createElement('div');
     labelEl.style.cssText = 'padding: 0 20px 6px; flex-shrink:0;';
+    const isAncient = era.label === 'Ancient World';
     labelEl.innerHTML = `
       <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.25em;color:${color};text-transform:uppercase;white-space:nowrap;">${era.label}</div>
+      ${isAncient ? `<div class="tl-era-subtitle">præambula fidei — preambles of faith</div>` : ''}
       <div style="height:1px;background:linear-gradient(90deg,${color},transparent);margin-top:4px;opacity:0.6;"></div>
     `;
     eraEl.appendChild(labelEl);
@@ -1399,6 +2163,16 @@ addWheelScroll(document.getElementById('bible-scroll'));
 buildLegend();
 render();
 
+// ── Download toast ────────────────────────────────────────────────────────────
+setTimeout(() => {
+  const toast = document.getElementById('dl-toast');
+  if (toast) {
+    toast.classList.add('show');
+    setTimeout(() => { toast.style.opacity = '0'; }, 4000);
+  }
+}, 2800);
+
+
 // ── INTRO SHOWCASE ────────────────────────────────────────────────────────────
 // After render, scroll timeline to the end then smoothly reel back to start
 // Then sequentially pulse the tabs to invite exploration
@@ -1414,13 +2188,20 @@ function introShowcase() {
   // Step 2: after a beat, smoothly scroll back to start
   setTimeout(() => {
     tlScroll.style.scrollBehavior = 'smooth';
-    const eraEls = document.querySelectorAll('#timeline-track .tl-era');
-      let targetX = 0;
-      eraEls.forEach(el => {
-        const ld = el.querySelector('div div');
-        if (ld && ld.textContent.includes('Apostolic')) targetX = Math.max(0, el.offsetLeft - 60);
-      });
-      tlScroll.scrollLeft = targetX;
+    const pleromaCol = document.getElementById('pleroma-col');
+      if (pleromaCol) {
+        // Show full pleroma column with a glimpse of ancient world on the left
+        tlScroll.scrollLeft = Math.max(0, pleromaCol.offsetLeft - 60);
+      } else {
+        // Fallback to Apostolic era
+        const eraEls = document.querySelectorAll('#timeline-track .tl-era');
+        let targetX = 0;
+        eraEls.forEach(el => {
+          const ld = el.querySelector('div div');
+          if (ld && ld.textContent.includes('Apostolic')) targetX = Math.max(0, el.offsetLeft - 60);
+        });
+        tlScroll.scrollLeft = targetX;
+      }
   }, 300);
 
   // Step 3: after scroll settles, pulse tabs sequentially
@@ -1448,6 +2229,7 @@ function introShowcase() {
 setTimeout(introShowcase, 200);
 
 </script>
-  <div class="version-stamp">v2.1 · 26 May 2026</div>
+  <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v3.4 · 26 May 2026</div>
 </body>
 </html>
