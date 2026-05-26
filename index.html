@@ -1897,18 +1897,15 @@ function initMap() {
     attributionControl: true,
   });
 
-  // Stadia watercolor tiles (hosted Stamen watercolor)
-  L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', {
-    attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, hosted by <a href="https://stadiamaps.com/">Stadia Maps</a>. Data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    minZoom: 1,
-    maxZoom: 16,
+  // OpenStreetMap tiles — no API key needed
+  // Apply watercolour-ish aesthetic via CSS filter on the container
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19,
   }).addTo(mapInstance);
 
-  // Label overlay
-  L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_labels/{z}/{x}/{y}{r}.png', {
-    opacity: 0.4,
-    attribution: '',
-  }).addTo(mapInstance);
+  // Apply warm antique filter to map container
+  mapInstance.getContainer().style.filter = 'sepia(0.55) saturate(0.8) brightness(0.88) contrast(1.05)';
 
   mapSortedVols = [...LIBRARY_DATA.volumes]
     .filter(v => MAP_LOCATIONS[v.title])
@@ -2658,6 +2655,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.2 · 26 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.3 · 26 May 2026</div>
 </body>
 </html>
