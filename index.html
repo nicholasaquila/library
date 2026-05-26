@@ -752,7 +752,8 @@
 
 
   /* ── TBC / PLACEHOLDER CARDS ── */
-  .tl-card.tbc, .vol-card.tbc {
+  .tl-card.tbc, .vol-card.tbc,
+  .tl-card.uncertain, .vol-card.uncertain {
     opacity: 0.4;
     filter: grayscale(0.7);
     border-style: dashed;
@@ -1253,8 +1254,8 @@ const LIBRARY_DATA = {
       "author": "Homer",
       "date_label": "c. 750\u2013650 BC",
       "date_sort": -700,
-      "series": "TBC",
-      "status": "pending",
+      "series": "Voices of the Ancient World",
+      "status": "uncertain",
       "notes": null,
       "filename": null
     },
@@ -1265,8 +1266,8 @@ const LIBRARY_DATA = {
       "author": "Homer",
       "date_label": "c. 725\u2013675 BC",
       "date_sort": -700,
-      "series": "TBC",
-      "status": "pending",
+      "series": "Voices of the Ancient World",
+      "status": "uncertain",
       "notes": null,
       "filename": null
     },
@@ -1962,7 +1963,7 @@ function setMapEra(yr) {
 function mapAddMarker(vol, animate) {
   const loc = MAP_LOCATIONS[vol.title];
   if (!loc) return;
-  const color = SERIES_COLORS[vol.series] || '#8c6e37';
+  const color = (vol.status === 'uncertain') ? '#888888' : (SERIES_COLORS[vol.series] || '#8c6e37');
 
   const icon = L.divIcon({
     className: '',
@@ -2120,7 +2121,7 @@ function renderTimeline() {
       col.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
 
       const card = document.createElement(v.filename ? 'a' : 'div');
-      card.className = `tl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}`;
+      card.className = `tl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
       card.style.setProperty('--sc', sc(v.series));
       if (v.filename) {
         card.href = './' + v.filename;
@@ -2286,7 +2287,7 @@ function renderGrid() {
     grid.className = 'volumes-grid';
     vols.forEach(v => {
       const card = document.createElement(v.filename ? 'a' : 'div');
-      card.className = `vol-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}`;
+      card.className = `vol-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
       card.style.setProperty('--series-color', sc(v.series));
       if (v.filename) {
         card.href = './' + v.filename;
@@ -2723,6 +2724,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.4 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.5 · 27 May 2026</div>
 </body>
 </html>
