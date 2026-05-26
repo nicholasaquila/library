@@ -1897,15 +1897,15 @@ function initMap() {
     attributionControl: true,
   });
 
-  // OpenStreetMap tiles — no API key needed
-  // Apply watercolour-ish aesthetic via CSS filter on the container
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  // CartoDB Positron No Labels — clean, no borders, no clutter
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
     maxZoom: 19,
   }).addTo(mapInstance);
 
-  // Apply warm antique filter to map container
-  mapInstance.getContainer().style.filter = 'sepia(0.55) saturate(0.8) brightness(0.88) contrast(1.05)';
+  // Warm antique tone
+  mapInstance.getContainer().style.filter = 'sepia(0.7) saturate(0.6) brightness(0.6) contrast(1.1)';
 
   mapSortedVols = [...LIBRARY_DATA.volumes]
     .filter(v => MAP_LOCATIONS[v.title])
@@ -2655,6 +2655,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.3 · 26 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v4.4 · 26 May 2026</div>
 </body>
 </html>
