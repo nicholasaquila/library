@@ -1177,6 +1177,17 @@
 const LIBRARY_DATA = {
   "volumes": [
     {
+      "id": 0,
+      "title": "Instructions of Shuruppak",
+      "subtitle": "The Oldest Wisdom Literature",
+      "author": "Anonymous",
+      "date_label": "c. 2500 BC",
+      "date_sort": -2500,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "filename": null
+    },
+    {
       "id": 1,
       "title": "The Epic of Gilgamesh",
       "subtitle": "The Oldest Story Ever Told",
@@ -1801,6 +1812,8 @@ function groupByEra(vols) {
 
 const SIGNIFICANCE = {
   // Voices of the Ancient World
+  "Instructions of Shuruppak":                "Oldest surviving wisdom literature; ethical proverbs and moral instruction; reflects themes in biblical Proverbs",
+  "Instructions of Shuruppak":              { lat: 31.8,  lng: 45.5,  place: "Shuruppak (Tell Fara), ancient Sumer" },
   "The Epic of Gilgamesh":                     "Oldest surviving epic; flood and creation themes; mortality and the search for eternal life",
   "The Tale of Sinuhe":                        "Masterpiece of Egyptian literature; exile, identity and return",
   "The Tale of the Shipwrecked Sailor":        "Earliest known talking snake narrative; paradise island; divine encounter",
@@ -1846,50 +1859,51 @@ const SIGNIFICANCE = {
 // ── MAP DATA ──────────────────────────────────────────────────────────────────
 // lat/lng for each volume's place of origin
 const MAP_LOCATIONS = {
+  "Instructions of Shuruppak":              { lat: 31.8,  lng: 45.5,  place: "Shuruppak (Tell Fara), ancient Sumer" },
   "The Epic of Gilgamesh":                    { lat: 31.3,  lng: 45.6,  place: "Uruk, ancient Mesopotamia" },
   "The Tale of Sinuhe":                       { lat: 30.1,  lng: 31.4,  place: "Memphis, Egypt" },
   "The Tale of the Shipwrecked Sailor":       { lat: 29.5,  lng: 31.0,  place: "Egypt (Nile Valley)" },
   "The Code of Hammurabi":                    { lat: 32.5,  lng: 44.5,  place: "Babylon, Mesopotamia" },
   "Atrahasis":                                { lat: 33.0,  lng: 44.3,  place: "Nippur, Mesopotamia" },
   "Enuma Elish":                              { lat: 32.2,  lng: 44.8,  place: "Babylon, Mesopotamia" },
-  "The Iliad":                                { lat: 38.9,  lng: 27.02,  place: "Ancient Greece / Troy" },
-  "The Odyssey":                              { lat: 38.9,  lng: 26.78,  place: "Ancient Greece" },
+  "The Iliad":                                { lat: 38.9,  lng: 27.05,  place: "Ancient Greece / Troy" },
+  "The Odyssey":                              { lat: 38.9,  lng: 26.75,  place: "Ancient Greece" },
   "The Didache":                              { lat: 36.2,  lng: 37.1,  place: "Syria / Antioch" },
   "The Epistle of Barnabas":                  { lat: 31.2,  lng: 30.12,  place: "Alexandria, Egypt" },
   "The First Epistle of Clement of Rome":     { lat: 41.9,  lng: 12.72,  place: "Rome" },
-  "The Letters of St. Ignatius of Antioch":   { lat: 36.2,  lng: 36.32,  place: "Antioch, Syria" },
+  "The Letters of St. Ignatius of Antioch":   { lat: 36.2,  lng: 36.38,  place: "Antioch, Syria" },
   "The Epistle and Martyrdom of St. Polycarp":{ lat: 38.4,  lng: 27.1,  place: "Smyrna (modern İzmir)" },
   "The First and Second Apologies":           { lat: 42.09,  lng: 12.39,  place: "Rome" },
   "Against Heresies":                         { lat: 45.7,  lng: 4.8,   place: "Lugdunum (Lyon, France)" },
-  "To Autolycus":                             { lat: 36.2,  lng: 36.08,  place: "Antioch, Syria" },
-  "The Prescription Against Heretics":        { lat: 36.8,  lng: 10.32,  place: "Carthage (modern Tunisia)" },
+  "To Autolycus":                             { lat: 36.2,  lng: 36.02,  place: "Antioch, Syria" },
+  "The Prescription Against Heretics":        { lat: 36.8,  lng: 10.38,  place: "Carthage (modern Tunisia)" },
   "De Principiis":                            { lat: 31.39,  lng: 29.79,  place: "Alexandria, Egypt" },
-  "The Unity of the Church":                  { lat: 36.8,  lng: 10.08,  place: "Carthage (modern Tunisia)" },
-  "First Council of Nicaea":                  { lat: 40.4,  lng: 29.82,  place: "Nicaea (modern İznik)" },
+  "The Unity of the Church":                  { lat: 36.8,  lng: 10.02,  place: "Carthage (modern Tunisia)" },
+  "First Council of Nicaea":                  { lat: 40.4,  lng: 29.88,  place: "Nicaea (modern İznik)" },
   "On the Incarnation":                       { lat: 31.01,  lng: 29.79,  place: "Alexandria, Egypt" },
-  "Five Theological Orations":                { lat: 41.0,  lng: 29.2,  place: "Constantinople" },
+  "Five Theological Orations":                { lat: 41.0,  lng: 29.25,  place: "Constantinople" },
   "Ad Ablabium":                              { lat: 40.6,  lng: 32.9,  place: "Cappadocia (modern Turkey)" },
-  "First Council of Constantinople":          { lat: 41.21,  lng: 29.11,  place: "Constantinople" },
-  "The Divine Liturgy":                       { lat: 41.3,  lng: 28.9,  place: "Constantinople" },
+  "First Council of Constantinople":          { lat: 41.247,  lng: 29.147,  place: "Constantinople" },
+  "The Divine Liturgy":                       { lat: 41.35,  lng: 28.9,  place: "Constantinople" },
   "Confessions":                              { lat: 36.4,  lng: 6.6,   place: "Hippo (modern Algeria)" },
   "Council of Ephesus":                       { lat: 37.9,  lng: 27.3,  place: "Ephesus (modern Turkey)" },
-  "Council of Chalcedon":                     { lat: 40.9,  lng: 29.4,  place: "Chalcedon (modern Kadıköy)" },
+  "Council of Chalcedon":                     { lat: 40.85,  lng: 29.55,  place: "Chalcedon (modern Kadıköy)" },
   "Epistles and Hymn":                        { lat: 53.3,  lng: -6.2,  place: "Ireland" },
   "The Rule of Saint Benedict":               { lat: 41.5,  lng: 14.0,  place: "Monte Cassino, Italy" },
-  "Second Council of Constantinople":         { lat: 41.21,  lng: 28.69,  place: "Constantinople" },
-  "On the Cosmic Mystery":                    { lat: 41.0,  lng: 28.6,  place: "Constantinople" },
-  "Third Council of Constantinople":          { lat: 40.79,  lng: 28.69,  place: "Constantinople" },
+  "Second Council of Constantinople":         { lat: 41.247,  lng: 28.653,  place: "Constantinople" },
+  "On the Cosmic Mystery":                    { lat: 41.0,  lng: 28.55,  place: "Constantinople" },
+  "Third Council of Constantinople":          { lat: 40.753,  lng: 28.653,  place: "Constantinople" },
   "An Exact Exposition of the Orthodox Faith":{ lat: 31.7,  lng: 35.2,  place: "Mar Saba Monastery, Palestine" },
-  "Second Council of Nicaea":                 { lat: 40.4,  lng: 29.58,  place: "Nicaea (modern İznik)" },
+  "Second Council of Nicaea":                 { lat: 40.4,  lng: 29.52,  place: "Nicaea (modern İznik)" },
   "Vita Karoli Magni":                        { lat: 49.9,  lng: 8.9,   place: "Seligenstadt (modern Germany)" },
-  "Fourth Council of Constantinople":         { lat: 40.7,  lng: 28.9,  place: "Constantinople" },
+  "Fourth Council of Constantinople":         { lat: 40.65,  lng: 28.9,  place: "Constantinople" },
   "Cur Deus Homo":                            { lat: 51.1,  lng: 0.9,   place: "Canterbury, England" },
-  "Summa Theologiae":                         { lat: 48.8,  lng: 2.42,   place: "Paris, France" },
+  "Summa Theologiae":                         { lat: 48.8,  lng: 2.45,   place: "Paris, France" },
   "The Divine Comedy":                        { lat: 43.7,  lng: 11.2,  place: "Florence, Italy" },
-  "The Triads":                               { lat: 40.79,  lng: 29.11,  place: "Constantinople" },
+  "The Triads":                               { lat: 40.753,  lng: 29.147,  place: "Constantinople" },
   "95 Theses & Small Catechism":              { lat: 51.8,  lng: 12.6,  place: "Wittenberg, Germany" },
   "Dark Night of the Soul":                   { lat: 39.8,  lng: -3.0,  place: "Toledo, Spain" },
-  "The Practice of the Presence of God":      { lat: 48.8,  lng: 2.18,   place: "Paris, France" },
+  "The Practice of the Presence of God":      { lat: 48.8,  lng: 2.15,   place: "Paris, France" },
   "On the Acquisition of the Holy Spirit":    { lat: 54.9,  lng: 43.3,  place: "Sarov, Russia" },
   "Orthodoxy and the Religion of the Future": { lat: 37.7,  lng: -122.4,place: "Platina, California" },
   "Theosis: The True Purpose of Human Life":  { lat: 40.3,  lng: 22.9,  place: "Mount Athos, Greece" },
@@ -2724,6 +2738,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.7 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.8 · 27 May 2026</div>
 </body>
 </html>
