@@ -495,7 +495,7 @@
   .bible-track {
     display: inline-flex;
     flex-direction: row;
-    padding: 16px 120px 16px 60px;
+    padding: 28px 120px 28px 60px;
     min-height: 100%;
   }
   /* reuse tl-era, tl-card etc — bible cards get a distinct top accent via --sc */
@@ -2102,7 +2102,7 @@ function renderTimeline() {
 
     // Above row
     const aboveRow = document.createElement('div');
-    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;min-height:160px;';
+    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;min-height:180px;';
 
     // Spine row
     const spineRow = document.createElement('div');
@@ -2113,7 +2113,7 @@ function renderTimeline() {
 
     // Below row
     const belowRow = document.createElement('div');
-    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:160px;';
+    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:180px;';
 
     // Place all vols in order, alternating
     vols.forEach((v, i) => {
@@ -2350,7 +2350,7 @@ const BIBLICAL_ERAS = [
   { label: 'The Monarchy',                       from: -1050, to: -931  },
   { label: 'Divided Kingdom & Prophets',         from: -931,  to: -586  },
   { label: 'Exile & Return',                     from: -586,  to: -167  },
-  { label: 'Deuterocanonical Period',                   from: -167,  to: -6    },
+  { label: 'Maccabean Age',                   from: -167,  to: -6    },
   { label: 'Gospel Era & Apostolic Age',         from: -6,    to: 100   },
 ];
 
@@ -2361,7 +2361,7 @@ const BIBLE_ERA_COLORS = {
   'The Monarchy':                    '#2e4a1e',
   'Divided Kingdom & Prophets':      '#1e3a5c',
   'Exile & Return':                  '#3d1e5c',
-  'Deuterocanonical Period':                '#5c1e3d',
+  'Maccabean Age':                '#5c1e3d',
   'Gospel Era & Apostolic Age':      '#6b1a2a',
 };
 
@@ -2399,7 +2399,7 @@ const BIBLICAL_EVENTS = [
   { event:'Rebuilding the Temple',    book:'Haggai · Zechariah',             greek:'ΑΓΓΑΙΟΣ · ΖΑΧΑΡΙΑΣ',           note:'Second Temple',   yr:-520  },
   { event:'Esther in Persia',         book:'Esther',                         greek:'ΕΣΘΗΡ',                        note:null,              yr:-483  },
   { event:'Malachi — Last Prophet',   book:'Malachi',                        greek:'ΜΑΛΑΧΙΑΣ',                     note:null,              yr:-450  },
-  // Deuterocanonical Period
+  // Maccabean Age
   { event:'The Maccabean Revolt',     book:'1–2 Maccabees',                  greek:'ΜΑΚΚΑΒΑΙΩΝ Α΄–Β΄',             note:null,              yr:-167  },
   { event:'Rededication of Temple',   book:'1 Maccabees',                    greek:'ΜΑΚΚΑΒΑΙΩΝ Α΄',                note:'Hanukkah',        yr:-164  },
   { event:'Wisdom of Solomon',        book:'Wisdom of Solomon',              greek:'ΣΟΦΙΑ ΣΑΛΟΜΩΝΤΟΣ',             note:null,              yr:-50   },
@@ -2466,7 +2466,7 @@ function renderBiblical() {
     layoutEl.style.cssText = 'display:flex;flex-direction:column;padding:0 20px;';
 
     const aboveRow = document.createElement('div');
-    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;min-height:160px;';
+    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;min-height:180px;';
 
     const spineRow = document.createElement('div');
     spineRow.style.cssText = 'position:relative;height:24px;display:flex;align-items:center;';
@@ -2475,7 +2475,7 @@ function renderBiblical() {
     spineRow.appendChild(spineLine);
 
     const belowRow = document.createElement('div');
-    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:160px;';
+    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:180px;';
 
     // Genesis anchor on first era
     if (isFirst) {
@@ -2724,6 +2724,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.6 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v5.7 · 27 May 2026</div>
 </body>
 </html>
