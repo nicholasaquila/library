@@ -1598,6 +1598,47 @@
     .timeline-scroll { flex: 1 !important; }
   }
 
+
+  /* ── MOBILE INLINE INFO TAG (Ancient World) ── */
+  @media (max-width: 768px) {
+    .mobile-info-tag {
+      width: 140px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .mobile-info-tag.visible { opacity: 1; }
+    .mobile-info-line {
+      width: 1px;
+      height: 14px;
+      background: rgba(140,110,55,0.35);
+      flex-shrink: 0;
+    }
+    .mobile-info-box {
+      background: rgba(28,26,16,0.92);
+      border: 0.5px dashed rgba(200,160,64,0.45);
+      padding: 5px 8px;
+      width: 130px;
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 9.5px;
+      color: #d4b870;
+      line-height: 1.4;
+      text-align: center;
+    }
+    [data-theme="light"] .mobile-info-box {
+      background: rgba(245,240,225,0.95);
+      color: #3a2a0a;
+      border-color: rgba(140,110,55,0.45);
+    }
+  }
+  @media (min-width: 769px) {
+    .mobile-info-tag { display: none !important; }
+  }
+
 </style>
 </head>
 <body>
@@ -2790,8 +2831,36 @@ function renderTimeline() {
         return wrap;
       }
 
+      // Build mobile inline info tag for Ancient World (except Iliad/Odyssey)
+      const ancientNoInfo = ['The Iliad','The Odyssey'];
+      const hasInfo = v.series === 'Voices of the Ancient World'
+                   && ANCIENT_WORLD_INFO[v.title]
+                   && !ancientNoInfo.includes(v.title);
+
+      function makeMobileInfoTag(isUp) {
+        const wrap = document.createElement('div');
+        wrap.className = 'mobile-info-tag';
+        wrap.style.cssText = 'width:140px;flex-shrink:0;display:flex;align-items:center;flex-direction:' + (isUp ? 'column' : 'column-reverse') + ';';
+        const line = document.createElement('div');
+        line.className = 'mobile-info-line';
+        const box = document.createElement('div');
+        box.className = 'mobile-info-box';
+        const info = ANCIENT_WORLD_INFO[v.title];
+        // Short version: just the first sentence of summary
+        const short = info ? info.summary.split('.')[0] + '.' : '';
+        box.textContent = short;
+        wrap.appendChild(line);
+        wrap.appendChild(box);
+        // IntersectionObserver to fade in when dot scrolls into view
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) wrap.classList.add('visible'); });
+        }, { threshold: 0.3 });
+        obs.observe(wrap);
+        return wrap;
+      }
+
       if (i % 2 === 0) {
-        // below spine
+        // Card below spine
         const bc = document.createElement('div');
         bc.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
         bc.appendChild(dot.cloneNode());
@@ -2801,11 +2870,13 @@ function renderTimeline() {
         if (st) bc.appendChild(st);
         bc.querySelector('.tl-dot').style.cssText = dot.style.cssText;
         belowRow.appendChild(bc);
+        // Placeholder in above row — add mobile info tag here (above spine = opposite side)
         const ph = document.createElement('div');
-        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        ph.style.cssText = 'width:160px;flex-shrink:0;display:flex;align-items:flex-end;justify-content:center;';
+        if (hasInfo) ph.appendChild(makeMobileInfoTag(false));
         aboveRow.appendChild(ph);
       } else {
-        // above spine
+        // Card above spine
         const ac = document.createElement('div');
         ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
         ac.appendChild(dot.cloneNode());
@@ -2815,8 +2886,10 @@ function renderTimeline() {
         if (st) ac.appendChild(st);
         ac.querySelector('.tl-dot').style.cssText = dot.style.cssText;
         aboveRow.appendChild(ac);
+        // Placeholder in below row — add mobile info tag here (below spine = opposite side)
         const ph = document.createElement('div');
-        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        ph.style.cssText = 'width:160px;flex-shrink:0;display:flex;align-items:flex-start;justify-content:center;';
+        if (hasInfo) ph.appendChild(makeMobileInfoTag(true));
         belowRow.appendChild(ph);
       }
 
@@ -3572,7 +3645,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.1 · 28 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.2 · 28 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
