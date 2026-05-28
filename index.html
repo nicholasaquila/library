@@ -1431,10 +1431,10 @@
   .reader-area {
     flex: 1;
     background: var(--cream);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
 
   /* Dark mode reader */
@@ -3200,8 +3200,8 @@ function openReader(vol) {
     readerBook = ePub('./' + vol.filename);
 
     readerRendition = readerBook.renderTo(readerArea, {
-      manager: 'default',
-      flow:    'paginated',
+      manager: 'continuous',
+      flow:    'scrolled',
       spread:  'none',
       width:   W,
       height:  H,
@@ -3251,35 +3251,29 @@ function openReader(vol) {
         readerRendition.on('relocated', loc => {
           if (!el) return;
           try {
-            const cur = readerBook.locations.locationFromCfi(loc.start.cfi);
-            el.textContent = `${cur + 1} / ${total}`;
+            const pct = readerBook.locations.percentageFromCfi(loc.start.cfi);
+            el.textContent = Math.round(pct * 100) + '%';
           } catch(e) {}
         });
-
-        // Show initial position
-        try {
-          const initLoc = readerRendition.currentLocation();
-          if (initLoc && initLoc.start) {
-            const cur = readerBook.locations.locationFromCfi(initLoc.start.cfi);
-            el.textContent = `${cur + 1} / ${total}`;
-          }
-        } catch(e) {}
       });
     });
 
-    // Swipe left/right to turn pages
+    // Mouse wheel — smooth scroll
+    readerArea.addEventListener('wheel', e => {
+      const iframe = readerArea.querySelector('iframe');
+      if (iframe && iframe.contentWindow) {
+        iframe.contentWindow.scrollBy({ top: e.deltaY * 1.5, behavior: 'smooth' });
+      } else {
+        readerArea.scrollBy({ top: e.deltaY * 1.5, behavior: 'smooth' });
+      }
+    }, { passive: true });
+
+    // Swipe horizontal = jump chapter, vertical = native scroll
     let tx = 0;
     readerArea.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
     readerArea.addEventListener('touchend', e => {
       const dx = e.changedTouches[0].clientX - tx;
-      if (Math.abs(dx) > 50) dx < 0 ? readerNext() : readerPrev();
-    }, { passive: true });
-
-    // Mouse wheel to turn pages
-    readerArea.addEventListener('wheel', e => {
-      if (Math.abs(e.deltaY) > 30) {
-        e.deltaY > 0 ? readerNext() : readerPrev();
-      }
+      if (Math.abs(dx) > 80) dx < 0 ? readerNext() : readerPrev();
     }, { passive: true });
 
     // Resize handler
@@ -3410,7 +3404,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.1 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.2 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
@@ -3430,9 +3424,9 @@ setTimeout(introShowcase, 200);
   <!-- Bottom bar: navigation + progress + download -->
   <div class="reader-footer">
     <div class="reader-nav">
-      <button onclick="readerPrev()" class="reader-nav-btn">← Prev</button>
+      <button onclick="readerPrev()" class="reader-nav-btn">↑ Chapter</button>
       <span id="reader-progress" class="reader-progress"></span>
-      <button onclick="readerNext()" class="reader-nav-btn">Next →</button>
+      <button onclick="readerNext()" class="reader-nav-btn">Chapter ↓</button>
     </div>
   </div>
 </div>
