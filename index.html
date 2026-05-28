@@ -2721,28 +2721,38 @@ function renderTimeline() {
       const card = document.createElement('div');
       card.className = `tl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
       card.style.setProperty('--sc', sc(v.series));
-      if (v.filename) { card.style.cursor = 'pointer'; card.title = 'Click to read'; card.addEventListener('click', () => openReader(v)); }
       const noHover = ['The Iliad', 'The Odyssey'];
-      if (v.series === 'Voices of the Ancient World' && ANCIENT_WORLD_INFO[v.title] && !noHover.includes(v.title)) {
+      const isAncientInfo = v.series === 'Voices of the Ancient World' && ANCIENT_WORLD_INFO[v.title] && !noHover.includes(v.title);
+
+      if (isAncientInfo) {
         card.style.position = 'relative';
         // Desktop hover
         card.addEventListener('mouseenter', e => showAncientInfo(e, v.title));
         card.addEventListener('mousemove',  e => moveAncientInfo(e));
         card.addEventListener('mouseleave', hideAncientInfo);
-        // Mobile ⓘ button — touch friendly
+        // ⓘ button
         const infoBtn = document.createElement('div');
         infoBtn.className = 'card-info-btn';
         infoBtn.textContent = 'ⓘ';
-        infoBtn.addEventListener('touchend', e => {
+        // Use pointer events only — no touchend, prevents double-fire
+        infoBtn.addEventListener('pointerup', e => {
           e.preventDefault();
           e.stopPropagation();
-          showBottomSheet(v.title);
-        });
-        infoBtn.addEventListener('click', e => {
-          e.stopPropagation();
+          e.stopImmediatePropagation();
           showBottomSheet(v.title);
         });
         card.appendChild(infoBtn);
+      }
+
+      // Card click — open reader (but not if info btn was tapped)
+      if (v.filename) {
+        card.style.cursor = 'pointer';
+        card.title = 'Click to read';
+        card.addEventListener('click', e => {
+          // If the click originated from the info button, ignore
+          if (e.target.classList.contains('card-info-btn')) return;
+          openReader(v);
+        });
       }
       const fileButtons = '';
       card.innerHTML = `
@@ -3562,7 +3572,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.0 · 28 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.1 · 28 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
