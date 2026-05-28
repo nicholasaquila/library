@@ -1126,7 +1126,7 @@
   .read-btn:hover { background: var(--brown); border-color: var(--brown); }
 
 
-  .reader-modal { display: none; }
+  .reader-modal { display: none; flex-direction: column; }
   .reader-modal.open { display: flex; }
   #reader-area iframe { border: none; width: 100%; height: 100%; }
 
@@ -1468,6 +1468,58 @@
     .reader-progress { min-width: 44px; font-size: 8px; }
     .reader-meta   { max-width: 140px; }
     .reader-title  { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
+
+
+  .reader-footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--cream);
+    border-top: 1px solid rgba(140,110,55,0.3);
+    gap: 12px;
+  }
+  .reader-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .reader-nav-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    padding: 6px 18px;
+    border: 1px solid rgba(140,110,55,0.4);
+    background: transparent;
+    color: var(--brown-light);
+    cursor: pointer;
+    transition: all 0.18s;
+    min-width: 80px;
+  }
+  .reader-nav-btn:hover {
+    border-color: var(--gold);
+    color: var(--ink);
+    background: rgba(140,110,55,0.08);
+  }
+  [data-theme="dark"] .reader-footer {
+    background: #252318;
+    border-color: rgba(200,160,64,0.2);
+  }
+  [data-theme="dark"] .reader-nav-btn {
+    color: var(--brown);
+    border-color: rgba(200,160,64,0.3);
+  }
+  [data-theme="dark"] .reader-nav-btn:hover {
+    color: var(--ink);
+    border-color: var(--gold);
+    background: rgba(200,160,64,0.08);
+  }
+  @media (max-width: 768px) {
+    .reader-footer { padding: 8px 14px; }
+    .reader-nav-btn { font-size: 9px; padding: 5px 12px; min-width: 60px; }
+    .reader-progress { font-size: 8px; min-width: 44px; }
   }
 
 </style>
@@ -3307,24 +3359,30 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.7 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.8 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
+  <!-- Top bar: title + close only -->
   <div class="reader-header">
     <div class="reader-meta">
       <div id="reader-title" class="reader-title"></div>
       <div id="reader-author" class="reader-author"></div>
     </div>
-    <div class="reader-controls">
-      <a id="reader-dl-btn" href="#" download class="reader-btn reader-dl">↓ Download</a>
-      <button onclick="readerPrev()" class="reader-btn">← Prev</button>
-      <span id="reader-progress" class="reader-progress"></span>
-      <button onclick="readerNext()" class="reader-btn">Next →</button>
-      <button onclick="closeReader()" class="reader-btn reader-close">✕ Close</button>
-    </div>
+    <button onclick="closeReader()" class="reader-btn reader-close">✕ Close</button>
   </div>
+  <!-- Reading area -->
   <div id="reader-area" class="reader-area"></div>
+  <!-- Bottom bar: navigation + progress + download -->
+  <div class="reader-footer">
+    <a id="reader-dl-btn" href="#" download class="reader-btn reader-dl">↓ Download</a>
+    <div class="reader-nav">
+      <button onclick="readerPrev()" class="reader-nav-btn">← Prev</button>
+      <span id="reader-progress" class="reader-progress"></span>
+      <button onclick="readerNext()" class="reader-nav-btn">Next →</button>
+    </div>
+    <div style="width:80px;"></div>
+  </div>
 </div>
 
 </body>
