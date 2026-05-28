@@ -1435,7 +1435,9 @@
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     scroll-behavior: smooth;
+    scrollbar-width: none;
   }
+  .reader-area::-webkit-scrollbar { display: none; }
 
   /* Dark mode reader */
   [data-theme="dark"] .reader-header {
@@ -1526,35 +1528,18 @@
   }
 
 
-  /* Reader content frame */
-  .reader-area > div,
-  .reader-area > section {
-    max-width: 720px;
-    width: 100%;
-    height: 100%;
-  }
-  #reader-area {
-    padding: 0;
-    position: relative;
-  }
-  #reader-area::before,
-  #reader-area::after {
-    content: '';
-    position: absolute;
-    top: 16px;
-    bottom: 16px;
-    width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(140,110,55,0.25), rgba(140,110,55,0.25), transparent);
-    pointer-events: none;
-    z-index: 10;
-  }
-  #reader-area::before { left: 24px; }
-  #reader-area::after  { right: 24px; }
 
-  [data-theme="dark"] #reader-area::before,
-  [data-theme="dark"] #reader-area::after {
-    background: linear-gradient(180deg, transparent, rgba(200,160,64,0.2), rgba(200,160,64,0.2), transparent);
+
+  .reader-chapter {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-top: 2px;
+    opacity: 0.8;
   }
+  [data-theme="dark"] .reader-chapter { color: var(--gold); opacity: 0.7; }
 
 </style>
 </head>
@@ -3244,16 +3229,42 @@ function openReader(vol) {
     // Display first page then set up counter
     readerRendition.display().then(() => {
       // Generate locations for page count
+      // Populate chapter on first load
+      readerBook.loaded.navigation.then(nav => {
+        const chEl = document.getElementById('reader-chapter');
+        if (chEl && nav.toc && nav.toc.length) chEl.textContent = nav.toc[0].label.trim();
+      });
+
       readerBook.locations.generate(600).then(() => {
         const total = readerBook.locations.total || readerBook.locations.length();
         const el    = document.getElementById('reader-progress');
 
         readerRendition.on('relocated', loc => {
-          if (!el) return;
-          try {
-            const pct = readerBook.locations.percentageFromCfi(loc.start.cfi);
-            el.textContent = Math.round(pct * 100) + '%';
-          } catch(e) {}
+          // Progress %
+          if (el) {
+            try {
+              const pct = readerBook.locations.percentageFromCfi(loc.start.cfi);
+              el.textContent = Math.round(pct * 100) + '%';
+            } catch(e) {}
+          }
+          // Chapter name
+          const chEl = document.getElementById('reader-chapter');
+          if (chEl) {
+            try {
+              const nav   = readerBook.navigation;
+              const toc   = nav && nav.toc ? nav.toc : [];
+              const cfi   = loc.start.cfi;
+              let chapter = '';
+              // Find deepest TOC entry whose cfi is before current
+              toc.forEach(item => {
+                if (item.href && readerBook.canonical(item.href)) chapter = item.label.trim();
+                if (item.subitems) item.subitems.forEach(sub => {
+                  if (sub.href) chapter = sub.label.trim();
+                });
+              });
+              chEl.textContent = chapter;
+            } catch(e) { }
+          }
         });
       });
     });
@@ -3404,7 +3415,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.2 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.3 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
@@ -3413,6 +3424,7 @@ setTimeout(introShowcase, 200);
     <div class="reader-meta">
       <div id="reader-title" class="reader-title"></div>
       <div id="reader-author" class="reader-author"></div>
+      <div id="reader-chapter" class="reader-chapter"></div>
     </div>
     <div class="reader-controls">
       <a id="reader-dl-btn" href="#" download class="reader-btn reader-dl">↓ Download</a>
