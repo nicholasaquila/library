@@ -1737,7 +1737,7 @@ const LIBRARY_DATA = {
     {
       "id": 0,
       "title": "Instructions of Shuruppak",
-      "subtitle": "The Oldest Wisdom Literature",
+      "subtitle": null,
       "author": "Anonymous",
       "date_label": "c. 2500 BC",
       "date_sort": -2500,
@@ -1748,7 +1748,7 @@ const LIBRARY_DATA = {
     {
       "id": 1,
       "title": "The Epic of Gilgamesh",
-      "subtitle": "The Oldest Story Ever Told",
+      "subtitle": null,
       "author": "Anonymous",
       "date_label": "c. 2100 BC",
       "date_sort": -2100,
@@ -1772,7 +1772,7 @@ const LIBRARY_DATA = {
     {
       "id": 48,
       "title": "The Tale of the Shipwrecked Sailor",
-      "subtitle": "The Talking Snake",
+      "subtitle": null,
       "author": "Anonymous",
       "date_label": "c. 1900 BC",
       "date_sort": -1900,
@@ -1795,7 +1795,7 @@ const LIBRARY_DATA = {
     {
       "id": 4,
       "title": "Atrahasis",
-      "subtitle": "The Epic of the Flood",
+      "subtitle": null,
       "author": "Anonymous",
       "date_label": "c. 1700 BC",
       "date_sort": -1700,
@@ -1807,7 +1807,7 @@ const LIBRARY_DATA = {
     {
       "id": 5,
       "title": "Enuma Elish",
-      "subtitle": "The Babylonian Epic of Creation",
+      "subtitle": null,
       "author": "Anonymous",
       "date_label": "c. 1100 BC",
       "date_sort": -1100,
@@ -2370,6 +2370,8 @@ function groupByEra(vols) {
 
 const SIGNIFICANCE = {
   // Voices of the Ancient World
+
+  // Voices of the Ancient World
   "Instructions of Shuruppak":                "Ancient Sumerian wisdom literature; ethical proverbs from father to son; reflects themes in biblical Proverbs",
   "The Epic of Gilgamesh":                     "Ancient Mesopotamian epic; flood and creation themes; mortality and the search for eternal life",
   "The Tale of Sinuhe":                        "Masterpiece of Egyptian literature; exile, identity and return",
@@ -2874,8 +2876,11 @@ function renderTimeline() {
         wrap.appendChild(box);
         // IntersectionObserver to fade in when dot scrolls into view
         const obs = new IntersectionObserver(entries => {
-          entries.forEach(e => { if (e.isIntersecting) wrap.classList.add('visible'); });
-        }, { threshold: 0.3 });
+          entries.forEach(e => {
+            if (e.isIntersecting) wrap.classList.add('visible');
+            else wrap.classList.remove('visible');
+          });
+        }, { threshold: 0.2, rootMargin: '0px 0px -20px 0px' });
         obs.observe(wrap);
         return wrap;
       }
@@ -3666,7 +3671,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.5 · 28 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.6 · 28 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
