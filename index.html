@@ -1126,11 +1126,9 @@
   .read-btn:hover { background: var(--brown); border-color: var(--brown); }
 
 
-  #reader-modal { display: none; }
-  #reader-modal.open { display: flex; }
+  .reader-modal { display: none; }
+  .reader-modal.open { display: flex; }
   #reader-area iframe { border: none; width: 100%; height: 100%; }
-  [data-theme="dark"] #reader-modal > div:first-child { background: #1a1810; }
-  [data-theme="dark"] #reader-area { background: #1a1810; }
 
 
   /* ── DOWNLOAD LINK ── */
@@ -1351,6 +1349,126 @@
   [data-theme="dark"] .tl-era-subtitle { color: rgba(212,170,68,0.7); }
 
   [data-theme="dark"] .version-stamp { color: rgba(212,170,68,0.35); }
+
+
+  /* ── READER MODAL ── */
+  .reader-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1000;
+    flex-direction: column;
+    background: rgba(20,16,8,0.95);
+  }
+  .reader-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background: var(--cream);
+    border-bottom: 1px solid rgba(140,110,55,0.3);
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .reader-meta { display: flex; flex-direction: column; gap: 1px; }
+  .reader-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .reader-author {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--brown-light);
+  }
+  .reader-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .reader-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    border: 1px solid rgba(140,110,55,0.4);
+    background: transparent;
+    color: var(--brown-light);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .reader-btn:hover {
+    border-color: var(--gold);
+    color: var(--ink);
+    background: rgba(140,110,55,0.08);
+  }
+  .reader-close {
+    background: var(--ink);
+    color: var(--cream);
+    border-color: var(--ink);
+  }
+  .reader-close:hover {
+    background: var(--brown);
+    border-color: var(--brown);
+    color: var(--cream);
+  }
+  .reader-progress {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    min-width: 60px;
+    text-align: center;
+    padding: 3px 8px;
+    border: 0.5px solid rgba(140,110,55,0.25);
+  }
+  .reader-area {
+    flex: 1;
+    background: var(--cream);
+    overflow: hidden;
+  }
+
+  /* Dark mode reader */
+  [data-theme="dark"] .reader-header {
+    background: #252318;
+    border-color: rgba(200,160,64,0.2);
+  }
+  [data-theme="dark"] .reader-title { color: var(--ink); }
+  [data-theme="dark"] .reader-author { color: var(--brown); }
+  [data-theme="dark"] .reader-btn {
+    color: var(--brown);
+    border-color: rgba(200,160,64,0.3);
+  }
+  [data-theme="dark"] .reader-btn:hover {
+    color: var(--ink);
+    border-color: var(--gold);
+    background: rgba(200,160,64,0.08);
+  }
+  [data-theme="dark"] .reader-close {
+    background: var(--ink);
+    color: #1c1a10;
+    border-color: var(--ink);
+  }
+  [data-theme="dark"] .reader-progress {
+    color: var(--gold);
+    border-color: rgba(200,160,64,0.25);
+  }
+  [data-theme="dark"] .reader-area { background: #1c1a10; }
+  [data-theme="dark"] .reader-modal { background: rgba(10,8,4,0.97); }
+
+  @media (max-width: 768px) {
+    .reader-header { padding: 8px 14px; gap: 8px; }
+    .reader-title  { font-size: 13px; }
+    .reader-btn    { font-size: 8px; padding: 4px 9px; }
+    .reader-progress { min-width: 44px; font-size: 8px; }
+    .reader-meta   { max-width: 140px; }
+    .reader-title  { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  }
 
 </style>
 </head>
@@ -3047,10 +3165,18 @@ function openReader(vol) {
   // Progress
   readerBook.ready.then(() => {
     readerBook.locations.generate(1024).then(() => {
+      const totalPages = readerBook.locations.length();
       readerRendition.on('locationChanged', (loc) => {
-        const pct = readerBook.locations.percentageFromCfi(loc.start.cfi);
-        document.getElementById('reader-progress').textContent =
-          Math.round(pct * 100) + '%';
+        const currentPage = readerBook.locations.locationFromCfi(loc.start.cfi);
+        const el = document.getElementById('reader-progress');
+        if (el) {
+          if (totalPages > 0) {
+            el.textContent = `${currentPage + 1} / ${totalPages}`;
+          } else {
+            const pct = readerBook.locations.percentageFromCfi(loc.start.cfi);
+            el.textContent = Math.round(pct * 100) + '%';
+          }
+        }
       });
     });
   });
@@ -3181,24 +3307,24 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.5 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.7 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
-<div id="reader-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:rgba(20,16,8,0.92);flex-direction:column;">
-  <div style="flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--cream);border-bottom:1px solid rgba(140,110,55,0.3);">
-    <div>
-      <div id="reader-title" style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--ink);"></div>
-      <div id="reader-author" style="font-family:'EB Garamond',serif;font-style:italic;font-size:12px;color:var(--brown-light);"></div>
+<div id="reader-modal" class="reader-modal">
+  <div class="reader-header">
+    <div class="reader-meta">
+      <div id="reader-title" class="reader-title"></div>
+      <div id="reader-author" class="reader-author"></div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;">
-      <a id="reader-dl-btn" href="#" download style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.12em;padding:4px 12px;border:1px solid rgba(140,110,55,0.35);background:transparent;color:var(--brown-light);text-decoration:none;cursor:pointer;transition:all 0.18s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='rgba(140,110,55,0.35)';this.style.color='var(--brown-light)'">↓ Download</a>
-      <button onclick="readerPrev()" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.1em;padding:4px 12px;border:1px solid rgba(140,110,55,0.4);background:transparent;color:var(--brown-light);cursor:pointer;">← Prev</button>
-      <span id="reader-progress" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.1em;color:var(--gold);"></span>
-      <button onclick="readerNext()" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.1em;padding:4px 12px;border:1px solid rgba(140,110,55,0.4);background:transparent;color:var(--brown-light);cursor:pointer;">Next →</button>
-      <button onclick="closeReader()" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.1em;padding:4px 14px;border:1px solid rgba(140,110,55,0.4);background:var(--ink);color:var(--cream);cursor:pointer;">✕ Close</button>
+    <div class="reader-controls">
+      <a id="reader-dl-btn" href="#" download class="reader-btn reader-dl">↓ Download</a>
+      <button onclick="readerPrev()" class="reader-btn">← Prev</button>
+      <span id="reader-progress" class="reader-progress"></span>
+      <button onclick="readerNext()" class="reader-btn">Next →</button>
+      <button onclick="closeReader()" class="reader-btn reader-close">✕ Close</button>
     </div>
   </div>
-  <div id="reader-area" style="flex:1;background:var(--cream);overflow:hidden;"></div>
+  <div id="reader-area" class="reader-area"></div>
 </div>
 
 </body>
