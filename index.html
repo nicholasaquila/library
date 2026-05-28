@@ -1568,34 +1568,56 @@
 
   /* ── MOBILE COMPACT OVERRIDES ── */
   @media (max-width: 768px) {
-    /* Minimal header */
-    header { padding: 8px 14px 6px !important; }
-    .h-title { font-size: 15px !important; }
+    /* Header: single line, left-aligned, minimal */
+    header { padding: 5px 12px 4px !important; text-align: left !important; display: flex !important; align-items: center !important; }
+    header::after { display: none !important; }
+    .header-title { font-size: 13px !important; letter-spacing: 0.03em !important; white-space: nowrap !important; }
+    .header-sub, .header-eyebrow { display: none !important; }
+    .dark-toggle { top: 5px !important; right: 8px !important; width: 24px !important; height: 24px !important; font-size: 11px !important; }
 
-    /* Controls bar — tight single row */
-    .controls-bar { padding: 5px 10px !important; gap: 6px !important; flex-wrap: nowrap !important; overflow-x: auto !important; }
+    /* Controls: tight single scrollable row */
+    .controls-bar { padding: 3px 8px !important; gap: 4px !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none !important; }
+    .controls-bar::-webkit-scrollbar { display: none !important; }
     .filter-label { display: none !important; }
-    .filter-btn   { font-size: 8px !important; padding: 3px 8px !important; white-space: nowrap; }
-    .vbtn         { font-size: 8px !important; padding: 3px 8px !important; white-space: nowrap; }
+    .filter-btn { font-size: 8px !important; padding: 2px 7px !important; white-space: nowrap !important; }
+    .vbtn { font-size: 8px !important; padding: 2px 7px !important; white-space: nowrap !important; }
+    .stats { display: none !important; }
 
-    /* Legend — dots only, no text, single line, no wrap */
-    .legend-bar   { padding: 3px 10px !important; gap: 6px !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none; border-top: none !important; }
-    .legend-bar::-webkit-scrollbar { display: none; }
-    .legend-item span:last-child { display: none !important; }
-    .legend-dot   { width: 9px !important; height: 9px !important; }
+    /* Series legend: dots only, no names, single scrollable row */
+    .legend-bar { padding: 2px 8px !important; gap: 5px !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none !important; border-top: none !important; }
+    .legend-bar::-webkit-scrollbar { display: none !important; }
+    .legend-item > span:last-child { display: none !important; }
+    .legend-dot { width: 8px !important; height: 8px !important; }
 
-    /* Status legend — hide entirely */
+    /* Hide status legend entirely */
     .status-legend-bar { display: none !important; }
 
-    /* Timeline cards smaller on mobile */
-    .tl-card { width: 110px !important; padding: 6px 7px 5px !important; }
-    .tl-card-title  { font-size: 10px !important; }
-    .tl-card-date   { font-size: 7px !important; }
+    /* Timeline cards */
+    .tl-card { width: 108px !important; padding: 5px 6px 4px !important; }
+    .tl-card-title { font-size: 10px !important; }
+    .tl-card-date { font-size: 7px !important; }
     .tl-card-author { font-size: 9px !important; }
-    .tl-card-badge  { font-size: 6px !important; }
+    .tl-card-badge { font-size: 6px !important; padding: 1px 4px !important; }
+    .sig-tag { font-size: 9px !important; max-width: 108px !important; padding: 2px 5px !important; }
 
-    /* More space for timeline */
+    /* Give timeline maximum vertical space */
+    .timeline-outer { flex: 1 !important; min-height: 0 !important; }
     .timeline-scroll { flex: 1 !important; }
+
+    /* Bible cards */
+    .bible-card { width: 108px; padding: 4px 6px 3px; }
+    .bc-date { font-size: 8px; }
+    .bc-event { font-size: 11px; }
+    .bc-book { font-size: 9px; }
+    .bc-greek { font-size: 8px; }
+    .bc-badge { font-size: 6px; }
+    .bible-legend-bar { padding: 2px 8px; gap: 5px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+
+    /* Grid */
+    .volumes-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    #grid-view { padding: 10px 10px 40px; }
+    .vol-title { font-size: 12px; }
+    .era-heading { font-size: 7px; letter-spacing: 0.18em; }
   }
 
 
@@ -2348,15 +2370,15 @@ function groupByEra(vols) {
 
 const SIGNIFICANCE = {
   // Voices of the Ancient World
-  "Instructions of Shuruppak":                "Ancient Sumerian wisdom literature; ethical proverbs from a father to his son; reflects themes in biblical Proverbs",
+  "Instructions of Shuruppak":                "Ancient Sumerian wisdom literature; ethical proverbs from father to son; reflects themes in biblical Proverbs",
   "The Epic of Gilgamesh":                     "Ancient Mesopotamian epic; flood and creation themes; mortality and the search for eternal life",
   "The Tale of Sinuhe":                        "Masterpiece of Egyptian literature; exile, identity and return",
   "The Tale of the Shipwrecked Sailor":        "Oldest known surviving written account of a talking snake; paradise island; divine encounter",
-  "The Code of Hammurabi":                     "Oldest known surviving comprehensive law code; lex talionis — 'eye for an eye'; reflects themes in Mosaic law",
+  "The Code of Hammurabi":                     "Oldest known surviving comprehensive law code; lex talionis (eye for an eye); reflects themes in Mosaic law",
   "Atrahasis":                                 "Oldest known surviving flood and creation narrative; human creation from clay; reflects themes in Genesis",
   "Enuma Elish":                               "Oldest known surviving Babylonian creation account; cosmos from chaos; reflects themes in Genesis 1",
 
-  // Ante-Nicene Fathers — verified milestones
+  // Ante-Nicene Fathers: verified milestones
   "The First Epistle of Clement of Rome":      "Apostolic succession affirmed; Rome's authority beyond its own church attested",
   "The Letters of St. Ignatius of Antioch":    "First recorded use of the term 'Catholic Church'; Real Presence of Christ in the Eucharist attested",
   "The First and Second Apologies":            "First substantially complete Christian apology to Roman authority; Logos theology reconciles faith and philosophy; early Christian worship described; Real Presence attested",
@@ -2364,7 +2386,7 @@ const SIGNIFICANCE = {
   "To Autolycus":                              "First recorded use of the word 'Trinity' (Greek: Τριάς)",
   "Against Heresies":                          "First unambiguous attestation of NT canon texts; four Gospels affirmed",
   "The Prescription Against Heretics":         "Scripture & tradition as dual authority; rule of faith defined",
-  "The Unity of the Church":                   "'No salvation outside the Church' (Salus extra ecclesiam non est); primacy of the Roman Church",
+  "The Unity of the Church":                   "No salvation outside the Church (Salus extra ecclesiam non est); primacy of the Roman Church",
 
   // Ecumenical Councils
   "First Council of Nicaea":                   "Nicene Creed; divinity of Christ defined; Arianism condemned",
@@ -2374,10 +2396,10 @@ const SIGNIFICANCE = {
   "Second Council of Constantinople":          "Three Chapters condemned; Origenism condemned",
   "Third Council of Constantinople":           "Two wills in Christ; Monothelitism condemned",
   "Second Council of Nicaea":                  "Iconoclasm condemned; veneration of icons restored",
-  "Fourth Council of Constantinople":          "Photian schism; East-West tensions crystallise",
+  "Fourth Council of Constantinople":          "Photian schism; East-West tensions deepen toward the Great Schism",
 
   // Nicene Fathers
-  "On the Incarnation":                        "Theosis (deification) articulated; 'God became man that man might become God'",
+  "On the Incarnation":                        "Theosis articulated; God became man that man might become God",
   "Five Theological Orations":                 "Trinity fully articulated; Holy Spirit's divinity defended",
   "Ad Ablabium":                               "Three persons, one essence (ousia) defined",
   "Confessions":                               "Original sin and grace; first autobiography in Western literature",
@@ -2388,7 +2410,7 @@ const SIGNIFICANCE = {
   "The Triads":                                "Hesychasm; uncreated light of Tabor; Palamite theology",
 
   // History of Christendom
-  "Cur Deus Homo":                             "Satisfaction theory of atonement; necessity of the Incarnation by reason",
+  "Cur Deus Homo":                             "Satisfaction theory of atonement; the necessity of the Incarnation argued by reason",
 };
 
 // ── MAP DATA ──────────────────────────────────────────────────────────────────
@@ -2616,43 +2638,42 @@ function mapPlay() {
 // ── ANCIENT WORLD HOVER INFO ──────────────────────────────────────────────────
 const ANCIENT_WORLD_INFO = {
   "Instructions of Shuruppak": {
-    summary: "Ancient Sumerian wisdom literature — a father's moral instructions to his son Ziusudra. In Sumerian tradition Ziusudra is the flood survivor, a figure scholars compare to the biblical Noah.",
-    biblical: "Ziusudra (Shuruppak's son) is the Sumerian Noah. The text's proverbial style — short, memorable moral maxims — closely parallels the book of Proverbs. Some sayings are strikingly similar: 'Do not steal anything; do not cut yourself with an axe' echoes the Decalogue's moral structure.",
+    summary: "Ancient Sumerian wisdom literature. A father passes moral instructions to his son Ziusudra, the Sumerian flood survivor whom scholars compare to the biblical Noah.",
+    biblical: "Ziusudra is the Sumerian Noah. The short proverbial maxims closely parallel the book of Proverbs. Some sayings are remarkably similar: phrases like \'do not steal\' echo the structure of the Decalogue.",
   },
   "The Epic of Gilgamesh": {
-    summary: "An ancient Mesopotamian epic following Gilgamesh, king of Uruk, and his companion Enkidu — culminating in a quest for immortality after Enkidu's death.",
-    biblical: "Tablet XI contains a detailed flood narrative: a man warned by a god, builds a boat, takes animals aboard, releases birds to find land, and offers sacrifice when the waters recede. The parallels with Genesis 6–9 are striking. Also: the serpent steals the plant of immortality — echoing Eden. Enkidu's creation from clay parallels Adam.",
+    summary: "An ancient Mesopotamian epic following Gilgamesh, king of Uruk, and his companion Enkidu. After Enkidu dies, Gilgamesh sets out on a desperate quest for immortality.",
+    biblical: "Tablet XI contains a flood narrative where a man is warned by a god, builds a boat, takes animals aboard, releases birds to find land and offers sacrifice when the waters recede. The parallels with Genesis 6 through 9 are widely noted. A serpent also steals the plant of immortality, echoing Eden. Enkidu is formed from clay, much like Adam.",
   },
   "The Tale of Sinuhe": {
-    summary: "An Egyptian official flees Egypt after the death of Pharaoh Amenemhat I, lives among nomadic tribes, becomes a chieftain, and eventually returns to Egypt to die in honour. A masterpiece of Egyptian literature.",
-    biblical: "Sinuhe's exile and return echoes the Joseph narrative — flight, life among foreign peoples, and restoration. His return to die in his homeland mirrors Jacob's final journey. The theme of divine providence guiding an exile is common to both.",
+    summary: "An Egyptian official flees after the death of Pharaoh Amenemhat I, lives among nomadic tribes and becomes a chieftain, before returning to Egypt to die in honour. A masterpiece of Egyptian literature.",
+    biblical: "Sinuhe\'s exile and return echoes the Joseph narrative: flight, life among foreign peoples and restoration. His return to die in his homeland mirrors Jacob\'s final journey. Divine providence guiding an exile is a shared theme.",
   },
   "The Tale of the Shipwrecked Sailor": {
-    summary: "An Egyptian sailor is shipwrecked on a magical island ruled by a great serpent who speaks, prophesies, and sends him home with gifts. One of the oldest known surviving narrative short stories.",
-    biblical: "The speaking serpent on a paradise island is the most discussed parallel with Genesis 3. The island is described as an Edenic abundance — fruit trees, fish, birds. The serpent is wise, not evil, but the structural parallel — man, paradise, talking serpent — is remarkable.",
+    summary: "An Egyptian sailor is shipwrecked on a magical island ruled by a great serpent who speaks, prophesies and sends him home with gifts. One of the oldest known surviving short stories.",
+    biblical: "The speaking serpent on a paradise island is widely compared to Genesis 3. The island is described with Edenic abundance: fruit trees, fish, birds. The serpent here is wise rather than evil, but the pairing of man, paradise and a talking serpent is a striking structural echo.",
   },
   "The Code of Hammurabi": {
-    summary: "282 laws inscribed on a 7-foot black diorite stele, covering commerce, property, family, and crime. Discovered in 1901 in Susa, Iran. Now in the Louvre.",
-    biblical: "The lex talionis — 'an eye for an eye, a tooth for a tooth' — appears almost verbatim in Exodus 21:24, Leviticus 24:20, and Deuteronomy 19:21. Laws on goring oxen (§251) parallel Exodus 21:28–36. The prologue — a king commissioned by gods to bring justice — echoes the covenant framework of Deuteronomy.",
+    summary: "282 laws inscribed on a black diorite stele over seven feet tall, covering commerce, property, family and crime. Discovered in 1901 in Susa, Iran. Now in the Louvre.",
+    biblical: "The lex talionis, an eye for an eye, appears almost verbatim in Exodus 21:24, Leviticus 24:20 and Deuteronomy 19:21. Laws on goring oxen parallel Exodus 21:28 through 36. The prologue, where a king is commissioned by gods to bring justice, echoes the covenant framework of Deuteronomy.",
   },
   "Atrahasis": {
     summary: "The Babylonian epic of human creation and the great flood. Humans are created from clay mixed with divine blood to do the labour of lesser gods. Their noise disturbs the great gods, who send plagues and finally a flood. Atrahasis alone is warned and survives.",
-    biblical: "Human creation from clay mirrors Genesis 2:7. The flood narrative — divine warning, boat-building, animals aboard, birds released, mountain grounding, sacrifice — is nearly structurally identical to Genesis 6–9. The divine regret after the flood parallels Genesis 8:21.",
+    biblical: "Human creation from clay mirrors Genesis 2:7. The flood narrative follows the same pattern as Genesis 6 through 9: divine warning, boat-building, animals taken aboard, birds released, grounding on a mountain and sacrifice. The divine regret after the flood parallels Genesis 8:21.",
   },
   "Enuma Elish": {
-    summary: "The Babylonian creation epic: from primordial waters (Apsu and Tiamat) the gods are born. Marduk defeats Tiamat, splits her body to form heaven and earth, creates humans from divine blood to serve the gods.",
-    biblical: "The opening — 'when on high' (enuma elish) — parallels 'In the beginning' (bereshit). The primordial waters (tehom in Hebrew, Tiamat in Babylonian) are cognate words. The six-day structure of divine creative acts, ending in rest and celebration, parallels Genesis 1. Scholars debate dependence vs. shared ancient Near Eastern cosmology.",
+    summary: "The Babylonian creation epic. From primordial waters the gods are born. Marduk defeats Tiamat, splits her body to form heaven and earth, and creates humans from divine blood to serve the gods.",
+    biblical: "The opening words mean \'when on high\', paralleling \'in the beginning\' in Hebrew. The primordial waters, called tehom in Hebrew and Tiamat in Babylonian, are cognate words. A six-stage structure of divine creative acts ending in rest parallels Genesis 1. Scholars continue to debate whether there is direct dependence or simply shared ancient Near Eastern cosmology.",
   },
   "The Iliad": {
-    summary: "The wrath of Achilles during the Trojan War — honour, mortality, grief, and the cost of pride. Set over a few weeks in the tenth year of the siege of Troy.",
-    biblical: "No direct textual parallels, but thematic resonance: pride and its consequences, divine involvement in human affairs, the meaning of a noble death. The Iliad's meditation on mortality and glory contrasts with the Hebrew view of human dignity before God.",
+    summary: "The wrath of Achilles during the Trojan War. Themes of honour, mortality, grief and the cost of pride, set over a few weeks in the tenth year of the siege of Troy.",
+    biblical: "No direct textual parallels, but strong thematic resonance: pride and its consequences, divine involvement in human affairs and the meaning of a noble death. The meditation on glory and mortality contrasts with the Hebrew view of human dignity before God.",
   },
   "The Odyssey": {
-    summary: "Odysseus's ten-year journey home from Troy — encountering monsters, gods, and the temptation to abandon his identity and duty. A foundational text of Western literature.",
-    biblical: "The theme of the long journey home — endurance, faithfulness, return — resonates with the Exodus narrative and the parable of the Prodigal Son. Odysseus's resistance of the Sirens has been read as a figure for resisting temptation.",
+    summary: "Odysseus\'s ten-year journey home from Troy, encountering monsters, gods and the temptation to abandon his identity and duty. A foundational text of Western literature.",
+    biblical: "The theme of the long journey home through endurance and faithfulness resonates with the Exodus narrative and the parable of the Prodigal Son. Odysseus\'s resistance of the Sirens has long been read as a figure for resisting temptation.",
   },
-};
-
+}
 // ── HOVER TOOLTIP ─────────────────────────────────────────────────────────────
 let infoTooltip = null;
 
@@ -3645,7 +3666,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.2 · 28 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.5 · 28 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
