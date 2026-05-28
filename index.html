@@ -1164,120 +1164,9 @@
   }
 
 
-  /* ── MOBILE PORTRAIT VERTICAL TIMELINE ── */
-  @media (max-width: 768px) and (orientation: portrait) {
 
-    /* Hide horizontal scroll, show vertical instead */
-    .tl-scroll { display: none !important; }
-    #mobile-vtl { display: flex !important; }
 
-    /* Vertical timeline container */
-    #mobile-vtl {
-      display: none;
-      flex: 1;
-      flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 0 0 60px 0;
-      -webkit-overflow-scrolling: touch;
-    }
 
-    /* Era section header */
-    .mvtl-era {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      padding: 8px 16px 6px;
-      background: var(--cream);
-      border-bottom: 1px solid rgba(140,110,55,0.2);
-    }
-    .mvtl-era-label {
-      font-family: 'Cinzel', serif;
-      font-size: 8px;
-      letter-spacing: 0.25em;
-      color: var(--gold);
-      text-transform: uppercase;
-    }
-    .mvtl-era-rule {
-      height: 1px;
-      background: linear-gradient(90deg, var(--gold-light), transparent);
-      margin-top: 3px;
-    }
-
-    /* Vertical spine + cards */
-    .mvtl-items {
-      display: flex;
-      flex-direction: column;
-      padding: 8px 16px;
-      position: relative;
-    }
-    .mvtl-items::before {
-      content: '';
-      position: absolute;
-      left: 28px;
-      top: 0;
-      bottom: 0;
-      width: 1px;
-      background: rgba(140,110,55,0.25);
-    }
-
-    .mvtl-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 14px;
-      position: relative;
-    }
-
-    .mvtl-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      border: 1.5px solid var(--cream);
-      flex-shrink: 0;
-      margin-top: 8px;
-      z-index: 2;
-      position: relative;
-    }
-
-    .mvtl-card {
-      flex: 1;
-      background: linear-gradient(150deg, #faf6ea, #ede5cc);
-      border: 0.5px solid rgba(140,110,55,0.32);
-      padding: 10px 12px 8px;
-      position: relative;
-      cursor: pointer;
-    }
-    [data-theme="dark"] .mvtl-card {
-      background: linear-gradient(150deg, #252318, #1e1c12);
-      border-color: rgba(200,160,64,0.2);
-    }
-    .mvtl-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: var(--vc, #5c3d1e);
-      opacity: 0.8;
-    }
-    .mvtl-card.pending { opacity: 0.6; }
-    .mvtl-card.needs-refresh { border-color: rgba(180,120,30,.4); }
-    .mvtl-card.tbc, .mvtl-card.uncertain { opacity: 0.4; filter: grayscale(0.7); border-style: dashed; }
-
-    .mvtl-date   { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 2px; }
-    .mvtl-title  { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 1px; }
-    .mvtl-author { font-family: 'EB Garamond', serif; font-style: italic; font-size: 11px; color: var(--brown-light); margin-bottom: 4px; }
-    .mvtl-badge  { font-family: 'Cinzel', serif; font-size: 6.5px; letter-spacing: 0.07em; padding: 1px 5px; border: 0.5px solid; display: inline-block; }
-    .mvtl-sig    { font-family: 'EB Garamond', serif; font-style: italic; font-size: 10px; color: #2a1a05; background: #ede0b8; border: 1px dashed #8c6e37; padding: 3px 6px; margin-top: 5px; line-height: 1.3; }
-    .mvtl-dl     { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 0.1em; color: var(--brown-light); text-decoration: none; padding: 3px 8px; border: 0.5px solid rgba(140,110,55,0.35); background: rgba(140,110,55,0.06); display: inline-block; margin-top: 6px; }
-
-    [data-theme="dark"] .mvtl-card { background: linear-gradient(150deg, #252318, #1e1c12); }
-    [data-theme="dark"] .mvtl-title { color: var(--ink); }
-  }
-
-  /* Show horizontal on landscape mobile */
-  @media (max-width: 768px) and (orientation: landscape) {
-    #mobile-vtl { display: none !important; }
     .tl-scroll { display: block !important; }
   }
 
@@ -1543,6 +1432,131 @@
     opacity: 0.8;
   }
   [data-theme="dark"] .reader-chapter { color: var(--gold); opacity: 0.7; }
+
+
+  /* ── ANCIENT WORLD HOVER TOOLTIP ── */
+  #ancient-tooltip {
+    position: fixed;
+    z-index: 500;
+    width: 320px;
+    background: var(--cream);
+    border: 1px solid rgba(140,110,55,0.4);
+    padding: 12px 14px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s;
+    box-shadow: 0 4px 20px rgba(80,60,20,0.2);
+  }
+  #ancient-tooltip.at-visible { opacity: 1; }
+  .at-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 0.5px solid rgba(140,110,55,0.25);
+  }
+  .at-text {
+    font-family: 'EB Garamond', serif;
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: 7px;
+  }
+  .at-biblical-label {
+    font-family: 'Cinzel', serif;
+    font-size: 7.5px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .at-biblical {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--brown-light);
+    line-height: 1.5;
+    border-left: 2px solid rgba(140,110,55,0.3);
+    padding-left: 8px;
+  }
+  [data-theme="dark"] #ancient-tooltip {
+    background: #252318;
+    border-color: rgba(200,160,64,0.25);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  [data-theme="dark"] .at-title   { color: var(--ink); }
+  [data-theme="dark"] .at-text    { color: var(--ink); }
+  [data-theme="dark"] .at-biblical { color: var(--brown); }
+
+
+  /* ── CARD INFO BUTTON ── */
+  .card-info-btn {
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 11px;
+    color: var(--gold);
+    opacity: 0.7;
+    cursor: pointer;
+    z-index: 5;
+    line-height: 1;
+  }
+  @media (max-width: 768px) {
+    .card-info-btn { display: block; }
+  }
+
+  /* ── ANCIENT WORLD BOTTOM SHEET ── */
+  .ancient-sheet-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 400;
+  }
+  .ancient-sheet-overlay.open { display: block; }
+
+  .ancient-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 401;
+    background: var(--cream);
+    border-top: 1px solid rgba(140,110,55,0.3);
+    padding: 0 20px 40px;
+    max-height: 70vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    border-radius: 16px 16px 0 0;
+  }
+  .ancient-sheet.open { transform: translateY(0); }
+  .ancient-sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: rgba(140,110,55,0.3);
+    border-radius: 2px;
+    margin: 12px auto 16px;
+  }
+  [data-theme="dark"] .ancient-sheet {
+    background: #252318;
+    border-color: rgba(200,160,64,0.2);
+  }
+  [data-theme="dark"] .ancient-sheet-handle { background: rgba(200,160,64,0.2); }
+
+
+  @media (max-width: 768px) {
+    .legend-bar { padding: 4px 12px; gap: 6px; flex-wrap: wrap; }
+    .lg-label   { display: none; }
+    .lg-item    { gap: 3px; }
+    .lg-dot     { width: 8px; height: 8px; }
+    .filter-btn { font-size: 8px; padding: 2px 7px; letter-spacing: 0.06em; }
+    .vbtn       { font-size: 8px; padding: 2px 7px; }
+    .stats      { display: none; }
+  }
 
 </style>
 </head>
@@ -2253,14 +2267,13 @@ function groupByEra(vols) {
 
 const SIGNIFICANCE = {
   // Voices of the Ancient World
-  "Instructions of Shuruppak":                "Oldest surviving wisdom literature; ethical proverbs and moral instruction; reflects themes in biblical Proverbs",
-  "Instructions of Shuruppak":              { lat: 31.8,  lng: 45.5,  place: "Shuruppak (Tell Fara), ancient Sumer" },
-  "The Epic of Gilgamesh":                     "Oldest known written epic; flood and creation themes; mortality and the search for eternal life",
+  "Instructions of Shuruppak":                "Ancient Sumerian wisdom literature; ethical proverbs from a father to his son; reflects themes in biblical Proverbs",
+  "The Epic of Gilgamesh":                     "Ancient Mesopotamian epic; flood and creation themes; mortality and the search for eternal life",
   "The Tale of Sinuhe":                        "Masterpiece of Egyptian literature; exile, identity and return",
-  "The Tale of the Shipwrecked Sailor":        "Oldest known talking snake narrative in written form; paradise island; divine encounter",
-  "The Code of Hammurabi":                     "Oldest known comprehensive law code; lex talionis — 'eye for an eye'; reflects themes in Mosaic law",
-  "Atrahasis":                                 "Oldest known flood and creation narrative in written form; human creation from clay; reflects themes in Genesis",
-  "Enuma Elish":                               "Oldest known Babylonian creation account in written form; cosmos from chaos; reflects themes in Genesis 1",
+  "The Tale of the Shipwrecked Sailor":        "Oldest known surviving written account of a talking snake; paradise island; divine encounter",
+  "The Code of Hammurabi":                     "Oldest known surviving comprehensive law code; lex talionis — 'eye for an eye'; reflects themes in Mosaic law",
+  "Atrahasis":                                 "Oldest known surviving flood and creation narrative; human creation from clay; reflects themes in Genesis",
+  "Enuma Elish":                               "Oldest known surviving Babylonian creation account; cosmos from chaos; reflects themes in Genesis 1",
 
   // Ante-Nicene Fathers — verified milestones
   "The First Epistle of Clement of Rome":      "Apostolic succession affirmed; Rome's authority beyond its own church attested",
@@ -2518,6 +2531,86 @@ function mapPlay() {
   }, 1200);
 }
 
+
+// ── ANCIENT WORLD HOVER INFO ──────────────────────────────────────────────────
+const ANCIENT_WORLD_INFO = {
+  "Instructions of Shuruppak": {
+    summary: "Ancient Sumerian wisdom literature — a father's moral instructions to his son Ziusudra. In Sumerian tradition Ziusudra is the flood survivor, a figure scholars compare to the biblical Noah.",
+    biblical: "Ziusudra (Shuruppak's son) is the Sumerian Noah. The text's proverbial style — short, memorable moral maxims — closely parallels the book of Proverbs. Some sayings are strikingly similar: 'Do not steal anything; do not cut yourself with an axe' echoes the Decalogue's moral structure.",
+  },
+  "The Epic of Gilgamesh": {
+    summary: "An ancient Mesopotamian epic following Gilgamesh, king of Uruk, and his companion Enkidu — culminating in a quest for immortality after Enkidu's death.",
+    biblical: "Tablet XI contains a detailed flood narrative: a man warned by a god, builds a boat, takes animals aboard, releases birds to find land, and offers sacrifice when the waters recede. The parallels with Genesis 6–9 are striking. Also: the serpent steals the plant of immortality — echoing Eden. Enkidu's creation from clay parallels Adam.",
+  },
+  "The Tale of Sinuhe": {
+    summary: "An Egyptian official flees Egypt after the death of Pharaoh Amenemhat I, lives among nomadic tribes, becomes a chieftain, and eventually returns to Egypt to die in honour. A masterpiece of Egyptian literature.",
+    biblical: "Sinuhe's exile and return echoes the Joseph narrative — flight, life among foreign peoples, and restoration. His return to die in his homeland mirrors Jacob's final journey. The theme of divine providence guiding an exile is common to both.",
+  },
+  "The Tale of the Shipwrecked Sailor": {
+    summary: "An Egyptian sailor is shipwrecked on a magical island ruled by a great serpent who speaks, prophesies, and sends him home with gifts. One of the oldest known surviving narrative short stories.",
+    biblical: "The speaking serpent on a paradise island is the most discussed parallel with Genesis 3. The island is described as an Edenic abundance — fruit trees, fish, birds. The serpent is wise, not evil, but the structural parallel — man, paradise, talking serpent — is remarkable.",
+  },
+  "The Code of Hammurabi": {
+    summary: "282 laws inscribed on a 7-foot black diorite stele, covering commerce, property, family, and crime. Discovered in 1901 in Susa, Iran. Now in the Louvre.",
+    biblical: "The lex talionis — 'an eye for an eye, a tooth for a tooth' — appears almost verbatim in Exodus 21:24, Leviticus 24:20, and Deuteronomy 19:21. Laws on goring oxen (§251) parallel Exodus 21:28–36. The prologue — a king commissioned by gods to bring justice — echoes the covenant framework of Deuteronomy.",
+  },
+  "Atrahasis": {
+    summary: "The Babylonian epic of human creation and the great flood. Humans are created from clay mixed with divine blood to do the labour of lesser gods. Their noise disturbs the great gods, who send plagues and finally a flood. Atrahasis alone is warned and survives.",
+    biblical: "Human creation from clay mirrors Genesis 2:7. The flood narrative — divine warning, boat-building, animals aboard, birds released, mountain grounding, sacrifice — is nearly structurally identical to Genesis 6–9. The divine regret after the flood parallels Genesis 8:21.",
+  },
+  "Enuma Elish": {
+    summary: "The Babylonian creation epic: from primordial waters (Apsu and Tiamat) the gods are born. Marduk defeats Tiamat, splits her body to form heaven and earth, creates humans from divine blood to serve the gods.",
+    biblical: "The opening — 'when on high' (enuma elish) — parallels 'In the beginning' (bereshit). The primordial waters (tehom in Hebrew, Tiamat in Babylonian) are cognate words. The six-day structure of divine creative acts, ending in rest and celebration, parallels Genesis 1. Scholars debate dependence vs. shared ancient Near Eastern cosmology.",
+  },
+  "The Iliad": {
+    summary: "The wrath of Achilles during the Trojan War — honour, mortality, grief, and the cost of pride. Set over a few weeks in the tenth year of the siege of Troy.",
+    biblical: "No direct textual parallels, but thematic resonance: pride and its consequences, divine involvement in human affairs, the meaning of a noble death. The Iliad's meditation on mortality and glory contrasts with the Hebrew view of human dignity before God.",
+  },
+  "The Odyssey": {
+    summary: "Odysseus's ten-year journey home from Troy — encountering monsters, gods, and the temptation to abandon his identity and duty. A foundational text of Western literature.",
+    biblical: "The theme of the long journey home — endurance, faithfulness, return — resonates with the Exodus narrative and the parable of the Prodigal Son. Odysseus's resistance of the Sirens has been read as a figure for resisting temptation.",
+  },
+};
+
+// ── HOVER TOOLTIP ─────────────────────────────────────────────────────────────
+let infoTooltip = null;
+
+function showAncientInfo(evt, title) {
+  const info = ANCIENT_WORLD_INFO[title];
+  if (!info) return;
+
+  if (!infoTooltip) {
+    infoTooltip = document.createElement('div');
+    infoTooltip.id = 'ancient-tooltip';
+    document.body.appendChild(infoTooltip);
+  }
+
+  infoTooltip.innerHTML = `
+    <div class="at-title">${title}</div>
+    <div class="at-text">${info.summary}</div>
+    ${info.biblical ? `<div class="at-biblical-label">Biblical Parallels</div><div class="at-biblical">${info.biblical}</div>` : ''}
+  `;
+
+  positionTooltip(evt);
+  infoTooltip.classList.add('at-visible');
+}
+
+function positionTooltip(evt) {
+  if (!infoTooltip) return;
+  const x = evt.clientX, y = evt.clientY;
+  const tw = 320, th = infoTooltip.offsetHeight || 200;
+  const left = Math.min(x + 14, window.innerWidth - tw - 10);
+  const top  = y + th + 20 > window.innerHeight ? y - th - 10 : y + 14;
+  infoTooltip.style.left = left + 'px';
+  infoTooltip.style.top  = top  + 'px';
+}
+
+function moveAncientInfo(evt) { positionTooltip(evt); }
+
+function hideAncientInfo() {
+  if (infoTooltip) infoTooltip.classList.remove('at-visible');
+}
+
 // ── TIMELINE RENDER ──────────────────────────────────────────────────────────
 
 function makeCard(tag, filename, classes, styleAttr, innerHtml) {
@@ -2530,69 +2623,6 @@ function makeCard(tag, filename, classes, styleAttr, innerHtml) {
 }
 
 
-// ── MOBILE VERTICAL TIMELINE ──────────────────────────────────────────────────
-function renderMobileTimeline() {
-  const container = document.getElementById('mobile-vtl');
-  if (!container) return;
-  container.innerHTML = '';
-
-  const filtered = currentFilter === 'all' ? VOLS : VOLS.filter(v => v.status === currentFilter);
-
-  ERAS.forEach(era => {
-    const vols = filtered.filter(v => v.date_sort >= era.from && v.date_sort < era.to);
-    if (!vols.length) return;
-
-    // Era header
-    const eraEl = document.createElement('div');
-    eraEl.className = 'mvtl-era';
-    eraEl.innerHTML = `<div class="mvtl-era-label">${era.label}</div><div class="mvtl-era-rule"></div>`;
-    container.appendChild(eraEl);
-
-    // Items
-    const itemsEl = document.createElement('div');
-    itemsEl.className = 'mvtl-items';
-
-    vols.forEach(v => {
-      const color = SC[v.series] || '#5c3d1e';
-      const sig = SIGNIFICANCE[v.title] || '';
-
-      const item = document.createElement('div');
-      item.className = 'mvtl-item';
-
-      const dot = document.createElement('div');
-      dot.className = 'mvtl-dot';
-      dot.style.background = color;
-      dot.style.boxShadow = `0 0 0 1px ${color}`;
-
-      const card = document.createElement('div');
-      card.className = `mvtl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
-      card.style.setProperty('--vc', color);
-      if (v.filename) { card.style.cursor = 'pointer'; card.addEventListener('click', () => openReader(v)); }
-
-      card.innerHTML = `
-        <div class="mvtl-date">${v.date_label}</div>
-        <div class="mvtl-title">${v.title}</div>
-        ${v.author ? `<div class="mvtl-author">${v.author}</div>` : ''}
-        <div class="mvtl-badge" style="color:${color};border-color:${color}">${v.series}</div>
-        ${sig ? `<div class="mvtl-sig">${sig}</div>` : ''}
-
-      `;
-
-      item.appendChild(dot);
-      item.appendChild(card);
-      itemsEl.appendChild(item);
-    });
-
-    container.appendChild(itemsEl);
-  });
-}
-
-// Detect orientation change and re-render
-window.addEventListener('orientationchange', () => {
-  setTimeout(() => {
-    if (currentView === 'timeline') render();
-  }, 300);
-});
 
 function renderTimeline() {
   const track = document.getElementById('timeline-track');
@@ -2652,6 +2682,23 @@ function renderTimeline() {
       card.className = `tl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
       card.style.setProperty('--sc', sc(v.series));
       if (v.filename) { card.style.cursor = 'pointer'; card.title = 'Click to read'; card.addEventListener('click', () => openReader(v)); }
+      const noHover = ['The Iliad', 'The Odyssey'];
+      if (v.series === 'Voices of the Ancient World' && ANCIENT_WORLD_INFO[v.title] && !noHover.includes(v.title)) {
+        card.style.position = 'relative';
+        // Desktop hover
+        card.addEventListener('mouseenter', e => showAncientInfo(e, v.title));
+        card.addEventListener('mousemove',  e => moveAncientInfo(e));
+        card.addEventListener('mouseleave', hideAncientInfo);
+        // Mobile ⓘ button
+        const infoBtn = document.createElement('div');
+        infoBtn.className = 'card-info-btn';
+        infoBtn.textContent = 'ⓘ';
+        infoBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          showBottomSheet(v.title);
+        });
+        card.appendChild(infoBtn);
+      }
       const fileButtons = '';
       card.innerHTML = `
         <div class="tl-card-status">${statusIcon(v.status)}</div>
@@ -3098,7 +3145,7 @@ function setView(view) {
 }
 
 function render() {
-  if (currentView === 'timeline') { renderTimeline(); renderMobileTimeline(); }
+  if (currentView === 'timeline') { renderTimeline(); }
   else if (currentView === 'bible') renderBiblical();
   else if (currentView === 'map') { /* map handles itself */ }
   else renderGrid();
@@ -3144,6 +3191,24 @@ addWheelScroll(document.getElementById('bible-scroll'));
 
 buildLegend();
 render();
+
+function showBottomSheet(title) {
+  const info = ANCIENT_WORLD_INFO[title];
+  if (!info) return;
+  const content = document.getElementById('ancient-sheet-content');
+  content.innerHTML = `
+    <div class="at-title">${title}</div>
+    <div class="at-text">${info.summary}</div>
+    ${info.biblical ? `<div class="at-biblical-label">Biblical Parallels</div><div class="at-biblical">${info.biblical}</div>` : ''}
+  `;
+  document.getElementById('ancient-sheet').classList.add('open');
+  document.getElementById('ancient-sheet-overlay').classList.add('open');
+}
+function hideBottomSheet() {
+  document.getElementById('ancient-sheet').classList.remove('open');
+  document.getElementById('ancient-sheet-overlay').classList.remove('open');
+}
+
 
 // ── EPUB READER ───────────────────────────────────────────────────────────────
 let readerBook = null;
@@ -3452,7 +3517,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.6 · 28 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.9 · 28 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
@@ -3479,6 +3544,14 @@ setTimeout(introShowcase, 200);
     </div>
   </div>
 </div>
+
+
+<!-- ANCIENT WORLD BOTTOM SHEET (mobile) -->
+<div id="ancient-sheet" class="ancient-sheet">
+  <div class="ancient-sheet-handle"></div>
+  <div id="ancient-sheet-content"></div>
+</div>
+<div id="ancient-sheet-overlay" onclick="hideBottomSheet()" class="ancient-sheet-overlay"></div>
 
 </body>
 </html>
