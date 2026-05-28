@@ -889,13 +889,13 @@
 
   /* ── DARK MODE ── */
   [data-theme="dark"] {
-    --cream:       #1a1810;
-    --cream-dark:  #242218;
-    --ink:         #e8e0cc;
-    --brown:       #c8a96e;
-    --brown-light: #a88848;
-    --gold:        #c8a040;
-    --gold-light:  #e0b858;
+    --cream:       #1c1a10;
+    --cream-dark:  #252318;
+    --ink:         #f0e8d0;
+    --brown:       #d4b878;
+    --brown-light: #c09848;
+    --gold:        #d4aa44;
+    --gold-light:  #e8c060;
   }
   [data-theme="dark"] body {
     background-image: radial-gradient(ellipse at 20% 10%, rgba(200,160,64,.04) 0%, transparent 60%),
@@ -1163,6 +1163,194 @@
     background: rgba(200,160,64,0.15);
     color: var(--cream);
   }
+
+
+  /* ── MOBILE PORTRAIT VERTICAL TIMELINE ── */
+  @media (max-width: 768px) and (orientation: portrait) {
+
+    /* Hide horizontal scroll, show vertical instead */
+    .tl-scroll { display: none !important; }
+    #mobile-vtl { display: flex !important; }
+
+    /* Vertical timeline container */
+    #mobile-vtl {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0 0 60px 0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Era section header */
+    .mvtl-era {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      padding: 8px 16px 6px;
+      background: var(--cream);
+      border-bottom: 1px solid rgba(140,110,55,0.2);
+    }
+    .mvtl-era-label {
+      font-family: 'Cinzel', serif;
+      font-size: 8px;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .mvtl-era-rule {
+      height: 1px;
+      background: linear-gradient(90deg, var(--gold-light), transparent);
+      margin-top: 3px;
+    }
+
+    /* Vertical spine + cards */
+    .mvtl-items {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 16px;
+      position: relative;
+    }
+    .mvtl-items::before {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(140,110,55,0.25);
+    }
+
+    .mvtl-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .mvtl-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 1.5px solid var(--cream);
+      flex-shrink: 0;
+      margin-top: 8px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .mvtl-card {
+      flex: 1;
+      background: linear-gradient(150deg, #faf6ea, #ede5cc);
+      border: 0.5px solid rgba(140,110,55,0.32);
+      padding: 10px 12px 8px;
+      position: relative;
+      cursor: pointer;
+    }
+    [data-theme="dark"] .mvtl-card {
+      background: linear-gradient(150deg, #252318, #1e1c12);
+      border-color: rgba(200,160,64,0.2);
+    }
+    .mvtl-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--vc, #5c3d1e);
+      opacity: 0.8;
+    }
+    .mvtl-card.pending { opacity: 0.6; }
+    .mvtl-card.needs-refresh { border-color: rgba(180,120,30,.4); }
+    .mvtl-card.tbc, .mvtl-card.uncertain { opacity: 0.4; filter: grayscale(0.7); border-style: dashed; }
+
+    .mvtl-date   { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 2px; }
+    .mvtl-title  { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 1px; }
+    .mvtl-author { font-family: 'EB Garamond', serif; font-style: italic; font-size: 11px; color: var(--brown-light); margin-bottom: 4px; }
+    .mvtl-badge  { font-family: 'Cinzel', serif; font-size: 6.5px; letter-spacing: 0.07em; padding: 1px 5px; border: 0.5px solid; display: inline-block; }
+    .mvtl-sig    { font-family: 'EB Garamond', serif; font-style: italic; font-size: 10px; color: #2a1a05; background: #ede0b8; border: 1px dashed #8c6e37; padding: 3px 6px; margin-top: 5px; line-height: 1.3; }
+    .mvtl-dl     { font-family: 'Cinzel', serif; font-size: 7px; letter-spacing: 0.1em; color: var(--brown-light); text-decoration: none; padding: 3px 8px; border: 0.5px solid rgba(140,110,55,0.35); background: rgba(140,110,55,0.06); display: inline-block; margin-top: 6px; }
+
+    [data-theme="dark"] .mvtl-card { background: linear-gradient(150deg, #252318, #1e1c12); }
+    [data-theme="dark"] .mvtl-title { color: var(--ink); }
+  }
+
+  /* Show horizontal on landscape mobile */
+  @media (max-width: 768px) and (orientation: landscape) {
+    #mobile-vtl { display: none !important; }
+    .tl-scroll { display: block !important; }
+  }
+
+
+  /* ── DARK MODE TEXT CONTRAST ── */
+  [data-theme="dark"] .tl-card-title,
+  [data-theme="dark"] .tl-card-date,
+  [data-theme="dark"] .tl-card-author,
+  [data-theme="dark"] .tl-card-subtitle,
+  [data-theme="dark"] .vc-title,
+  [data-theme="dark"] .vc-date,
+  [data-theme="dark"] .vc-author,
+  [data-theme="dark"] .vc-sub { color: var(--ink); }
+
+  [data-theme="dark"] .tl-card-badge,
+  [data-theme="dark"] .vc-badge,
+  [data-theme="dark"] .series-badge,
+  [data-theme="dark"] .gc-badge { opacity: 0.9; }
+
+  [data-theme="dark"] .vol-title,
+  [data-theme="dark"] .gc-title { color: var(--ink); }
+
+  [data-theme="dark"] .vol-date,
+  [data-theme="dark"] .gc-date { color: var(--gold); }
+
+  [data-theme="dark"] .vol-author,
+  [data-theme="dark"] .vol-subtitle,
+  [data-theme="dark"] .gc-author,
+  [data-theme="dark"] .gc-sub { color: var(--brown); }
+
+  [data-theme="dark"] .bc-event { color: var(--ink); }
+  [data-theme="dark"] .bc-date  { color: var(--gold); }
+  [data-theme="dark"] .bc-book,
+  [data-theme="dark"] .bc-note  { color: var(--brown); }
+  [data-theme="dark"] .bc-greek { color: var(--gold-light); }
+
+  [data-theme="dark"] .tl-card-status,
+  [data-theme="dark"] .gc-status,
+  [data-theme="dark"] .status-icon { color: var(--gold); }
+
+  [data-theme="dark"] .lg-item,
+  [data-theme="dark"] .bl-item,
+  [data-theme="dark"] .sl-item,
+  [data-theme="dark"] .sl { color: var(--brown); }
+
+  [data-theme="dark"] .era-heading { color: var(--gold); }
+
+  [data-theme="dark"] .filter-btn,
+  [data-theme="dark"] .vbtn { color: var(--brown); }
+
+  [data-theme="dark"] .stats,
+  [data-theme="dark"] .h-title { color: var(--ink); }
+
+  [data-theme="dark"] .h-sub { color: var(--brown); }
+
+  [data-theme="dark"] .mvtl-title { color: var(--ink); }
+  [data-theme="dark"] .mvtl-date  { color: var(--gold); }
+  [data-theme="dark"] .mvtl-author { color: var(--brown); }
+
+  [data-theme="dark"] .sig-tag {
+    background: #2e2810;
+    color: #e0c878;
+    border-color: rgba(200,160,64,0.5);
+  }
+
+  [data-theme="dark"] .pleroma-greek { color: var(--gold); }
+  [data-theme="dark"] .pleroma-latin { color: var(--brown); }
+  [data-theme="dark"] .pleroma-ref   { color: rgba(212,170,68,0.5); }
+
+  [data-theme="dark"] .tl-era-subtitle { color: rgba(212,170,68,0.7); }
+
+  [data-theme="dark"] .version-stamp { color: rgba(212,170,68,0.35); }
 
 </style>
 </head>
@@ -2014,6 +2202,14 @@ function initMap() {
   document.getElementById('map-slider').max = mapSortedVols.length - 1;
   mapReset();
   updateMapFilter();
+  // Update epub reader theme if open
+  if (readerRendition) {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    readerRendition.themes.select(dark ? 'dark' : 'light');
+    // Also update reader modal background
+    const modal = document.getElementById('reader-modal');
+    if (modal) modal.style.background = dark ? 'rgba(20,16,8,0.95)' : 'rgba(245,240,225,0.95)';
+  }
 }
 
 
@@ -2140,6 +2336,71 @@ function makeCard(tag, filename, classes, styleAttr, innerHtml) {
     return `<${tag} class="${classes} no-download" style="${styleAttr}">${innerHtml}</${tag}>`;
   }
 }
+
+
+// ── MOBILE VERTICAL TIMELINE ──────────────────────────────────────────────────
+function renderMobileTimeline() {
+  const container = document.getElementById('mobile-vtl');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const filtered = currentFilter === 'all' ? VOLS : VOLS.filter(v => v.status === currentFilter);
+
+  ERAS.forEach(era => {
+    const vols = filtered.filter(v => v.date_sort >= era.from && v.date_sort < era.to);
+    if (!vols.length) return;
+
+    // Era header
+    const eraEl = document.createElement('div');
+    eraEl.className = 'mvtl-era';
+    eraEl.innerHTML = `<div class="mvtl-era-label">${era.label}</div><div class="mvtl-era-rule"></div>`;
+    container.appendChild(eraEl);
+
+    // Items
+    const itemsEl = document.createElement('div');
+    itemsEl.className = 'mvtl-items';
+
+    vols.forEach(v => {
+      const color = SC[v.series] || '#5c3d1e';
+      const sig = SIGNIFICANCE[v.title] || '';
+
+      const item = document.createElement('div');
+      item.className = 'mvtl-item';
+
+      const dot = document.createElement('div');
+      dot.className = 'mvtl-dot';
+      dot.style.background = color;
+      dot.style.boxShadow = `0 0 0 1px ${color}`;
+
+      const card = document.createElement('div');
+      card.className = `mvtl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
+      card.style.setProperty('--vc', color);
+      if (v.filename) { card.style.cursor = 'pointer'; card.addEventListener('click', () => openReader(v)); }
+
+      card.innerHTML = `
+        <div class="mvtl-date">${v.date_label}</div>
+        <div class="mvtl-title">${v.title}</div>
+        ${v.author ? `<div class="mvtl-author">${v.author}</div>` : ''}
+        <div class="mvtl-badge" style="color:${color};border-color:${color}">${v.series}</div>
+        ${sig ? `<div class="mvtl-sig">${sig}</div>` : ''}
+        ${v.filename ? `<a class="mvtl-dl" href="./${v.filename}" download onclick="event.stopPropagation()">↓ Download</a>` : ''}
+      `;
+
+      item.appendChild(dot);
+      item.appendChild(card);
+      itemsEl.appendChild(item);
+    });
+
+    container.appendChild(itemsEl);
+  });
+}
+
+// Detect orientation change and re-render
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    if (currentView === 'timeline') render();
+  }, 300);
+});
 
 function renderTimeline() {
   const track = document.getElementById('timeline-track');
@@ -2646,7 +2907,7 @@ function setView(view) {
 }
 
 function render() {
-  if (currentView === 'timeline') renderTimeline();
+  if (currentView === 'timeline') { renderTimeline(); renderMobileTimeline(); }
   else if (currentView === 'bible') renderBiblical();
   else if (currentView === 'map') { /* map handles itself */ }
   else renderGrid();
@@ -2703,6 +2964,8 @@ function openReader(vol) {
   document.getElementById('reader-title').textContent = vol.title;
   document.getElementById('reader-author').textContent = vol.author || '';
   modal.classList.add('open');
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  modal.style.background = dark ? 'rgba(20,16,8,0.95)' : 'rgba(245,240,225,0.95)';
   document.body.style.overflow = 'hidden';
 
   // Clear previous
@@ -2718,6 +2981,44 @@ function openReader(vol) {
     spread: 'none',
     flow: 'paginated',
   });
+  // Inject theme into epub.js iframe based on current mode
+  const isDarkMode = () => document.documentElement.getAttribute('data-theme') === 'dark';
+
+  readerBook.ready.then(() => {
+    readerRendition.themes.register('light', {
+      'body': {
+        'background': '#f5f0e1 !important',
+        'color': '#1e1910 !important',
+        'font-family': '"EB Garamond", Georgia, serif !important',
+        'font-size': '1.1em !important',
+        'line-height': '1.7 !important',
+        'padding': '2em 3em !important',
+        'max-width': '680px !important',
+        'margin': '0 auto !important',
+      },
+      'h1,h2,h3,h4': { 'font-family': '"Cormorant Garamond", Georgia, serif !important', 'color': '#1e1910 !important' },
+      'p': { 'color': '#1e1910 !important' },
+    });
+    readerRendition.themes.register('dark', {
+      'body': {
+        'background': '#1c1a10 !important',
+        'color': '#f0e8d0 !important',
+        'font-family': '"EB Garamond", Georgia, serif !important',
+        'font-size': '1.1em !important',
+        'line-height': '1.7 !important',
+        'padding': '2em 3em !important',
+        'max-width': '680px !important',
+        'margin': '0 auto !important',
+      },
+      'h1,h2,h3,h4': { 'font-family': '"Cormorant Garamond", Georgia, serif !important', 'color': '#d4aa44 !important' },
+      'p': { 'color': '#f0e8d0 !important' },
+      'a': { 'color': '#c8a040 !important' },
+      'span': { 'color': '#f0e8d0 !important' },
+      '*': { 'color': '#f0e8d0 !important' },
+    });
+    readerRendition.themes.select(isDarkMode() ? 'dark' : 'light');
+  });
+
   readerRendition.display();
 
   // Progress
@@ -2857,7 +3158,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes can be downloaded — click any card</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.1 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.3 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:rgba(20,16,8,0.92);flex-direction:column;">
