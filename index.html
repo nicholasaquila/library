@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/epubjs@0.3.93/dist/epub.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -3130,88 +3130,122 @@ let readerRendition = null;
 function openReader(vol) {
   if (!vol.filename) return;
 
-  const modal = document.getElementById('reader-modal');
-  document.getElementById('reader-title').textContent = vol.title;
+  const modal    = document.getElementById('reader-modal');
+  const readerArea = document.getElementById('reader-area');
+
+  // Populate header
+  document.getElementById('reader-title').textContent  = vol.title;
   document.getElementById('reader-author').textContent = vol.author || '';
   const dlBtn = document.getElementById('reader-dl-btn');
   if (dlBtn) { dlBtn.href = './' + vol.filename; dlBtn.setAttribute('download', vol.filename); }
 
-  // Show modal first so dimensions are real
+  // Show modal
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Style modal bg
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
   modal.style.background = dark ? 'rgba(12,10,6,0.98)' : 'rgba(245,240,225,0.98)';
 
-  // Clear previous
-  const readerArea = document.getElementById('reader-area');
+  // Clear previous reader
   readerArea.innerHTML = '';
+  document.getElementById('reader-progress').textContent = '';
   if (readerBook) { try { readerBook.destroy(); } catch(e){} readerBook = null; readerRendition = null; }
 
-  // Check if PDF
+  // PDF — just iframe it
   if (vol.filename.endsWith('.pdf')) {
-    readerArea.innerHTML = `<iframe src="./${vol.filename}" style="width:100%;height:100%;border:none;"></iframe>`;
-    document.getElementById('reader-progress').textContent = '';
+    readerArea.innerHTML = `<iframe src="./${vol.filename}" style="width:100%;height:100%;border:none;display:block;"></iframe>`;
     return;
   }
 
-  // Wait one frame so modal has real dimensions
-  requestAnimationFrame(() => {
-    const W = readerArea.clientWidth  || window.innerWidth;
-    const H = readerArea.clientHeight || (window.innerHeight - 120);
+  // EPUB — wait for modal to paint so dimensions are real
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    const W = readerArea.offsetWidth;
+    const H = readerArea.offsetHeight;
 
     readerBook = ePub('./' + vol.filename);
+
     readerRendition = readerBook.renderTo(readerArea, {
-      width:  W,
-      height: H,
-      spread: 'none',
-      flow:   'paginated',
-      allowScriptedContent: true,
+      manager: 'default',
+      flow:    'paginated',
+      spread:  'none',
+      width:   W,
+      height:  H,
     });
 
+    // Theme injection
     const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+    const themeLight = {
+      'body': {
+        'background':   '#f5f0e1 !important',
+        'color':        '#1e1910 !important',
+        'font-family':  '"EB Garamond", Georgia, serif !important',
+        'font-size':    '18px !important',
+        'line-height':  '1.8 !important',
+        'padding':      '20px 40px !important',
+        'box-sizing':   'border-box !important',
+      },
+      'h1,h2,h3': { 'font-family': '"Cormorant Garamond", Georgia, serif !important', 'color': '#1e1910 !important' },
+      'p':  { 'color': '#1e1910 !important', 'margin': '0 0 1em !important' },
+    };
+    const themeDark = {
+      'body': {
+        'background':   '#1c1a10 !important',
+        'color':        '#f0e8d0 !important',
+        'font-family':  '"EB Garamond", Georgia, serif !important',
+        'font-size':    '18px !important',
+        'line-height':  '1.8 !important',
+        'padding':      '20px 40px !important',
+        'box-sizing':   'border-box !important',
+      },
+      'h1,h2,h3': { 'font-family': '"Cormorant Garamond", Georgia, serif !important', 'color': '#d4aa44 !important' },
+      'p':    { 'color': '#f0e8d0 !important', 'margin': '0 0 1em !important' },
+      'span': { 'color': '#f0e8d0 !important' },
+    };
 
-    readerBook.ready.then(() => {
-      // Register themes
-      readerRendition.themes.register('light', {
-        'body': { 'background': '#f5f0e1 !important', 'color': '#1e1910 !important', 'font-family': '"EB Garamond",Georgia,serif !important', 'font-size': '1.05em !important', 'line-height': '1.75 !important', 'padding': '1.5em 2.5em !important', 'max-width': '680px !important', 'margin': '0 auto !important' },
-        'h1,h2,h3,h4': { 'font-family': '"Cormorant Garamond",Georgia,serif !important', 'color': '#1e1910 !important' },
-        'p': { 'color': '#1e1910 !important' },
-      });
-      readerRendition.themes.register('dark', {
-        'body': { 'background': '#1c1a10 !important', 'color': '#f0e8d0 !important', 'font-family': '"EB Garamond",Georgia,serif !important', 'font-size': '1.05em !important', 'line-height': '1.75 !important', 'padding': '1.5em 2.5em !important', 'max-width': '680px !important', 'margin': '0 auto !important' },
-        'h1,h2,h3,h4': { 'font-family': '"Cormorant Garamond",Georgia,serif !important', 'color': '#d4aa44 !important' },
-        'p,span,li,td,div': { 'color': '#f0e8d0 !important' },
-      });
-      readerRendition.themes.select(isDark() ? 'dark' : 'light');
+    readerRendition.themes.register('light', themeLight);
+    readerRendition.themes.register('dark',  themeDark);
+    readerRendition.themes.select(isDark() ? 'dark' : 'light');
 
-      // Page counter — generate after display
-      readerRendition.display().then(() => {
-        readerBook.locations.generate(1024).then(() => {
-          const total = readerBook.locations.total;
-          readerRendition.on('locationChanged', loc => {
-            const cur = readerBook.locations.locationFromCfi(loc.start.cfi);
-            const el  = document.getElementById('reader-progress');
-            if (el) el.textContent = total > 0 ? `${cur + 1} / ${total}` : '';
-          });
+    // Display first page then set up counter
+    readerRendition.display().then(() => {
+      // Generate locations for page count
+      readerBook.locations.generate(600).then(() => {
+        const total = readerBook.locations.total || readerBook.locations.length();
+        const el    = document.getElementById('reader-progress');
+
+        // Update on every page turn
+        readerRendition.on('relocated', loc => {
+          if (!el) return;
+          const cur = readerBook.locations.locationFromCfi(loc.start.cfi);
+          el.textContent = `${cur + 1} / ${total}`;
         });
+
+        // Show initial page
+        if (el && total > 0) {
+          const cur = readerBook.locations.locationFromCfi(readerRendition.currentLocation().start.cfi);
+          el.textContent = `${cur + 1} / ${total}`;
+        }
       });
     });
 
-    // Swipe
+    // Swipe on mobile
     let tx = 0;
     readerArea.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
     readerArea.addEventListener('touchend',   e => {
       const dx = e.changedTouches[0].clientX - tx;
-      if (Math.abs(dx) > 50) { dx < 0 ? readerNext() : readerPrev(); }
+      if (Math.abs(dx) > 50) dx < 0 ? readerNext() : readerPrev();
     }, { passive: true });
 
-    // Resize
-    window.addEventListener('resize', () => {
+    // Resize handler
+    const onResize = () => {
       if (!readerRendition) return;
       const ra = document.getElementById('reader-area');
-      if (ra) readerRendition.resize(ra.clientWidth, ra.clientHeight);
-    });
-  });
+      if (ra) readerRendition.resize(ra.offsetWidth, ra.offsetHeight);
+    };
+    window.removeEventListener('resize', onResize);
+    window.addEventListener('resize', onResize);
+  }));
 }
 
 
@@ -3331,7 +3365,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.8 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.9 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
