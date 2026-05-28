@@ -1649,9 +1649,9 @@ const LIBRARY_DATA = {
       "date_label": "c. 1754 BC",
       "date_sort": -1754,
       "series": "Voices of the Ancient World",
-      "status": "pending",
+      "status": "complete",
       "notes": null,
-      "filename": null
+      "filename": "(c1754BC)_The_Code_of_Hammurabi.pdf"
     },
     {
       "id": 4,
@@ -3129,119 +3129,91 @@ let readerRendition = null;
 
 function openReader(vol) {
   if (!vol.filename) return;
+
   const modal = document.getElementById('reader-modal');
   document.getElementById('reader-title').textContent = vol.title;
-  const dlBtn = document.getElementById('reader-dl-btn');
-  if (dlBtn) { dlBtn.href = './' + (vol.filename || ''); dlBtn.download = vol.filename || ''; }
   document.getElementById('reader-author').textContent = vol.author || '';
+  const dlBtn = document.getElementById('reader-dl-btn');
+  if (dlBtn) { dlBtn.href = './' + vol.filename; dlBtn.setAttribute('download', vol.filename); }
+
+  // Show modal first so dimensions are real
   modal.classList.add('open');
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  modal.style.background = dark ? 'rgba(20,16,8,0.95)' : 'rgba(245,240,225,0.95)';
   document.body.style.overflow = 'hidden';
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  modal.style.background = dark ? 'rgba(12,10,6,0.98)' : 'rgba(245,240,225,0.98)';
 
   // Clear previous
-  const area = document.getElementById('reader-area');
-  area.innerHTML = '';
-  if (readerBook) { readerBook.destroy(); readerBook = null; }
-
-  // Load EPUB
-  readerBook = ePub('./' + vol.filename);
   const readerArea = document.getElementById('reader-area');
-  readerRendition = readerBook.renderTo(readerArea, {
-    width:   readerArea.clientWidth  || window.innerWidth,
-    height:  readerArea.clientHeight || window.innerHeight - 60,
-    spread: 'none',
-    flow: 'paginated',
-    allowScriptedContent: true,
-  });
-  // Inject theme into epub.js iframe based on current mode
-  const isDarkMode = () => document.documentElement.getAttribute('data-theme') === 'dark';
+  readerArea.innerHTML = '';
+  if (readerBook) { try { readerBook.destroy(); } catch(e){} readerBook = null; readerRendition = null; }
 
-  readerBook.ready.then(() => {
-    readerRendition.themes.register('light', {
-      'body': {
-        'background': '#f5f0e1 !important',
-        'color': '#1e1910 !important',
-        'font-family': '"EB Garamond", Georgia, serif !important',
-        'font-size': '1.1em !important',
-        'line-height': '1.7 !important',
-        'padding': '2em 3em !important',
-        'max-width': '680px !important',
-        'margin': '0 auto !important',
-      },
-      'h1,h2,h3,h4': { 'font-family': '"Cormorant Garamond", Georgia, serif !important', 'color': '#1e1910 !important' },
-      'p': { 'color': '#1e1910 !important' },
+  // Check if PDF
+  if (vol.filename.endsWith('.pdf')) {
+    readerArea.innerHTML = `<iframe src="./${vol.filename}" style="width:100%;height:100%;border:none;"></iframe>`;
+    document.getElementById('reader-progress').textContent = '';
+    return;
+  }
+
+  // Wait one frame so modal has real dimensions
+  requestAnimationFrame(() => {
+    const W = readerArea.clientWidth  || window.innerWidth;
+    const H = readerArea.clientHeight || (window.innerHeight - 120);
+
+    readerBook = ePub('./' + vol.filename);
+    readerRendition = readerBook.renderTo(readerArea, {
+      width:  W,
+      height: H,
+      spread: 'none',
+      flow:   'paginated',
+      allowScriptedContent: true,
     });
-    readerRendition.themes.register('dark', {
-      'body': {
-        'background': '#1c1a10 !important',
-        'color': '#f0e8d0 !important',
-        'font-family': '"EB Garamond", Georgia, serif !important',
-        'font-size': '1.1em !important',
-        'line-height': '1.7 !important',
-        'padding': '2em 3em !important',
-        'max-width': '680px !important',
-        'margin': '0 auto !important',
-      },
-      'h1,h2,h3,h4': { 'font-family': '"Cormorant Garamond", Georgia, serif !important', 'color': '#d4aa44 !important' },
-      'p': { 'color': '#f0e8d0 !important' },
-      'a': { 'color': '#c8a040 !important' },
-      'span': { 'color': '#f0e8d0 !important' },
-      '*': { 'color': '#f0e8d0 !important' },
-    });
-    readerRendition.themes.select(isDarkMode() ? 'dark' : 'light');
-  });
 
+    const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
 
-  window.addEventListener('resize', () => {
-    if (!readerRendition) return;
-    const ra = document.getElementById('reader-area');
-    if (!ra) return;
-    readerRendition.resize(ra.clientWidth, ra.clientHeight);
-  });
+    readerBook.ready.then(() => {
+      // Register themes
+      readerRendition.themes.register('light', {
+        'body': { 'background': '#f5f0e1 !important', 'color': '#1e1910 !important', 'font-family': '"EB Garamond",Georgia,serif !important', 'font-size': '1.05em !important', 'line-height': '1.75 !important', 'padding': '1.5em 2.5em !important', 'max-width': '680px !important', 'margin': '0 auto !important' },
+        'h1,h2,h3,h4': { 'font-family': '"Cormorant Garamond",Georgia,serif !important', 'color': '#1e1910 !important' },
+        'p': { 'color': '#1e1910 !important' },
+      });
+      readerRendition.themes.register('dark', {
+        'body': { 'background': '#1c1a10 !important', 'color': '#f0e8d0 !important', 'font-family': '"EB Garamond",Georgia,serif !important', 'font-size': '1.05em !important', 'line-height': '1.75 !important', 'padding': '1.5em 2.5em !important', 'max-width': '680px !important', 'margin': '0 auto !important' },
+        'h1,h2,h3,h4': { 'font-family': '"Cormorant Garamond",Georgia,serif !important', 'color': '#d4aa44 !important' },
+        'p,span,li,td,div': { 'color': '#f0e8d0 !important' },
+      });
+      readerRendition.themes.select(isDark() ? 'dark' : 'light');
 
-
-  // Mobile swipe to turn pages
-  let touchStartX = 0;
-  readerArea.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-  readerArea.addEventListener('touchend', e => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    if (Math.abs(dx) > 50) {
-      if (dx < 0) readerNext();
-      else readerPrev();
-    }
-  }, { passive: true });
-
-  readerRendition.display();
-
-  // Progress
-  readerBook.ready.then(() => {
-    readerBook.locations.generate(1024).then(() => {
-      const totalPages = readerBook.locations.length();
-      readerRendition.on('locationChanged', (loc) => {
-        const currentPage = readerBook.locations.locationFromCfi(loc.start.cfi);
-        const el = document.getElementById('reader-progress');
-        if (el) {
-          if (totalPages > 0) {
-            el.textContent = `${currentPage + 1} / ${totalPages}`;
-          } else {
-            const pct = readerBook.locations.percentageFromCfi(loc.start.cfi);
-            el.textContent = Math.round(pct * 100) + '%';
-          }
-        }
+      // Page counter — generate after display
+      readerRendition.display().then(() => {
+        readerBook.locations.generate(1024).then(() => {
+          const total = readerBook.locations.total;
+          readerRendition.on('locationChanged', loc => {
+            const cur = readerBook.locations.locationFromCfi(loc.start.cfi);
+            const el  = document.getElementById('reader-progress');
+            if (el) el.textContent = total > 0 ? `${cur + 1} / ${total}` : '';
+          });
+        });
       });
     });
+
+    // Swipe
+    let tx = 0;
+    readerArea.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+    readerArea.addEventListener('touchend',   e => {
+      const dx = e.changedTouches[0].clientX - tx;
+      if (Math.abs(dx) > 50) { dx < 0 ? readerNext() : readerPrev(); }
+    }, { passive: true });
+
+    // Resize
+    window.addEventListener('resize', () => {
+      if (!readerRendition) return;
+      const ra = document.getElementById('reader-area');
+      if (ra) readerRendition.resize(ra.clientWidth, ra.clientHeight);
+    });
   });
-
-  // Keyboard navigation
-  document.addEventListener('keydown', readerKeyHandler);
 }
 
-function readerKeyHandler(e) {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') readerNext();
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   readerPrev();
-  if (e.key === 'Escape') closeReader();
-}
 
 function readerNext() { if (readerRendition) readerRendition.next(); }
 function readerPrev() { if (readerRendition) readerRendition.prev(); }
@@ -3369,19 +3341,20 @@ setTimeout(introShowcase, 200);
       <div id="reader-title" class="reader-title"></div>
       <div id="reader-author" class="reader-author"></div>
     </div>
-    <button onclick="closeReader()" class="reader-btn reader-close">✕ Close</button>
+    <div class="reader-controls">
+      <a id="reader-dl-btn" href="#" download class="reader-btn reader-dl">↓ Download</a>
+      <button onclick="closeReader()" class="reader-btn reader-close">✕ Close</button>
+    </div>
   </div>
   <!-- Reading area -->
   <div id="reader-area" class="reader-area"></div>
   <!-- Bottom bar: navigation + progress + download -->
   <div class="reader-footer">
-    <a id="reader-dl-btn" href="#" download class="reader-btn reader-dl">↓ Download</a>
     <div class="reader-nav">
       <button onclick="readerPrev()" class="reader-nav-btn">← Prev</button>
       <span id="reader-progress" class="reader-progress"></span>
       <button onclick="readerNext()" class="reader-nav-btn">Next →</button>
     </div>
-    <div style="width:80px;"></div>
   </div>
 </div>
 
