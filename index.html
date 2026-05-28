@@ -3198,6 +3198,8 @@ function openReader(vol) {
       'body': {
         'background':   '#f5f0e1 !important',
         'color':        '#1e1910 !important',
+        'scrollbar-width': 'none !important',
+        '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
         'font-size':    '18px !important',
         'line-height':  '1.8 !important',
@@ -3211,6 +3213,8 @@ function openReader(vol) {
       'body': {
         'background':   '#1c1a10 !important',
         'color':        '#f0e8d0 !important',
+        'scrollbar-width': 'none !important',
+        '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
         'font-size':    '18px !important',
         'line-height':  '1.8 !important',
@@ -3232,7 +3236,13 @@ function openReader(vol) {
       // Populate chapter on first load
       readerBook.loaded.navigation.then(nav => {
         const chEl = document.getElementById('reader-chapter');
-        if (chEl && nav.toc && nav.toc.length) chEl.textContent = nav.toc[0].label.trim();
+        if (chEl && nav.toc) {
+          // Find first real content item (skip cover/copyright)
+          const first = nav.toc.find(t => t.subitems && t.subitems.length)
+                     || nav.toc.find(t => !t.href.includes('title') && !t.href.includes('cover'))
+                     || nav.toc[0];
+          if (first) chEl.textContent = (first.subitems && first.subitems.length ? first.subitems[0].label : first.label).trim();
+        }
       });
 
       readerBook.locations.generate(600).then(() => {
@@ -3247,23 +3257,24 @@ function openReader(vol) {
               el.textContent = Math.round(pct * 100) + '%';
             } catch(e) {}
           }
-          // Chapter name
+          // Chapter name — match current spine href to TOC
           const chEl = document.getElementById('reader-chapter');
           if (chEl) {
             try {
-              const nav   = readerBook.navigation;
-              const toc   = nav && nav.toc ? nav.toc : [];
-              const cfi   = loc.start.cfi;
-              let chapter = '';
-              // Find deepest TOC entry whose cfi is before current
-              toc.forEach(item => {
-                if (item.href && readerBook.canonical(item.href)) chapter = item.label.trim();
-                if (item.subitems) item.subitems.forEach(sub => {
-                  if (sub.href) chapter = sub.label.trim();
+              const href = loc.start.href;
+              const toc  = readerBook.navigation.toc;
+              let label  = '';
+              const search = (items) => {
+                items.forEach(item => {
+                  if (item.href && item.href.split('#')[0].includes(href.split('#')[0])) {
+                    label = item.label.trim();
+                  }
+                  if (item.subitems && item.subitems.length) search(item.subitems);
                 });
-              });
-              chEl.textContent = chapter;
-            } catch(e) { }
+              };
+              search(toc);
+              if (label) chEl.textContent = label;
+            } catch(e) {}
           }
         });
       });
@@ -3299,8 +3310,15 @@ function openReader(vol) {
 }
 
 
-function readerNext() { if (readerRendition) readerRendition.next(); }
-function readerPrev() { if (readerRendition) readerRendition.prev(); }
+function readerNext() {
+  if (!readerRendition) return;
+  // Move to next spine item (chapter)
+  readerRendition.next();
+}
+function readerPrev() {
+  if (!readerRendition) return;
+  readerRendition.prev();
+}
 
 function closeReader() {
   document.getElementById('reader-modal').classList.remove('open');
@@ -3415,7 +3433,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.3 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.4 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
