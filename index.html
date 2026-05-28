@@ -1128,7 +1128,8 @@
 
   .reader-modal { display: none; flex-direction: column; }
   .reader-modal.open { display: flex; }
-  #reader-area iframe { border: none; width: 100%; height: 100%; }
+  #reader-area iframe { border: none; width: 100%; height: 100%; display: block; }
+  #reader-area > div { height: 100% !important; }
 
 
   /* ── DOWNLOAD LINK ── */
@@ -1430,7 +1431,10 @@
   .reader-area {
     flex: 1;
     background: var(--cream);
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
   }
 
   /* Dark mode reader */
@@ -1475,16 +1479,15 @@
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 10px 20px;
     background: var(--cream);
     border-top: 1px solid rgba(140,110,55,0.3);
-    gap: 12px;
   }
   .reader-nav {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
   }
   .reader-nav-btn {
     font-family: 'Cinzel', serif;
@@ -3166,11 +3169,12 @@ function openReader(vol) {
     readerBook = ePub('./' + vol.filename);
 
     readerRendition = readerBook.renderTo(readerArea, {
-      manager: 'default',
-      flow:    'paginated',
-      spread:  'none',
-      width:   W,
-      height:  H,
+      manager:    'continuous',
+      flow:       'scrolled-continuous',
+      spread:     'none',
+      width:      W,
+      height:     H,
+      allowScriptedContent: true,
     });
 
     // Theme injection
@@ -3214,27 +3218,23 @@ function openReader(vol) {
         const total = readerBook.locations.total || readerBook.locations.length();
         const el    = document.getElementById('reader-progress');
 
-        // Update on every page turn
+        // Track position as percentage for smooth scroll mode
         readerRendition.on('relocated', loc => {
           if (!el) return;
-          const cur = readerBook.locations.locationFromCfi(loc.start.cfi);
-          el.textContent = `${cur + 1} / ${total}`;
+          try {
+            const pct = readerBook.locations.percentageFromCfi(loc.start.cfi);
+            el.textContent = Math.round(pct * 100) + '%';
+          } catch(e) {}
         });
-
-        // Show initial page
-        if (el && total > 0) {
-          const cur = readerBook.locations.locationFromCfi(readerRendition.currentLocation().start.cfi);
-          el.textContent = `${cur + 1} / ${total}`;
-        }
       });
     });
 
-    // Swipe on mobile
-    let tx = 0;
-    readerArea.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
-    readerArea.addEventListener('touchend',   e => {
-      const dx = e.changedTouches[0].clientX - tx;
-      if (Math.abs(dx) > 50) dx < 0 ? readerNext() : readerPrev();
+    // Touch/mouse scroll is handled natively by scrolled-continuous flow
+    // Forward mouse wheel events into the epub iframe
+    readerArea.addEventListener('wheel', e => {
+      const iframe = readerArea.querySelector('iframe');
+      if (!iframe || !iframe.contentWindow) return;
+      iframe.contentWindow.scrollBy({ top: e.deltaY * 1.2, behavior: 'smooth' });
     }, { passive: true });
 
     // Resize handler
@@ -3365,7 +3365,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.9 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.0 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
@@ -3385,9 +3385,9 @@ setTimeout(introShowcase, 200);
   <!-- Bottom bar: navigation + progress + download -->
   <div class="reader-footer">
     <div class="reader-nav">
-      <button onclick="readerPrev()" class="reader-nav-btn">← Prev</button>
+      <button onclick="readerPrev()" class="reader-nav-btn">↑ Back</button>
       <span id="reader-progress" class="reader-progress"></span>
-      <button onclick="readerNext()" class="reader-nav-btn">Next →</button>
+      <button onclick="readerNext()" class="reader-nav-btn">↓ Forward</button>
     </div>
   </div>
 </div>
