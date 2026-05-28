@@ -2976,11 +2976,13 @@ function openReader(vol) {
 
   // Load EPUB
   readerBook = ePub('./' + vol.filename);
-  readerRendition = readerBook.renderTo('reader-area', {
-    width: '100%',
-    height: '100%',
+  const readerArea = document.getElementById('reader-area');
+  readerRendition = readerBook.renderTo(readerArea, {
+    width:   readerArea.clientWidth  || window.innerWidth,
+    height:  readerArea.clientHeight || window.innerHeight - 60,
     spread: 'none',
     flow: 'paginated',
+    allowScriptedContent: true,
   });
   // Inject theme into epub.js iframe based on current mode
   const isDarkMode = () => document.documentElement.getAttribute('data-theme') === 'dark';
@@ -3019,6 +3021,26 @@ function openReader(vol) {
     });
     readerRendition.themes.select(isDarkMode() ? 'dark' : 'light');
   });
+
+
+  window.addEventListener('resize', () => {
+    if (!readerRendition) return;
+    const ra = document.getElementById('reader-area');
+    if (!ra) return;
+    readerRendition.resize(ra.clientWidth, ra.clientHeight);
+  });
+
+
+  // Mobile swipe to turn pages
+  let touchStartX = 0;
+  readerArea.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  readerArea.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) {
+      if (dx < 0) readerNext();
+      else readerPrev();
+    }
+  }, { passive: true });
 
   readerRendition.display();
 
@@ -3159,7 +3181,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.4 · 27 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v6.5 · 27 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" style="position:fixed;top:0;left:0;right:0;bottom:0;z-index:1000;background:rgba(20,16,8,0.92);flex-direction:column;">
@@ -3169,7 +3191,7 @@ setTimeout(introShowcase, 200);
       <div id="reader-author" style="font-family:'EB Garamond',serif;font-style:italic;font-size:12px;color:var(--brown-light);"></div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;">
-      <a id="reader-dl-btn" href="#" download style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.12em;padding:4px 12px;border:1px solid rgba(140,110,55,0.35);background:transparent;color:var(--brown-light);text-decoration:none;cursor:pointer;transition:all 0.18s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='rgba(140,110,55,0.35)';this.style.color='var(--brown-light)'">↓ Save</a>
+      <a id="reader-dl-btn" href="#" download style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.12em;padding:4px 12px;border:1px solid rgba(140,110,55,0.35);background:transparent;color:var(--brown-light);text-decoration:none;cursor:pointer;transition:all 0.18s;" onmouseover="this.style.borderColor='var(--gold)';this.style.color='var(--ink)'" onmouseout="this.style.borderColor='rgba(140,110,55,0.35)';this.style.color='var(--brown-light)'">↓ Download</a>
       <button onclick="readerPrev()" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.1em;padding:4px 12px;border:1px solid rgba(140,110,55,0.4);background:transparent;color:var(--brown-light);cursor:pointer;">← Prev</button>
       <span id="reader-progress" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.1em;color:var(--gold);"></span>
       <button onclick="readerNext()" style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.1em;padding:4px 12px;border:1px solid rgba(140,110,55,0.4);background:transparent;color:var(--brown-light);cursor:pointer;">Next →</button>
