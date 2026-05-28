@@ -1493,19 +1493,26 @@
 
   /* ── CARD INFO BUTTON ── */
   .card-info-btn {
-    display: none;
     position: absolute;
     top: 4px;
     right: 4px;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--gold);
-    opacity: 0.7;
+    opacity: 0;
     cursor: pointer;
     z-index: 5;
     line-height: 1;
+    transition: opacity 0.15s;
   }
+  .tl-card:hover .card-info-btn { opacity: 0.8; }
   @media (max-width: 768px) {
-    .card-info-btn { display: block; }
+    .card-info-btn {
+      opacity: 0.7 !important;
+      font-size: 13px !important;
+      top: 3px !important;
+      right: 4px !important;
+      padding: 2px 4px;
+    }
   }
 
   /* ── ANCIENT WORLD BOTTOM SHEET ── */
@@ -1556,6 +1563,39 @@
     .filter-btn { font-size: 8px; padding: 2px 7px; letter-spacing: 0.06em; }
     .vbtn       { font-size: 8px; padding: 2px 7px; }
     .stats      { display: none; }
+  }
+
+
+  /* ── MOBILE COMPACT OVERRIDES ── */
+  @media (max-width: 768px) {
+    /* Minimal header */
+    header { padding: 8px 14px 6px !important; }
+    .h-title { font-size: 15px !important; }
+
+    /* Controls bar — tight single row */
+    .controls-bar { padding: 5px 10px !important; gap: 6px !important; flex-wrap: nowrap !important; overflow-x: auto !important; }
+    .filter-label { display: none !important; }
+    .filter-btn   { font-size: 8px !important; padding: 3px 8px !important; white-space: nowrap; }
+    .vbtn         { font-size: 8px !important; padding: 3px 8px !important; white-space: nowrap; }
+
+    /* Legend — dots only, no text, single line, no wrap */
+    .legend-bar   { padding: 3px 10px !important; gap: 6px !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none; border-top: none !important; }
+    .legend-bar::-webkit-scrollbar { display: none; }
+    .legend-item span:last-child { display: none !important; }
+    .legend-dot   { width: 9px !important; height: 9px !important; }
+
+    /* Status legend — hide entirely */
+    .status-legend-bar { display: none !important; }
+
+    /* Timeline cards smaller on mobile */
+    .tl-card { width: 110px !important; padding: 6px 7px 5px !important; }
+    .tl-card-title  { font-size: 10px !important; }
+    .tl-card-date   { font-size: 7px !important; }
+    .tl-card-author { font-size: 9px !important; }
+    .tl-card-badge  { font-size: 6px !important; }
+
+    /* More space for timeline */
+    .timeline-scroll { flex: 1 !important; }
   }
 
 </style>
@@ -2689,10 +2729,15 @@ function renderTimeline() {
         card.addEventListener('mouseenter', e => showAncientInfo(e, v.title));
         card.addEventListener('mousemove',  e => moveAncientInfo(e));
         card.addEventListener('mouseleave', hideAncientInfo);
-        // Mobile ⓘ button
+        // Mobile ⓘ button — touch friendly
         const infoBtn = document.createElement('div');
         infoBtn.className = 'card-info-btn';
         infoBtn.textContent = 'ⓘ';
+        infoBtn.addEventListener('touchend', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          showBottomSheet(v.title);
+        });
         infoBtn.addEventListener('click', e => {
           e.stopPropagation();
           showBottomSheet(v.title);
@@ -3517,7 +3562,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v7.9 · 28 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v8.0 · 28 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
