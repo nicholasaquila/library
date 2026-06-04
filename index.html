@@ -3843,7 +3843,8 @@ function openReader(vol) {
       },
       'h1,h2,h3': { 'font-family': '"Cormorant Garamond", Georgia, serif !important', 'color': '#1e1910 !important' },
       'p':  { 'color': '#1e1910 !important', 'margin': '0 0 1em !important' },
-      'img': { 'max-width': '100% !important', 'height': 'auto !important' },
+      'img': { 'max-width': '100% !important', 'height': 'auto !important', 'display': 'block', 'margin': '0 auto' },
+      'img.cover-image, .cover-image-container': { 'max-width': '100% !important', 'max-height': '90vh !important', 'margin': '0 auto !important' },
     };
     const themeDark = {
       'html': { 'overflow-x': 'hidden !important', 'box-sizing': 'border-box !important' },
@@ -3863,7 +3864,8 @@ function openReader(vol) {
       'h1,h2,h3': { 'font-family': '"Cormorant Garamond", Georgia, serif !important', 'color': '#d4aa44 !important' },
       'p':    { 'color': '#f0e8d0 !important', 'margin': '0 0 1em !important' },
       'span': { 'color': '#f0e8d0 !important' },
-      'img': { 'max-width': '100% !important', 'height': 'auto !important' },
+      'img': { 'max-width': '100% !important', 'height': 'auto !important', 'display': 'block', 'margin': '0 auto' },
+      'img.cover-image, .cover-image-container': { 'max-width': '100% !important', 'max-height': '90vh !important', 'margin': '0 auto !important' },
     };
 
     readerRendition.themes.register('light', themeLight);
@@ -4174,7 +4176,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.1 · 4 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.2 · 4 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
