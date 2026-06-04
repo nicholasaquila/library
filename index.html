@@ -1869,6 +1869,16 @@
   }
 
 
+
+  /* Ensure epub.js view fills the reader area so body max-width centres correctly */
+  #reader-area > div,
+  #reader-area .epub-container,
+  #reader-area .epub-view,
+  #reader-area iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
 </style>
 </head>
 <body>
@@ -4028,10 +4038,12 @@ function toggleTOC(force) {
   // Resize the rendition after the panel animation so text re-centres in the
   // remaining width (desktop only — on mobile the TOC overlays, no resize needed)
   if (window.innerWidth > 768 && readerRendition) {
-    setTimeout(() => {
+    const doResize = () => {
       const ra = document.getElementById('reader-area');
-      if (ra) readerRendition.resize(ra.offsetWidth, ra.offsetHeight);
-    }, 320);
+      if (ra && readerRendition) readerRendition.resize(ra.offsetWidth, ra.offsetHeight);
+    };
+    setTimeout(doResize, 330);
+    setTimeout(doResize, 450);
   }
 }
 
@@ -4176,7 +4188,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.2 · 4 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.3 · 4 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
