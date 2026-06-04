@@ -2354,6 +2354,17 @@ const LIBRARY_DATA = {
       "series": "Magisterium",
       "status": "pending",
       "filename": null
+    },
+    {
+      "id": 49,
+      "title": "The Hobbit",
+      "subtitle": null,
+      "author": "J.R.R. Tolkien",
+      "date_label": "1937",
+      "date_sort": 1937,
+      "series": "Literature & History",
+      "status": "pending",
+      "filename": null
     }
   ]
 };
@@ -2424,6 +2435,7 @@ const CONTEXTUAL_SERIES = new Set([
   'TBC',
 ]);
 const CONTEXTUAL_TITLES = new Set([
+  'The Hobbit',
   'The Triads',
   'Vita Karoli Magni',
   'The Divine Comedy',
@@ -2483,6 +2495,7 @@ const SIGNIFICANCE = {
 
   // Voices of the Ancient World
   "Instructions of Shuruppak":                "Ancient Sumerian wisdom literature; ethical proverbs from father to son; reflects themes in biblical Proverbs",
+  "The Hobbit":                             { lat: 51.75, lng: -1.26, place: "Oxford, England" },
   "The Epic of Gilgamesh":                     "Ancient Mesopotamian epic; flood and creation themes; mortality and the search for eternal life",
   "The Tale of Sinuhe":                        "Masterpiece of Egyptian literature; exile, identity and return",
   "The Tale of the Shipwrecked Sailor":        "Oldest known surviving written account of a talking snake; paradise island; divine encounter",
@@ -2529,6 +2542,7 @@ const SIGNIFICANCE = {
 // lat/lng for each volume's place of origin
 const MAP_LOCATIONS = {
   "Instructions of Shuruppak":              { lat: 31.8,  lng: 45.5,  place: "Shuruppak (Tell Fara), ancient Sumer" },
+  "The Hobbit":                             { lat: 51.75, lng: -1.26, place: "Oxford, England" },
   "The Epic of Gilgamesh":                    { lat: 31.3,  lng: 45.6,  place: "Uruk, ancient Mesopotamia" },
   "The Tale of Sinuhe":                       { lat: 30.1,  lng: 31.4,  place: "Memphis, Egypt" },
   "The Tale of the Shipwrecked Sailor":       { lat: 29.5,  lng: 31.0,  place: "Egypt (Nile Valley)" },
@@ -2753,6 +2767,7 @@ const ANCIENT_WORLD_INFO = {
     summary: "Ancient Sumerian wisdom literature. A father passes moral instructions to his son Ziusudra, the Sumerian flood survivor whom scholars compare to the biblical Noah.",
     biblical: "Ziusudra is the Sumerian Noah. The short proverbial maxims closely parallel the book of Proverbs. Some sayings are remarkably similar: phrases like \'do not steal\' echo the structure of the Decalogue.",
   },
+  "The Hobbit":                             { lat: 51.75, lng: -1.26, place: "Oxford, England" },
   "The Epic of Gilgamesh": {
     summary: "An ancient Mesopotamian epic following Gilgamesh, king of Uruk, and his companion Enkidu. After Enkidu dies, Gilgamesh sets out on a desperate quest for immortality.",
     biblical: "Tablet XI contains a flood narrative where a man is warned by a god, builds a boat, takes animals aboard, releases birds to find land and offers sacrifice when the waters recede. The parallels with Genesis 6 through 9 are widely noted. A serpent also steals the plant of immortality, echoing Eden. Enkidu is formed from clay, much like Adam.",
@@ -3763,7 +3778,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v10.7 · 28 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v10.8 · 28 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
