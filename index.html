@@ -1868,6 +1868,12 @@
     .continue-chip-title { font-size: 12px; }
   }
 
+
+  /* Centre epub.js scrolled content within the reading area */
+  #reader-area .epub-container { display: flex !important; justify-content: center !important; }
+  #reader-area .epub-view { margin: 0 auto !important; float: none !important; }
+  #reader-area > div { margin: 0 auto !important; }
+
 </style>
 </head>
 <body>
@@ -3833,11 +3839,10 @@ function openReader(vol) {
         'scrollbar-width': 'none !important',
         '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
-        'font-size':    readerFontSize + 'px !important',
         'line-height':  '1.8 !important',
         'padding':      '24px 0 !important',
         'margin':       '0 auto !important',
-        'max-width':    'min(640px, 86%) !important',
+        'max-width':    '38em !important',
         'box-sizing':   'border-box !important',
         'overflow-x':   'hidden !important',
       },
@@ -3853,11 +3858,10 @@ function openReader(vol) {
         'scrollbar-width': 'none !important',
         '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
-        'font-size':    readerFontSize + 'px !important',
         'line-height':  '1.8 !important',
         'padding':      '24px 0 !important',
         'margin':       '0 auto !important',
-        'max-width':    'min(640px, 86%) !important',
+        'max-width':    '38em !important',
         'box-sizing':   'border-box !important',
         'overflow-x':   'hidden !important',
       },
@@ -3870,6 +3874,7 @@ function openReader(vol) {
     readerRendition.themes.register('light', themeLight);
     readerRendition.themes.register('dark',  themeDark);
     readerRendition.themes.select(isDark() ? 'dark' : 'light');
+    readerRendition.themes.fontSize(readerFontSize + 'px');
 
     // Display first page then set up counter
     readerRendition.display().then(() => {
@@ -4003,8 +4008,15 @@ function buildReaderTOC(toc) {
       el.className = 'reader-toc-item' + (sub ? ' reader-toc-sub' : '');
       el.textContent = item.label.trim();
       el.addEventListener('click', () => {
-        if (readerRendition) readerRendition.display(item.href);
-        // Close TOC on mobile after selecting
+        if (readerRendition) {
+          // display() returns a promise; once resolved the section is laid out,
+          // so a second display of the same href lands exactly on the anchor.
+          const target = item.href;
+          readerRendition.display(target).then(() => {
+            // Re-issue once layout settles for precise anchor positioning
+            setTimeout(() => { if (readerRendition) readerRendition.display(target); }, 60);
+          });
+        }
         if (window.innerWidth <= 768) toggleTOC(false);
       });
       inner.appendChild(el);
@@ -4035,10 +4047,15 @@ function toggleTOC(force) {
 }
 
 function readerFont(dir) {
-  readerFontSize = Math.max(13, Math.min(28, readerFontSize + dir * 1));
+  readerFontSize = Math.max(13, Math.min(30, readerFontSize + dir * 2));
   localStorage.setItem('readerFontSize', String(readerFontSize));
   if (readerRendition) {
     readerRendition.themes.fontSize(readerFontSize + 'px');
+    // Nudge a resize so the continuous manager reflows at the new size
+    setTimeout(() => {
+      const ra = document.getElementById('reader-area');
+      if (ra && readerRendition) readerRendition.resize(ra.offsetWidth, ra.offsetHeight);
+    }, 30);
   }
 }
 
@@ -4170,7 +4187,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v11.9 · 4 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.0 · 4 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
