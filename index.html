@@ -1343,6 +1343,13 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
+  /* Centre the epub content column within the reader area, accounting for TOC */
+  #reader-area > div,
+  #reader-area .epub-container {
+    max-width: 680px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
   .reader-area::-webkit-scrollbar { display: none; }
   .reader-area * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
   .reader-area *::-webkit-scrollbar { display: none !important; }
@@ -1869,15 +1876,6 @@
   }
 
 
-
-  /* Ensure epub.js view fills the reader area so body max-width centres correctly */
-  #reader-area > div,
-  #reader-area .epub-container,
-  #reader-area .epub-view,
-  #reader-area iframe {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
 
 </style>
 </head>
@@ -3845,9 +3843,7 @@ function openReader(vol) {
         '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
         'line-height':  '1.8 !important',
-        'padding':      '24px 0 !important',
-        'margin':       '0 auto !important',
-        'max-width':    'min(640px, 86%) !important',
+        'padding':      '24px 32px !important',
         'box-sizing':   'border-box !important',
         'overflow-x':   'hidden !important',
       },
@@ -3865,9 +3861,7 @@ function openReader(vol) {
         '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
         'line-height':  '1.8 !important',
-        'padding':      '24px 0 !important',
-        'margin':       '0 auto !important',
-        'max-width':    'min(640px, 86%) !important',
+        'padding':      '24px 32px !important',
         'box-sizing':   'border-box !important',
         'overflow-x':   'hidden !important',
       },
@@ -4188,7 +4182,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.3 · 4 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.4 · 4 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
