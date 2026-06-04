@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>The Clayton Historical Library</title>
+<title>Bibliotheca Fidei — The Library of the Faith</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -22,7 +22,7 @@
 
     --series-ante:      #5c3d1e;
     --series-nicene:    #1e3d5c;
-    --series-ecumen:    #3d1e5c;
+    --series-ecumen:    #6e4a92;
     --series-early:     #1e5c3d;
     --series-monastic:  #5c4a1e;
     --series-byzantine: #5c1e1e;
@@ -1702,7 +1702,7 @@
 
 <button class="dark-toggle" id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()">☀</button>
 <header>
-  <div class="header-title">The Clayton Historical Library</div>
+  <div class="header-title">Bibliotheca Fidei</div>
 </header>
 
 <div class="controls-bar">
@@ -2124,7 +2124,7 @@ const LIBRARY_DATA = {
       "author": "St. Patrick of Ireland",
       "date_label": "c. 461\u2013493 AD",
       "date_sort": 470,
-      "series": "Early Church",
+      "series": "Missionary",
       "status": "complete",
       "notes": null,
       "filename": "(c461-493AD)_Epistles_and_Hymn_St_Patrick_of_Ireland.epub"
@@ -2208,7 +2208,7 @@ const LIBRARY_DATA = {
       "author": "Einhard",
       "date_label": "c. 817\u2013830 AD",
       "date_sort": 820,
-      "series": "History",
+      "series": "Literature & History",
       "status": "complete",
       "notes": null,
       "filename": "(c817-830AD)_Vita_Karoli_Magni_Einhard.epub"
@@ -2256,7 +2256,7 @@ const LIBRARY_DATA = {
       "author": "Dante Alighieri",
       "date_label": "c. 1321 AD",
       "date_sort": 1321,
-      "series": "History",
+      "series": "Literature & History",
       "status": "pending",
       "notes": null,
       "filename": null
@@ -2280,7 +2280,7 @@ const LIBRARY_DATA = {
       "author": "Martin Luther",
       "date_label": "1517 / 1529 AD",
       "date_sort": 1517,
-      "series": "History",
+      "series": "Literature & History",
       "status": "pending",
       "notes": null,
       "filename": null
@@ -2292,7 +2292,7 @@ const LIBRARY_DATA = {
       "author": "St. John of the Cross",
       "date_label": "c. 1579 AD",
       "date_sort": 1579,
-      "series": "History",
+      "series": "Mystical",
       "status": "pending",
       "notes": null,
       "filename": null
@@ -2304,7 +2304,7 @@ const LIBRARY_DATA = {
       "author": "Brother Lawrence",
       "date_label": "c. 1692 AD",
       "date_sort": 1692,
-      "series": "History",
+      "series": "Mystical",
       "status": "pending",
       "notes": null,
       "filename": null
@@ -2357,19 +2357,42 @@ const LIBRARY_DATA = {
   ]
 };
 const SERIES_COLORS = {
-  'Apostolic Fathers':           '#5c3d1e',
-  'Ante-Nicene':                 '#7a4a1e',
-  'Nicene':                      '#1e3d5c',
-  'Ecumenical Councils':         '#3d1e5c',
-  'Early Church':                '#1e5c3d',
+  'Apostolic Fathers':           '#a8801c',
+  'Ante-Nicene':                 '#946c1a',
+  'Nicene':                      '#806015',
+  'Ecumenical Councils':         '#6e4a92',
+  'Missionary':                  '#1e5c3d',
   'Monastic':                    '#5c4a1e',
   'Byzantine':                   '#5c1e1e',
-  'History':                     '#2e4a1e',
-  'Voices of the Ancient World': '#7a4f00',
-  'Scholastic':                  '#3d2a5c',
-  'Magisterium':                  '#3d1e5c',
+  'Mystical':                    '#8a5ea0',
+  'Literature & History':        '#4a4a4a',
+  'Voices of the Ancient World': '#6b6438',
+  'Scholastic':                  '#6a5494',
+  'Magisterium':                  '#6e4a92',
   'TBC':                         '#888888',
 };
+
+// ── TRADITION COLOUR OVERRIDES ────────────────────────────────────────────────
+// Framework: texts of the undivided Church (pre-1054) and Western Catholic
+// developments are received Catholic doctrine and keep their series colour.
+// Post-schism Eastern Orthodox texts are red; post-Reformation Protestant texts
+// are blue. Pre-Christian texts keep the Voices amber.
+const EASTERN_ORTHODOX = new Set([
+  'The Triads',                              // Palamas, 14th c. hesychasm
+  'On the Acquisition of the Holy Spirit',   // Seraphim of Sarov, 19th c.
+  'Orthodoxy and the Religion of the Future',// Seraphim Rose, 20th c.
+  'Theosis: The True Purpose of Human Life',  // Archimandrite George, 20th c.
+]);
+const PROTESTANT = new Set([
+  '95 Theses & Small Catechism',             // Luther, 16th c.
+]);
+
+function volumeColor(v) {
+  if (EASTERN_ORTHODOX.has(v.title)) return '#7a4a4a';  // muted dusty red — post-schism Orthodox
+  if (PROTESTANT.has(v.title))       return '#4a5a6e';  // muted slate blue — Protestant
+  return SERIES_COLORS[v.series] || '#8c6e37';
+}
+
 
 const ERAS = [
   { label: 'Ancient World',                 from: -9999, to: 0    },
@@ -2630,7 +2653,7 @@ function setMapEra(yr) {
 function mapAddMarker(vol, animate) {
   const loc = MAP_LOCATIONS[vol.title];
   if (!loc) return;
-  const color = (vol.status === 'uncertain') ? '#888888' : (SERIES_COLORS[vol.series] || '#8c6e37');
+  const color = (vol.status === 'uncertain') ? '#888888' : volumeColor(vol);
 
   const icon = L.divIcon({
     className: '',
@@ -2874,7 +2897,7 @@ function renderTimeline() {
 
       const card = document.createElement('div');
       card.className = `tl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
-      card.style.setProperty('--sc', sc(v.series));
+      card.style.setProperty('--sc', volumeColor(v));
       const noHover = ['The Iliad', 'The Odyssey'];
       const isAncientInfo = v.series === 'Voices of the Ancient World' && ANCIENT_WORLD_INFO[v.title] && !noHover.includes(v.title);
 
@@ -2915,7 +2938,7 @@ function renderTimeline() {
         <div class="tl-card-title">${v.title}</div>
         ${v.subtitle ? `<div class="tl-card-subtitle">${v.subtitle}</div>` : ''}
         ${v.author ? `<div class="tl-card-author">${v.author}</div>` : ''}
-        <div class="tl-card-badge" style="--sc:${sc(v.series)};border-color:${sc(v.series)};color:${sc(v.series)}">${v.series}</div>
+        <div class="tl-card-badge" style="--sc:${volumeColor(v)};border-color:${volumeColor(v)};color:${volumeColor(v)}">${v.series}</div>
         ${fileButtons}
       `;
 
@@ -2927,7 +2950,7 @@ function renderTimeline() {
 
       const dot = document.createElement('div');
       dot.className = 'tl-dot';
-      dot.style.cssText = `background:${sc(v.series)};box-shadow:0 0 0 1px ${sc(v.series)};--dc:${sc(v.series)};`;
+      dot.style.cssText = `background:${volumeColor(v)};box-shadow:0 0 0 1px ${volumeColor(v)};--dc:${volumeColor(v)};`;
 
       const sigText = SIGNIFICANCE[v.title] || null;
       function makeSigTag(isUp) {
@@ -2986,7 +3009,7 @@ function renderTimeline() {
       spineDot.className = 'tl-col' + ctxClass;
       spineDot.style.cssText = `width:160px;display:flex;justify-content:center;flex-shrink:0;`;
       const sd = document.createElement('div');
-      sd.style.cssText = `width:8px;height:8px;border-radius:50%;background:${sc(v.series)};border:2px solid var(--cream);box-shadow:0 0 0 1px ${sc(v.series)};z-index:2;`;
+      sd.style.cssText = `width:8px;height:8px;border-radius:50%;background:${volumeColor(v)};border:2px solid var(--cream);box-shadow:0 0 0 1px ${volumeColor(v)};z-index:2;`;
       spineDot.appendChild(sd);
       spineRow.appendChild(spineDot);
     });
@@ -3078,7 +3101,7 @@ function renderGrid() {
     vols.forEach(v => {
       const card = document.createElement(v.filename ? 'a' : 'div');
       card.className = `vol-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
-      card.style.setProperty('--series-color', sc(v.series));
+      card.style.setProperty('--series-color', volumeColor(v));
       if (v.filename) {
         card.href = './' + v.filename;
         card.setAttribute('download', '');
@@ -3090,7 +3113,7 @@ function renderGrid() {
         <div class="vol-title">${v.title}</div>
         ${v.subtitle?`<div class="vol-subtitle">${v.subtitle}</div>`:''}
         ${v.author?`<div class="vol-author">${v.author}</div>`:''}
-        <span class="series-badge" style="color:${sc(v.series)};border-color:${sc(v.series)}">${v.series}</span>
+        <span class="series-badge" style="color:${volumeColor(v)};border-color:${volumeColor(v)}">${v.series}</span>
       `;
       grid.appendChild(card);
     });
@@ -3739,7 +3762,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v9.5 · 28 May 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v10.6 · 28 May 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
