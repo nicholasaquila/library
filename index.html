@@ -132,14 +132,29 @@
     font-family: 'Cinzel', serif;
     font-size: 9px;
     letter-spacing: 0.15em;
-    padding: 4px 12px;
+    padding: 5px 13px;
     border: 1px solid rgba(140,110,55,0.4);
     background: transparent;
     color: var(--brown-light);
     cursor: pointer;
     transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
   .view-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+  .vb-icon {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    opacity: 0.85;
+  }
+  .view-btn.active .vb-icon { opacity: 1; }
+  @media (max-width: 768px) {
+    .view-btn { padding: 4px 8px !important; gap: 4px !important; }
+    .vb-icon { width: 12px !important; height: 12px !important; }
+    .view-btn span { display: none; }   /* icons only on mobile to save space */
+  }
 
   .stats-text {
     font-family: 'Cormorant Garamond', serif;
@@ -1643,18 +1658,17 @@
   /* ── CONTEXTUAL COLUMN WIDTH ANIMATION ── */
   .tl-col {
     transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.35s ease,
-                transform 0.35s ease;
+                opacity 0.35s ease;
+  }
+  /* Only contextual columns clip — so dots in normal columns aren't bitten */
+  .tl-col.ctx-col {
     overflow: hidden;
+    opacity: 1;
   }
   .hide-context .tl-col.ctx-col {
     width: 0 !important;
     opacity: 0;
-    transform: scaleX(0.8);
     pointer-events: none;
-  }
-  .tl-col.ctx-col {
-    opacity: 1;
   }
 
 
@@ -1697,6 +1711,82 @@
     display: none;
   }
 
+
+  /* Grid contextual hide/show */
+  #grid-view.hide-context .ctx-card { display: none; }
+  #grid-view.hide-context .ctx-section { display: none; }
+  .vol-card.ctx-card { transition: opacity 0.3s ease; }
+
+
+  /* ── READER BODY + TOC PANEL ── */
+  .reader-body {
+    flex: 1;
+    display: flex;
+    min-height: 0;
+    overflow: hidden;
+  }
+  .reader-toc {
+    width: 0;
+    flex-shrink: 0;
+    overflow-y: auto;
+    background: var(--cream-dark, #ece3cc);
+    border-right: 1px solid rgba(140,110,55,0.2);
+    transition: width 0.3s ease;
+    -webkit-overflow-scrolling: touch;
+  }
+  .reader-toc.open { width: 280px; }
+  .reader-toc-inner { padding: 18px 16px; }
+  .reader-toc-heading {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .reader-toc-item {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: var(--brown);
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 2px;
+    line-height: 1.3;
+    transition: background 0.15s, color 0.15s;
+  }
+  .reader-toc-item:hover { background: rgba(140,110,55,0.12); color: var(--ink); }
+  .reader-toc-item.active { color: var(--gold); font-weight: 600; }
+  .reader-toc-sub { padding-left: 18px; font-size: 12px; }
+  [data-theme="dark"] .reader-toc { background: #211f15; border-color: rgba(200,160,64,0.15); }
+  [data-theme="dark"] .reader-toc-item { color: var(--brown); }
+  [data-theme="dark"] .reader-toc-item:hover { color: var(--ink); }
+  .reader-font-btn { font-size: 9px !important; min-width: 28px; }
+  @media (max-width: 768px) {
+    .reader-toc.open { width: 78vw; position: absolute; z-index: 20; height: 100%; box-shadow: 4px 0 20px rgba(0,0,0,0.3); }
+    .reader-body { position: relative; }
+    #reader-toc-btn span, .reader-font-btn { }
+  }
+
+
+  /* ── SEARCH ── */
+  .search-wrap { position: relative; display: flex; align-items: center; flex-shrink: 0; }
+  .search-input {
+    font-family: 'EB Garamond', serif; font-size: 13px;
+    padding: 5px 26px 5px 10px; border: 1px solid rgba(140,110,55,0.4);
+    background: rgba(255,255,255,0.4); color: var(--ink);
+    width: 190px; transition: width 0.25s ease, border-color 0.2s; outline: none;
+  }
+  .search-input:focus { border-color: var(--gold); width: 230px; }
+  .search-input::placeholder { color: var(--brown-light); opacity: 0.7; font-style: italic; }
+  .search-clear { position: absolute; right: 6px; background: none; border: none; color: var(--brown-light); cursor: pointer; font-size: 11px; display: none; padding: 2px; }
+  .search-clear.show { display: block; }
+  [data-theme="dark"] .search-input { background: rgba(0,0,0,0.25); color: var(--ink); border-color: rgba(200,160,64,0.3); }
+  .tl-col.search-hidden, .vol-card.search-hidden, .era-section.search-hidden { display: none !important; }
+  @media (max-width: 768px) {
+    .search-input { width: 110px; font-size: 12px; padding: 4px 22px 4px 8px; }
+    .search-input:focus { width: 140px; }
+  }
+
 </style>
 </head>
 <body>
@@ -1715,11 +1805,27 @@
     <button class="filter-btn" onclick="setFilter('pending',this)">Pending</button>
   </div>
   <div class="stats-text" id="stats-bar"></div>
+  <div class="search-wrap">
+    <input type="text" id="search-input" class="search-input" placeholder="Search titles, authors, ideas…" oninput="onSearch(this.value)" autocomplete="off"/>
+    <button class="search-clear" id="search-clear" onclick="clearSearch()" title="Clear">✕</button>
+  </div>
   <div class="view-toggle">
-    <button class="view-btn" id="btn-bible" onclick="setView('bible')">Scripture</button>
-    <button class="view-btn active" id="btn-timeline" onclick="setView('timeline')">Library</button>
-    <button class="view-btn" id="btn-grid" onclick="setView('grid')">Grid</button>
-    <button class="view-btn" id="btn-map" onclick="setView('map')">Map</button>
+    <button class="view-btn" id="btn-bible" onclick="setView('bible')">
+      <svg viewBox="0 0 16 16" class="vb-icon"><path d="M3 2h7a2 2 0 0 1 2 2v10l-2-1.2L8 14l-2-1.2L4 14V3a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M5 5h4M5 7.5h4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+      <span>Scripture</span>
+    </button>
+    <button class="view-btn active" id="btn-timeline" onclick="setView('timeline')">
+      <svg viewBox="0 0 16 16" class="vb-icon"><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.1"/><circle cx="4.5" cy="8" r="1.6" fill="currentColor"/><circle cx="8" cy="8" r="1.6" fill="currentColor"/><circle cx="11.5" cy="8" r="1.6" fill="currentColor"/></svg>
+      <span>Library</span>
+    </button>
+    <button class="view-btn" id="btn-grid" onclick="setView('grid')">
+      <svg viewBox="0 0 16 16" class="vb-icon"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.1"/><rect x="9" y="9" width="4.5" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>
+      <span>Grid</span>
+    </button>
+    <button class="view-btn" id="btn-map" onclick="setView('map')">
+      <svg viewBox="0 0 16 16" class="vb-icon"><path d="M8 1.5c2.5 0 4.5 2 4.5 4.5C12.5 9.5 8 14.5 8 14.5S3.5 9.5 3.5 6C3.5 3.5 5.5 1.5 8 1.5z" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="8" cy="6" r="1.6" fill="currentColor"/></svg>
+      <span>Map</span>
+    </button>
     <div style="width:1px;background:rgba(140,110,55,0.2);align-self:stretch;margin:0 4px;flex-shrink:0;"></div>
     <button class="filter-btn" id="btn-expand" onclick="toggleExpanded()" title="Show contextual texts">+ Context & Edification</button>
   </div>
@@ -2444,6 +2550,57 @@ const CONTEXTUAL_TITLES = new Set([
 ]);
 let showContextual = false;
 
+
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+let searchQuery = '';
+function volumeMatchesSearch(v, q) {
+  if (!q) return true;
+  const hay = [
+    v.title, v.author, v.series, v.date_label, v.subtitle,
+    SIGNIFICANCE[v.title] || '',
+    ANCIENT_WORLD_INFO[v.title] ? (ANCIENT_WORLD_INFO[v.title].summary + ' ' + ANCIENT_WORLD_INFO[v.title].biblical) : ''
+  ].join(' ').toLowerCase();
+  return q.toLowerCase().split(/\s+/).every(term => hay.includes(term));
+}
+function onSearch(value) {
+  searchQuery = value.trim();
+  document.getElementById('search-clear').classList.toggle('show', searchQuery.length > 0);
+  applySearch();
+}
+function clearSearch() {
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').classList.remove('show');
+  applySearch();
+}
+function applySearch() {
+  const q = searchQuery;
+  document.querySelectorAll('#timeline-track .tl-col').forEach(col => {
+    const title = col.getAttribute('data-title');
+    if (!title) return;
+    const v = allVolumes.find(x => x.title === title);
+    const match = v ? volumeMatchesSearch(v, q) : true;
+    col.classList.toggle('search-hidden', !match);
+  });
+  document.querySelectorAll('#grid-view .vol-card').forEach(card => {
+    const title = card.getAttribute('data-title');
+    const v = title ? allVolumes.find(x => x.title === title) : null;
+    const match = v ? volumeMatchesSearch(v, q) : true;
+    card.classList.toggle('search-hidden', !match);
+  });
+  document.querySelectorAll('#grid-view .era-section').forEach(sec => {
+    const visible = sec.querySelectorAll('.vol-card:not(.search-hidden)').length;
+    sec.classList.toggle('search-hidden', visible === 0);
+  });
+}
+document.addEventListener('keydown', e => {
+  const readerOpen = document.getElementById('reader-modal').classList.contains('open');
+  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && !readerOpen) {
+    e.preventDefault();
+    document.getElementById('search-input').focus();
+  }
+});
+
 function toggleExpanded() {
   showContextual = !showContextual;
   const btn = document.getElementById('btn-expand');
@@ -2459,7 +2616,9 @@ function toggleExpanded() {
   const track = document.getElementById('timeline-track');
   if (track) track.classList.toggle('hide-context', !showContextual);
 
-  // Grid and bible views still re-render (they are not visible during timeline toggle)
+  // Keep grid in sync — toggle its context class (re-render if currently showing)
+  const gridView = document.getElementById('grid-view');
+  if (gridView) gridView.classList.toggle('hide-context', !showContextual);
   if (currentView === 'grid')  renderGrid();
   if (currentView === 'bible') renderBible();
 }
@@ -2986,6 +3145,7 @@ function renderTimeline() {
         // Card below spine
         const bc = document.createElement('div');
         bc.className = 'tl-col' + ctxClass;
+        bc.setAttribute('data-title', v.title);
         bc.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
         bc.appendChild(dot.cloneNode());
         bc.appendChild(stem.cloneNode());
@@ -3003,6 +3163,7 @@ function renderTimeline() {
         // Card above spine
         const ac = document.createElement('div');
         ac.className = 'tl-col' + ctxClass;
+        ac.setAttribute('data-title', v.title);
         ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
         ac.appendChild(dot.cloneNode());
         ac.appendChild(stem.cloneNode());
@@ -3099,27 +3260,36 @@ function renderTimeline() {
 // ── GRID RENDER ───────────────────────────────────────────────────────────────
 function renderGrid() {
   const container = document.getElementById('grid-view');
-  const filtered = filterVolumes(allVolumes);
-  const groups = groupByEra(filtered);
+  // Render ALL volumes (status filter only); contextual hidden via CSS class like the timeline
+  let vols = allVolumes;
+  if (currentFilter !== 'all') vols = vols.filter(v => v.status === currentFilter);
+  const groups = groupByEra(vols);
   container.innerHTML = '';
+  container.classList.toggle('hide-context', !showContextual);
   let total = 0;
   ERAS.forEach(era => {
-    const vols = groups[era.label];
-    if (!vols || vols.length === 0) return;
-    total += vols.length;
+    const eraVols = groups[era.label];
+    if (!eraVols || eraVols.length === 0) return;
+    // Count only those visible in current context state for the empty check
+    const visibleCount = showContextual ? eraVols.length : eraVols.filter(v => !isContextual(v)).length;
+    total += visibleCount;
     const section = document.createElement('div');
     section.className = 'era-section';
+    // Mark the whole section contextual only if every volume in it is contextual
+    const allCtx = eraVols.every(v => isContextual(v));
+    if (allCtx) section.classList.add('ctx-section');
     section.innerHTML = `<div class="era-heading">${era.label}</div><div class="era-rule"></div>`;
     const grid = document.createElement('div');
     grid.className = 'volumes-grid';
-    vols.forEach(v => {
-      const card = document.createElement(v.filename ? 'a' : 'div');
-      card.className = `vol-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
+    eraVols.forEach(v => {
+      const card = document.createElement('div');
+      card.className = `vol-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}${isContextual(v) ? ' ctx-card' : ''}`;
+      card.setAttribute('data-title', v.title);
       card.style.setProperty('--series-color', volumeColor(v));
       if (v.filename) {
-        card.href = './' + v.filename;
-        card.setAttribute('download', '');
-        card.title = 'Download EPUB';
+        card.style.cursor = 'pointer';
+        card.title = 'Click to read';
+        card.addEventListener('click', () => openReader(v));
       }
       card.innerHTML = `
         <span class="status-icon">${statusIcon(v.status)}</span>
@@ -3135,7 +3305,7 @@ function renderGrid() {
     container.appendChild(section);
   });
   document.getElementById('empty-state').style.display = total === 0 ? 'block' : 'none';
-  updateStats(filtered);
+  updateStats(showContextual ? vols : vols.filter(v => !isContextual(v)));
 }
 
 function updateStats(filtered) {
@@ -3402,6 +3572,7 @@ function setView(view) {
 
 function render() {
   if (currentView === 'timeline') { renderTimeline(); }
+  if (typeof applySearch === 'function' && searchQuery) applySearch();
   else if (currentView === 'bible') renderBiblical();
   else if (currentView === 'map') { /* map handles itself */ }
   else renderGrid();
@@ -3470,8 +3641,12 @@ function hideBottomSheet() {
 let readerBook = null;
 let readerRendition = null;
 
+let readerCurrentVol = null;
+let readerFontSize = parseInt(localStorage.getItem('readerFontSize') || '18');
+
 function openReader(vol) {
   if (!vol.filename) return;
+  readerCurrentVol = vol;
 
   const modal    = document.getElementById('reader-modal');
   const readerArea = document.getElementById('reader-area');
@@ -3526,7 +3701,7 @@ function openReader(vol) {
         'scrollbar-width': 'none !important',
         '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
-        'font-size':    '18px !important',
+        'font-size':    readerFontSize + 'px !important',
         'line-height':  '1.8 !important',
         'padding':      '24px 0 !important',
         'margin':       '0 auto !important',
@@ -3546,7 +3721,7 @@ function openReader(vol) {
         'scrollbar-width': 'none !important',
         '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
-        'font-size':    '18px !important',
+        'font-size':    readerFontSize + 'px !important',
         'line-height':  '1.8 !important',
         'padding':      '24px 0 !important',
         'margin':       '0 auto !important',
@@ -3587,19 +3762,27 @@ function openReader(vol) {
       readerBook.loaded.navigation.then(nav => {
         const chEl = document.getElementById('reader-chapter');
         if (chEl && nav.toc) {
-          // Find first real content item (skip cover/copyright)
           const first = nav.toc.find(t => t.subitems && t.subitems.length)
                      || nav.toc.find(t => !t.href.includes('title') && !t.href.includes('cover'))
                      || nav.toc[0];
           if (first) chEl.textContent = (first.subitems && first.subitems.length ? first.subitems[0].label : first.label).trim();
         }
+        buildReaderTOC(nav.toc || []);
       });
 
       readerBook.locations.generate(600).then(() => {
         const total = readerBook.locations.total || readerBook.locations.length();
         const el    = document.getElementById('reader-progress');
 
+        // Restore saved reading position for this book
+        const savedCfi = localStorage.getItem('readerPos:' + vol.filename);
+        if (savedCfi) {
+          try { readerRendition.display(savedCfi); } catch(e) {}
+        }
+
         readerRendition.on('relocated', loc => {
+          // Persist reading position
+          try { localStorage.setItem('readerPos:' + vol.filename, loc.start.cfi); } catch(e) {}
           // Progress %
           if (el) {
             try {
@@ -3660,6 +3843,46 @@ function openReader(vol) {
 }
 
 
+function buildReaderTOC(toc) {
+  const panel = document.getElementById('reader-toc');
+  if (!panel) return;
+  const inner = document.createElement('div');
+  inner.className = 'reader-toc-inner';
+  inner.innerHTML = '<div class="reader-toc-heading">Contents</div>';
+  const addItems = (items, sub) => {
+    items.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'reader-toc-item' + (sub ? ' reader-toc-sub' : '');
+      el.textContent = item.label.trim();
+      el.addEventListener('click', () => {
+        if (readerRendition) readerRendition.display(item.href);
+        // Close TOC on mobile after selecting
+        if (window.innerWidth <= 768) toggleTOC(false);
+      });
+      inner.appendChild(el);
+      if (item.subitems && item.subitems.length) addItems(item.subitems, true);
+    });
+  };
+  addItems(toc, false);
+  panel.innerHTML = '';
+  panel.appendChild(inner);
+}
+
+function toggleTOC(force) {
+  const panel = document.getElementById('reader-toc');
+  if (!panel) return;
+  const open = typeof force === 'boolean' ? force : !panel.classList.contains('open');
+  panel.classList.toggle('open', open);
+}
+
+function readerFont(dir) {
+  readerFontSize = Math.max(13, Math.min(28, readerFontSize + dir * 1));
+  localStorage.setItem('readerFontSize', String(readerFontSize));
+  if (readerRendition) {
+    readerRendition.themes.fontSize(readerFontSize + 'px');
+  }
+}
+
 function readerNext() {
   if (!readerRendition) return;
   // Move to next spine item (chapter)
@@ -3672,6 +3895,7 @@ function readerPrev() {
 
 function closeReader() {
   document.getElementById('reader-modal').classList.remove('open');
+  document.getElementById('reader-toc').classList.remove('open');
   document.body.style.overflow = '';
   document.removeEventListener('keydown', readerKeyHandler);
   if (readerBook) { readerBook.destroy(); readerBook = null; readerRendition = null; }
@@ -3786,11 +4010,11 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v11.3 · 4 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v11.7 · 4 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
-  <!-- Top bar: title + close only -->
+  <!-- Top bar -->
   <div class="reader-header">
     <div class="reader-meta">
       <div id="reader-title" class="reader-title"></div>
@@ -3798,13 +4022,19 @@ setTimeout(introShowcase, 200);
       <div id="reader-chapter" class="reader-chapter"></div>
     </div>
     <div class="reader-controls">
+      <button onclick="toggleTOC()" class="reader-btn" id="reader-toc-btn" title="Table of contents">☰ Contents</button>
+      <button onclick="readerFont(-1)" class="reader-btn reader-font-btn" title="Smaller text">A−</button>
+      <button onclick="readerFont(1)" class="reader-btn reader-font-btn" title="Larger text">A+</button>
       <a id="reader-dl-btn" href="#" download class="reader-btn reader-dl">↓ Download</a>
       <button onclick="closeReader()" class="reader-btn reader-close">✕ Close</button>
     </div>
   </div>
-  <!-- Reading area -->
-  <div id="reader-area" class="reader-area"></div>
-  <!-- Bottom bar: navigation + progress + download -->
+  <!-- Body: TOC panel + reading area -->
+  <div class="reader-body">
+    <div id="reader-toc" class="reader-toc"></div>
+    <div id="reader-area" class="reader-area"></div>
+  </div>
+  <!-- Bottom bar -->
   <div class="reader-footer">
     <div class="reader-nav">
       <button onclick="readerPrev()" class="reader-nav-btn">↑ Chapter</button>
