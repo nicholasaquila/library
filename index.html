@@ -2057,7 +2057,7 @@ const LIBRARY_DATA = {
       "filename": "(c0-1100BC)_Enuma_Elish.epub"
     },
     {
-      "id": 5,
+      "id": 50,
       "title": "The Iliad",
       "subtitle": null,
       "author": "Homer",
@@ -2069,7 +2069,7 @@ const LIBRARY_DATA = {
       "filename": null
     },
     {
-      "id": 5,
+      "id": 51,
       "title": "The Odyssey",
       "subtitle": null,
       "author": "Homer",
@@ -2465,7 +2465,7 @@ const LIBRARY_DATA = {
       "filename": null
     },
     {
-      "id": 37,
+      "id": 52,
       "title": "The Triads",
       "subtitle": null,
       "author": "St. Gregory Palamas",
@@ -2791,6 +2791,7 @@ function groupByEra(vols) {
 
 
 const SIGNIFICANCE = {
+  "The Iliad & The Odyssey":                  "Homeric epics; ambrosia, the heavenly food of the gods that preserves their immortality",
   // Voices of the Ancient World
 
   // Voices of the Ancient World
@@ -3204,8 +3205,84 @@ function renderTimeline() {
     const belowRow = document.createElement('div');
     belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:180px;';
 
+    // Track indices to skip (e.g. the Odyssey, merged into the Iliad column)
+    const skipIdx = new Set();
+
     // Place all vols in order, alternating
     vols.forEach((v, i) => {
+      if (skipIdx.has(i)) return;
+
+      // ── SPECIAL CASE: merge The Iliad + The Odyssey into one shared-dot column ──
+      const next = vols[i + 1];
+      if (v.title === 'The Iliad' && next && next.title === 'The Odyssey') {
+        skipIdx.add(i + 1);
+        const il = v, od = next;
+        const ctxC = isContextual(il) ? ' ctx-col' : '';
+        const col = volumeColor(il);
+
+        // Build a card (reusable)
+        const buildHomerCard = (vol) => {
+          const c = document.createElement('div');
+          c.className = `tl-card ${vol.status}${vol.status === 'uncertain' ? ' uncertain' : ''}`;
+          c.style.setProperty('--sc', volumeColor(vol));
+          if (vol.filename) {
+            c.style.cursor = 'pointer';
+            c.title = 'Click to read';
+            c.addEventListener('click', () => openReader(vol));
+          }
+          c.innerHTML = `
+            <div class="tl-card-status">${statusIcon(vol.status)}</div>
+            <div class="tl-card-date">${vol.date_label}</div>
+            <div class="tl-card-title">${vol.title}</div>
+            ${vol.author ? `<div class="tl-card-author">${vol.author}</div>` : ''}
+            <div class="tl-card-badge" style="--sc:${volumeColor(vol)};border-color:${volumeColor(vol)};color:${volumeColor(vol)}">${vol.series}</div>
+          `;
+          return c;
+        };
+
+        const stemUp = document.createElement('div');
+        stemUp.className = 'tl-stem'; stemUp.style.cssText = 'height:20px;width:1px;background:rgba(140,110,55,0.28);';
+        const stemDn = stemUp.cloneNode();
+
+        // ABOVE: Iliad card (column-reverse so card sits up, stem down to spine)
+        const ac = document.createElement('div');
+        ac.className = 'tl-col' + ctxC;
+        ac.setAttribute('data-title', il.title);
+        ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
+        ac.appendChild(stemUp);
+        ac.appendChild(buildHomerCard(il));
+        // Shared significance tag (ambrosia) above the Iliad
+        const sigText2 = SIGNIFICANCE['The Iliad & The Odyssey'];
+        if (sigText2) {
+          const wrap = document.createElement('div');
+          wrap.className = 'sig-wrap up';
+          const line = document.createElement('div'); line.className = 'sig-line';
+          const tag = document.createElement('div'); tag.className = 'sig-tag'; tag.textContent = sigText2;
+          wrap.appendChild(line); wrap.appendChild(tag);
+          ac.appendChild(wrap);
+        }
+        aboveRow.appendChild(ac);
+
+        // BELOW: Odyssey card
+        const bc = document.createElement('div');
+        bc.className = 'tl-col' + ctxC;
+        bc.setAttribute('data-title', od.title);
+        bc.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
+        bc.appendChild(stemDn);
+        bc.appendChild(buildHomerCard(od));
+        belowRow.appendChild(bc);
+
+        // SPINE: single shared dot
+        const spineDot = document.createElement('div');
+        spineDot.className = 'tl-col' + ctxC;
+        spineDot.style.cssText = 'width:160px;display:flex;justify-content:center;flex-shrink:0;';
+        const sd = document.createElement('div');
+        sd.style.cssText = `width:10px;height:10px;border-radius:50%;background:${col};border:2px solid var(--cream);box-shadow:0 0 0 1px ${col};z-index:2;`;
+        spineDot.appendChild(sd);
+        spineRow.appendChild(spineDot);
+        return; // done with this merged pair
+      }
+
       const col = document.createElement('div');
       col.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
 
@@ -4188,7 +4265,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.4 · 4 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.5 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
