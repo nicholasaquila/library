@@ -1734,29 +1734,32 @@
     min-height: 0;
     overflow: hidden;
     position: relative;
+    --toc-w: clamp(180px, 22vw, 280px);
   }
+  /* Desktop: permanently reserve the TOC strip so the reading column is fixed */
+  @media (min-width: 769px) {
+    .reader-area { margin-left: var(--toc-w); }
+  }
+  /* TOC occupies a permanently-reserved strip on the left; the reading column
+     never changes width, so the text never moves or reflows. */
   .reader-toc {
-    width: 0;
-    flex-shrink: 0;
+    position: absolute;
+    top: 0; left: 0;
     height: 100%;
+    width: var(--toc-w, 240px);
     overflow-y: auto;
     overflow-x: hidden;
     background: var(--cream-dark, #ece3cc);
     border-right: 1px solid rgba(140,110,55,0.3);
-    transition: width 0.3s ease;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 5;
     -webkit-overflow-scrolling: touch;
   }
-  /* Responsive width: a fraction of the window, clamped to sensible bounds */
-  .reader-toc.open { width: clamp(180px, 22vw, 280px); }
+  .reader-toc.open { transform: translateX(0); }
   @media (max-width: 768px) {
-    /* On small screens the TOC overlays (space is too tight to share) */
-    .reader-toc {
-      position: absolute; top: 0; left: 0; z-index: 20;
-      width: 0;
-      box-shadow: 4px 0 24px rgba(0,0,0,0.28);
-      transform: translateX(0);
-    }
-    .reader-toc.open { width: min(72vw, 280px); }
+    /* On phones, overlay above the text (no reserved strip) */
+    .reader-toc { width: min(72vw, 280px); box-shadow: 4px 0 24px rgba(0,0,0,0.28); z-index: 20; }
   }
   .reader-toc-inner { padding: 16px 12px; }
   .reader-toc-heading {
@@ -4154,7 +4157,7 @@ function openReader(vol) {
       const tocBtn = document.getElementById('reader-toc-btn');
       if (tocBtn) tocBtn.classList.add('active');
     }
-    // Measure after opening so the initial layout uses the correct remaining width
+    // reader-area reserves the TOC strip via CSS, so its width is already final
     const RW = readerArea.offsetWidth;
     const RH = readerArea.offsetHeight;
 
@@ -4394,15 +4397,8 @@ function toggleTOC(force) {
   // Reflect state on the button
   const btn = document.getElementById('reader-toc-btn');
   if (btn) btn.classList.toggle('active', open);
-  // On desktop the TOC shares space (flex), so the reading area changes width.
-  // Resize the rendition once after the slide animation so the text reflows to
-  // fill the remaining space — never overlapped, never clipped.
-  if (window.innerWidth > 768 && readerRendition) {
-    const area = document.getElementById('reader-area');
-    setTimeout(() => {
-      if (readerRendition && area) readerRendition.resize(area.offsetWidth, area.offsetHeight);
-    }, 330);
-  }
+  // The TOC strip is permanently reserved on desktop, so the reading column width
+  // never changes — no resize, no reflow, the text never moves.
 }
 
 function readerFont(dir) {
@@ -4549,7 +4545,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.7 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.8 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
