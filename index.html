@@ -1878,6 +1878,49 @@
 
 
 
+
+  /* ── MAP FLASH LABEL (during play) ── */
+  .map-flash-label {
+    position: absolute;
+    transform: translate(-50%, -100%) translateY(6px);
+    background: rgba(28,26,16,0.92);
+    border: 0.5px solid var(--gold);
+    padding: 4px 9px;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+    opacity: 0;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .map-flash-label.show { opacity: 1; transform: translate(-50%, -100%) translateY(0); }
+  .map-flash-label::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--gold);
+  }
+  .map-flash-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #f0e8d0;
+    line-height: 1.1;
+  }
+  .map-flash-place {
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
 </style>
 </head>
 <body>
@@ -3003,6 +3046,34 @@ function mapAddMarker(vol, animate) {
   return marker;
 }
 
+
+function mapFlashLabel(vol) {
+  const loc = MAP_LOCATIONS[vol.title];
+  if (!loc || !mapInstance) return;
+  // Transient label marker above the pin
+  const labelIcon = L.divIcon({
+    className: '',
+    html: `<div class="map-flash-label">
+      <span class="map-flash-title">${vol.title}</span>
+      <span class="map-flash-place">${loc.place || ''}</span>
+    </div>`,
+    iconSize: [0, 0],
+    iconAnchor: [0, 26],
+  });
+  const labelMarker = L.marker([loc.lat, loc.lng], { icon: labelIcon, interactive: false, zIndexOffset: 1000 });
+  labelMarker.addTo(mapInstance);
+  // Fade in, hold, fade out, remove
+  const el = labelMarker.getElement();
+  if (el) {
+    const box = el.querySelector('.map-flash-label');
+    if (box) {
+      requestAnimationFrame(() => { box.classList.add('show'); });
+      setTimeout(() => { if (box) box.classList.remove('show'); }, 1400);
+    }
+  }
+  setTimeout(() => { if (mapInstance) mapInstance.removeLayer(labelMarker); }, 1900);
+}
+
 function mapReset() {
   mapMarkers.forEach(m => { if (mapInstance) mapInstance.removeLayer(m); });
   mapMarkers = [];
@@ -3052,11 +3123,12 @@ function mapPlay() {
     }
     mapCurrentIdx++;
     document.getElementById('map-slider').value = mapCurrentIdx;
-    mapAddMarker(mapSortedVols[mapCurrentIdx], true);
     const vol = mapSortedVols[mapCurrentIdx];
+    mapAddMarker(vol, true);
+    mapFlashLabel(vol);
     document.getElementById('map-year-label').textContent = vol.date_label;
-    document.getElementById('map-vol-label').textContent = vol.title + ' · ';
-    setMapEra(vol.date_sort); + (MAP_LOCATIONS[vol.title] ? MAP_LOCATIONS[vol.title].place : '');
+    document.getElementById('map-vol-label').textContent = vol.title;
+    setMapEra(vol.date_sort);
   }, 1200);
 }
 
@@ -4265,7 +4337,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.5 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.6 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
