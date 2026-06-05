@@ -1818,14 +1818,11 @@
     flex-shrink: 0;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 6px 28px;
+    gap: 14px;
+    padding: 7px 28px;
     background: rgba(140,110,55,0.06);
     border-bottom: 1px solid rgba(140,110,55,0.15);
-    overflow-x: auto;
-    scrollbar-width: none;
   }
-  .continue-bar::-webkit-scrollbar { display: none; }
   .continue-label {
     font-family: 'Cinzel', serif;
     font-size: 8px;
@@ -1834,60 +1831,141 @@
     color: var(--gold);
     flex-shrink: 0;
   }
-  .continue-items { display: flex; gap: 8px; align-items: center; }
-  .continue-chip {
+  .continue-items { display: flex; gap: 12px; align-items: center; }
+
+  /* Hero resume card */
+  .continue-hero {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 4px 10px;
+    gap: 11px;
+    padding: 5px 14px 5px 8px;
     border: 1px solid rgba(140,110,55,0.3);
     background: var(--cream);
     cursor: pointer;
-    flex-shrink: 0;
-    transition: border-color 0.2s, background 0.2s;
-    max-width: 240px;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    max-width: 320px;
   }
-  .continue-chip:hover { border-color: var(--gold); background: rgba(200,160,64,0.08); }
-  .continue-chip-text { display: flex; flex-direction: column; min-width: 0; }
-  .continue-chip-title {
+  .continue-hero:hover { border-color: var(--gold); background: rgba(200,160,64,0.08); box-shadow: 0 1px 8px rgba(140,110,55,0.12); }
+  .continue-hero-text { display: flex; flex-direction: column; min-width: 0; gap: 1px; }
+  .continue-hero-label {
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .continue-hero-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     color: var(--ink);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.15;
   }
-  .continue-chip-prog {
+  .continue-hero-author {
+    font-family: 'EB Garamond', serif;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--brown-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Progress ring (used in hero, popover, and cards) */
+  .continue-ring {
+    --pct: 0;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: conic-gradient(var(--gold) calc(var(--pct) * 1%), rgba(140,110,55,0.18) 0);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .continue-ring::after {
+    content: '';
+    position: absolute;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--cream);
+  }
+  .continue-ring span {
+    position: relative;
+    z-index: 1;
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    color: var(--brown);
+    letter-spacing: 0.02em;
+  }
+  .continue-ring.small { width: 20px; height: 20px; }
+  .continue-ring.small::after { width: 13px; height: 13px; }
+
+  /* "+N more" overflow */
+  .continue-more-wrap { position: relative; flex-shrink: 0; }
+  .continue-more-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 11px;
+    border: 1px solid rgba(140,110,55,0.3);
+    background: transparent;
+    color: var(--brown);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .continue-more-btn:hover { border-color: var(--gold); color: var(--ink); }
+  .continue-popover {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 60;
+    background: var(--cream);
+    border: 1px solid rgba(140,110,55,0.3);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    min-width: 240px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 4px;
+  }
+  .continue-pop-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 9px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .continue-pop-row:hover { background: rgba(200,160,64,0.1); }
+  .continue-pop-text { display: flex; flex-direction: column; min-width: 0; }
+  .continue-pop-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .continue-pop-prog {
     font-family: 'Cinzel', serif;
     font-size: 7px;
     letter-spacing: 0.1em;
     color: var(--brown-light);
   }
-  .continue-ring {
-    --pct: 0;
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    background: conic-gradient(var(--gold) calc(var(--pct) * 1%), rgba(140,110,55,0.2) 0);
-    display: flex; align-items: center; justify-content: center;
-  }
-  .continue-ring::after {
-    content: '';
-    width: 15px; height: 15px;
-    border-radius: 50%;
-    background: var(--cream);
-  }
-  .continue-dismiss {
-    background: none; border: none; color: var(--brown-light);
-    cursor: pointer; font-size: 12px; padding: 0 2px; flex-shrink: 0;
-  }
   [data-theme="dark"] .continue-bar { background: rgba(200,160,64,0.05); }
-  [data-theme="dark"] .continue-chip { background: #211f15; }
+  [data-theme="dark"] .continue-hero { background: #211f15; }
   [data-theme="dark"] .continue-ring::after { background: #211f15; }
+  [data-theme="dark"] .continue-popover { background: #211f15; }
   @media (max-width: 768px) {
     .continue-bar { padding: 5px 12px; gap: 8px; }
-    .continue-chip { max-width: 170px; padding: 3px 8px; }
+    .continue-hero { max-width: 230px; padding: 4px 10px 4px 6px; gap: 8px; }
+    .continue-hero-title { font-size: 13px; }
+    .continue-ring { width: 26px; height: 26px; }
+    .continue-ring::after { width: 19px; height: 19px; }
+  }
+
     .continue-chip-title { font-size: 12px; }
   }
 
@@ -1942,6 +2020,24 @@
     text-transform: uppercase;
     color: var(--gold);
   }
+
+
+  /* ── CARD READING PROGRESS BAR ── */
+  .card-prog {
+    width: 100%;
+    height: 2px;
+    background: rgba(140,110,55,0.18);
+    margin-top: 6px;
+    border-radius: 1px;
+    overflow: hidden;
+  }
+  .card-prog-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 1px;
+    transition: width 0.3s ease;
+  }
+  [data-theme="dark"] .card-prog { background: rgba(200,160,64,0.15); }
 
 </style>
 </head>
@@ -2714,12 +2810,8 @@ let showContextual = false;
 
 
 // ── CONTINUE READING ──────────────────────────────────────────────────────────
-function buildContinueReading() {
-  const bar   = document.getElementById('continue-bar');
-  const items = document.getElementById('continue-items');
-  if (!bar || !items) return;
-
-  // Gather in-progress books from localStorage
+let continueExpanded = false;
+function getInProgressBooks() {
   const inProgress = [];
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
@@ -2728,32 +2820,85 @@ function buildContinueReading() {
       const seen = parseInt(localStorage.getItem(key) || '0');
       const pct  = parseFloat(localStorage.getItem('readerPct:' + filename) || '0');
       const vol  = allVolumes.find(v => v.filename === filename);
-      if (vol && pct > 0.01 && pct < 0.995) {
-        inProgress.push({ vol, pct, seen });
-      }
+      if (vol && pct > 0.01 && pct < 0.995) inProgress.push({ vol, pct, seen });
     }
   }
-  // Most recent first, cap at 6
   inProgress.sort((a, b) => b.seen - a.seen);
-  const list = inProgress.slice(0, 6);
+  return inProgress;
+}
 
+
+function volumeProgress(vol) {
+  if (!vol || !vol.filename) return 0;
+  const p = parseFloat(localStorage.getItem('readerPct:' + vol.filename) || '0');
+  return (p > 0.01 && p < 0.995) ? p : (p >= 0.995 ? 1 : 0);
+}
+
+function buildContinueReading() {
+  const bar   = document.getElementById('continue-bar');
+  const items = document.getElementById('continue-items');
+  if (!bar || !items) return;
+
+  const list = getInProgressBooks();
   if (list.length === 0) { bar.style.display = 'none'; return; }
 
+  const hero = list[0];
+  const rest = list.slice(1);
+  const heroPct = Math.round(hero.pct * 100);
+
   items.innerHTML = '';
-  list.forEach(({ vol, pct }) => {
-    const chip = document.createElement('div');
-    chip.className = 'continue-chip';
-    const pctInt = Math.round(pct * 100);
-    chip.innerHTML = `
-      <div class="continue-ring" style="--pct:${pctInt}"></div>
-      <div class="continue-chip-text">
-        <span class="continue-chip-title">${vol.title}</span>
-        <span class="continue-chip-prog">${pctInt}% · ${vol.author || ''}</span>
-      </div>
-    `;
-    chip.addEventListener('click', () => openReader(vol));
-    items.appendChild(chip);
-  });
+
+  // Hero resume card
+  const heroEl = document.createElement('div');
+  heroEl.className = 'continue-hero';
+  heroEl.innerHTML = `
+    <div class="continue-ring" style="--pct:${heroPct}"><span>${heroPct}%</span></div>
+    <div class="continue-hero-text">
+      <span class="continue-hero-label">Resume reading</span>
+      <span class="continue-hero-title">${hero.vol.title}</span>
+      <span class="continue-hero-author">${hero.vol.author || ''}</span>
+    </div>
+  `;
+  heroEl.addEventListener('click', () => openReader(hero.vol));
+  items.appendChild(heroEl);
+
+  // Overflow: "+N more" pill that expands to a small popover list
+  if (rest.length > 0) {
+    const moreWrap = document.createElement('div');
+    moreWrap.className = 'continue-more-wrap';
+
+    const moreBtn = document.createElement('button');
+    moreBtn.className = 'continue-more-btn';
+    moreBtn.textContent = continueExpanded ? 'Hide' : ('+' + rest.length + ' more');
+    moreBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      continueExpanded = !continueExpanded;
+      buildContinueReading();
+    });
+    moreWrap.appendChild(moreBtn);
+
+    if (continueExpanded) {
+      const pop = document.createElement('div');
+      pop.className = 'continue-popover';
+      rest.forEach(({ vol, pct }) => {
+        const row = document.createElement('div');
+        row.className = 'continue-pop-row';
+        const p = Math.round(pct * 100);
+        row.innerHTML = `
+          <div class="continue-ring small" style="--pct:${p}"></div>
+          <div class="continue-pop-text">
+            <span class="continue-pop-title">${vol.title}</span>
+            <span class="continue-pop-prog">${p}% · ${vol.author || ''}</span>
+          </div>
+        `;
+        row.addEventListener('click', () => openReader(vol));
+        pop.appendChild(row);
+      });
+      moreWrap.appendChild(pop);
+    }
+    items.appendChild(moreWrap);
+  }
+
   bar.style.display = 'flex';
 }
 
@@ -3418,6 +3563,8 @@ function renderTimeline() {
         });
       }
       const fileButtons = '';
+      const prog = volumeProgress(v);
+      const progBar = prog > 0 ? `<div class="card-prog"><div class="card-prog-fill" style="width:${Math.round(prog*100)}%"></div></div>` : '';
       card.innerHTML = `
         <div class="tl-card-status">${statusIcon(v.status)}</div>
         <div class="tl-card-date">${v.date_label}</div>
@@ -3425,6 +3572,7 @@ function renderTimeline() {
         ${v.subtitle ? `<div class="tl-card-subtitle">${v.subtitle}</div>` : ''}
         ${v.author ? `<div class="tl-card-author">${v.author}</div>` : ''}
         <div class="tl-card-badge" style="--sc:${volumeColor(v)};border-color:${volumeColor(v)};color:${volumeColor(v)}">${v.series}</div>
+        ${progBar}
         ${fileButtons}
       `;
 
@@ -3604,6 +3752,8 @@ function renderGrid() {
         card.title = 'Click to read';
         card.addEventListener('click', () => openReader(v));
       }
+      const gprog = volumeProgress(v);
+      const gprogBar = gprog > 0 ? `<div class="card-prog"><div class="card-prog-fill" style="width:${Math.round(gprog*100)}%"></div></div>` : '';
       card.innerHTML = `
         <span class="status-icon">${statusIcon(v.status)}</span>
         <div class="vol-date">${v.date_label}</div>
@@ -3611,6 +3761,7 @@ function renderGrid() {
         ${v.subtitle?`<div class="vol-subtitle">${v.subtitle}</div>`:''}
         ${v.author?`<div class="vol-author">${v.author}</div>`:''}
         <span class="series-badge" style="color:${volumeColor(v)};border-color:${volumeColor(v)}">${v.series}</span>
+        ${gprogBar}
       `;
       grid.appendChild(card);
     });
@@ -4294,6 +4445,9 @@ function closeReader() {
   document.removeEventListener('keydown', readerKeyHandler);
   if (readerBook) { readerBook.destroy(); readerBook = null; readerRendition = null; }
   buildContinueReading();
+  // Refresh card progress bars to reflect new reading position
+  if (currentView === 'timeline') renderTimeline();
+  else if (currentView === 'grid') renderGrid();
 }
 
 
@@ -4405,7 +4559,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.5 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.6 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
