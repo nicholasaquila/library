@@ -1740,12 +1740,12 @@
     top: 0;
     left: 0;
     height: 100%;
-    width: 210px;
+    width: 200px;
     z-index: 20;
     overflow-y: auto;
     background: var(--cream-dark, #ece3cc);
-    border-right: 1px solid rgba(140,110,55,0.2);
-    box-shadow: 4px 0 20px rgba(0,0,0,0.18);
+    border-right: 1px solid rgba(140,110,55,0.3);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.28);
     transform: translateX(-100%);
     transition: transform 0.3s ease;
     -webkit-overflow-scrolling: touch;
@@ -4005,7 +4005,6 @@ function openReader(vol) {
       if (tocPanel) tocPanel.classList.add('open');
       const tocBtn = document.getElementById('reader-toc-btn');
       if (tocBtn) tocBtn.classList.add('active');
-      readerArea.style.marginLeft = '210px';
     }
     const RW = readerArea.offsetWidth;
     const RH = readerArea.offsetHeight;
@@ -4223,17 +4222,7 @@ function toggleTOC(force) {
   // Reflect state on the button
   const btn = document.getElementById('reader-toc-btn');
   if (btn) btn.classList.toggle('active', open);
-  // On desktop, shift the reading area so the text clears the TOC (margin shift +
-  // one resize so epub reflows into the new width — no clipping, no double-pass).
-  const body = document.querySelector('.reader-body');
-  const area = document.getElementById('reader-area');
-  if (window.innerWidth > 768 && area) {
-    area.style.transition = 'margin-left 0.3s ease';
-    area.style.marginLeft = open ? '210px' : '0';
-    setTimeout(() => {
-      if (readerRendition && area) readerRendition.resize(area.offsetWidth, area.offsetHeight);
-    }, 320);
-  }
+  // Pure overlay — the page never moves; the TOC floats over the left margin.
 }
 
 function readerFont(dir) {
@@ -4262,8 +4251,6 @@ function readerPrev() {
 function closeReader() {
   document.getElementById('reader-modal').classList.remove('open');
   document.getElementById('reader-toc').classList.remove('open');
-  const ra0 = document.getElementById('reader-area');
-  if (ra0) ra0.style.marginLeft = '0';
   document.body.style.overflow = '';
   document.removeEventListener('keydown', readerKeyHandler);
   if (readerBook) { readerBook.destroy(); readerBook = null; readerRendition = null; }
@@ -4379,7 +4366,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.1 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.2 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
