@@ -2034,6 +2034,35 @@
   }
   [data-theme="dark"] .card-prog { background: rgba(200,160,64,0.15); }
 
+
+  .continue-reset-row {
+    font-family: 'Cinzel', serif;
+    font-size: 7.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brown-light);
+    padding: 8px 9px 6px;
+    margin-top: 3px;
+    border-top: 1px solid rgba(140,110,55,0.18);
+    cursor: pointer;
+    text-align: center;
+    transition: color 0.15s, background 0.15s;
+  }
+  .continue-reset-row:hover { color: #8b3a3a; background: rgba(139,0,0,0.06); }
+
+
+  .continue-reset-single {
+    background: none;
+    border: 1px solid rgba(140,110,55,0.3);
+    color: var(--brown-light);
+    width: 24px; height: 24px;
+    cursor: pointer;
+    font-size: 13px;
+    flex-shrink: 0;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .continue-reset-single:hover { color: #8b3a3a; border-color: #8b3a3a; }
+
 </style>
 </head>
 <body>
@@ -2827,6 +2856,23 @@ function volumeProgress(vol) {
   return (p > 0.01 && p < 0.995) ? p : (p >= 0.995 ? 1 : 0);
 }
 
+function resetReadingProgress() {
+  // Remove all reader progress keys from localStorage
+  const keys = [];
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && (k.startsWith('readerPos:') || k.startsWith('readerPct:') || k.startsWith('readerSeen:'))) {
+      keys.push(k);
+    }
+  }
+  keys.forEach(k => localStorage.removeItem(k));
+  continueExpanded = false;
+  buildContinueReading();
+  // Refresh card progress bars
+  if (currentView === 'timeline') renderTimeline();
+  else if (currentView === 'grid') renderGrid();
+}
+
 function buildContinueReading() {
   const bar   = document.getElementById('continue-bar');
   const items = document.getElementById('continue-items');
@@ -2887,9 +2933,31 @@ function buildContinueReading() {
         row.addEventListener('click', () => openReader(vol));
         pop.appendChild(row);
       });
+      // Reset reading progress option
+      const resetRow = document.createElement('div');
+      resetRow.className = 'continue-reset-row';
+      resetRow.textContent = 'Reset reading progress';
+      resetRow.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (confirm('Clear all saved reading progress? This cannot be undone.')) {
+          resetReadingProgress();
+        }
+      });
+      pop.appendChild(resetRow);
       moreWrap.appendChild(pop);
     }
     items.appendChild(moreWrap);
+  } else {
+    // Only one book in progress — still offer a small reset control
+    const resetBtn = document.createElement('button');
+    resetBtn.className = 'continue-reset-single';
+    resetBtn.textContent = '↺';
+    resetBtn.title = 'Reset reading progress';
+    resetBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (confirm('Clear saved reading progress? This cannot be undone.')) resetReadingProgress();
+    });
+    items.appendChild(resetBtn);
   }
 
   bar.style.display = 'flex';
@@ -4555,7 +4623,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.0 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.1 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
