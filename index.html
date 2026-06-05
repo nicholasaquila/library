@@ -1336,6 +1336,7 @@
   }
   .reader-area {
     flex: 1;
+    position: relative;
     background: var(--cream);
     overflow-y: auto;
     overflow-x: hidden;
@@ -3972,6 +3973,12 @@ function openReader(vol) {
   document.getElementById('reader-progress').textContent = '';
   if (readerBook) { try { readerBook.destroy(); } catch(e){} readerBook = null; readerRendition = null; }
 
+  // Set the reading-area background to match the page theme right away so there is
+  // no dark flash while the EPUB fetches and parses. Show a quiet loading hint.
+  const darkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+  readerArea.style.background = darkNow ? '#1c1a10' : '#f5f0e1';
+  readerArea.innerHTML = `<div id="reader-loading" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:${darkNow ? 'rgba(200,160,64,0.5)' : 'rgba(140,110,55,0.5)'};">opening…</div>`;
+
   // PDF — just iframe it
   if (vol.filename.endsWith('.pdf')) {
     readerArea.innerHTML = `<iframe src="./${vol.filename}" style="width:100%;height:100%;border:none;display:block;"></iframe>`;
@@ -3985,12 +3992,23 @@ function openReader(vol) {
 
     readerBook = ePub('./' + vol.filename);
 
+    // Open TOC first on desktop so the rendition is sized to the final width up front
+    if (window.innerWidth > 768) {
+      const tocPanel = document.getElementById('reader-toc');
+      if (tocPanel) tocPanel.classList.add('open');
+      const tocBtn = document.getElementById('reader-toc-btn');
+      if (tocBtn) tocBtn.classList.add('active');
+    }
+    // Measure AFTER the TOC is open so width is final (no later resize reflow)
+    const RW = readerArea.offsetWidth;
+    const RH = readerArea.offsetHeight;
+
     readerRendition = readerBook.renderTo(readerArea, {
       manager: 'continuous',
       flow:    'scrolled',
       spread:  'none',
-      width:   W,
-      height:  H,
+      width:   RW,
+      height:  RH,
     });
 
     // Theme injection
@@ -4038,8 +4056,12 @@ function openReader(vol) {
     readerRendition.themes.select(isDark() ? 'dark' : 'light');
     readerRendition.themes.fontSize(readerFontSize + 'px');
 
-    // Display first page then set up counter
-    readerRendition.display().then(() => {
+    // Restore saved position on first display (avoids a second jump/repaint)
+    const savedStart = localStorage.getItem('readerPos:' + vol.filename);
+    readerRendition.display(savedStart || undefined).then(() => {
+        // Remove loading hint
+        const ld = document.getElementById('reader-loading');
+        if (ld) ld.remove();
         // Inject scrollbar-hiding CSS directly into epub iframe document
         const hideScrollbars = () => {
           document.querySelectorAll('#reader-area iframe').forEach(iframe => {
@@ -4067,28 +4089,11 @@ function openReader(vol) {
           if (first) chEl.textContent = (first.subitems && first.subitems.length ? first.subitems[0].label : first.label).trim();
         }
         buildReaderTOC(nav.toc || []);
-        // Default-open TOC on desktop
-        if (window.innerWidth > 768) {
-          toggleTOC(true);
-          // Resize rendition after TOC opens so text re-centres in remaining space
-          setTimeout(() => {
-            if (readerRendition) {
-              const ra = document.getElementById('reader-area');
-              if (ra) readerRendition.resize(ra.offsetWidth, ra.offsetHeight);
-            }
-          }, 320);
-        }
       });
 
       readerBook.locations.generate(600).then(() => {
         const total = readerBook.locations.total || readerBook.locations.length();
         const el    = document.getElementById('reader-progress');
-
-        // Restore saved reading position for this book
-        const savedCfi = localStorage.getItem('readerPos:' + vol.filename);
-        if (savedCfi) {
-          try { readerRendition.display(savedCfi); } catch(e) {}
-        }
 
         readerRendition.on('relocated', loc => {
           // Progress %: use the END of the visible range so reaching the
@@ -4345,7 +4350,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.7 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.8 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
