@@ -1740,7 +1740,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    width: 280px;
+    width: 210px;
     z-index: 20;
     overflow-y: auto;
     background: var(--cream-dark, #ece3cc);
@@ -1751,7 +1751,7 @@
     -webkit-overflow-scrolling: touch;
   }
   .reader-toc.open { transform: translateX(0); }
-  .reader-toc-inner { padding: 18px 16px; }
+  .reader-toc-inner { padding: 16px 12px; }
   .reader-toc-heading {
     font-family: 'Cinzel', serif;
     font-size: 9px;
@@ -1762,7 +1762,7 @@
   }
   .reader-toc-item {
     font-family: 'EB Garamond', serif;
-    font-size: 13px;
+    font-size: 12px;
     color: var(--brown);
     padding: 6px 8px;
     cursor: pointer;
@@ -1780,7 +1780,7 @@
   #reader-toc-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
   [data-theme="dark"] #reader-toc-btn.active { background: var(--gold); color: #1c1a10; border-color: var(--gold); }
   @media (max-width: 768px) {
-    .reader-toc { width: 78vw; }
+    .reader-toc { width: 68vw; max-width: 260px; }
     .reader-body { position: relative; }
     #reader-toc-btn span, .reader-font-btn { }
   }
@@ -4347,7 +4347,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.9 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.0 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
