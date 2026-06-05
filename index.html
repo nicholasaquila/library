@@ -1970,48 +1970,50 @@
   /* ── MAP FLASH LABEL (during play) ── */
   .map-flash-label {
     position: absolute;
-    transform: translate(-50%, -100%) translateY(6px);
-    background: rgba(28,26,16,0.92);
-    border: 0.5px solid var(--gold);
-    padding: 4px 9px;
+    left: 0; top: 0;
+    transform: translate(-50%, calc(-100% - 14px));
+    background: rgba(24,22,14,0.95);
+    border: 1px solid rgba(200,160,64,0.7);
+    border-radius: 3px;
+    padding: 7px 13px 8px;
     white-space: nowrap;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1px;
+    gap: 3px;
     opacity: 0;
-    transition: opacity 0.35s ease, transform 0.35s ease;
+    transition: opacity 0.35s ease;
     pointer-events: none;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
   }
-  .map-flash-label.show { opacity: 1; transform: translate(-50%, -100%) translateY(0); }
+  .map-flash-label.show { opacity: 1; }
   .map-flash-label::after {
     content: '';
     position: absolute;
-    bottom: -5px; left: 50%;
+    bottom: -6px; left: 50%;
     transform: translateX(-50%);
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid var(--gold);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid rgba(200,160,64,0.7);
   }
   .map-flash-date {
     font-family: 'Cinzel', serif;
-    font-size: 7px;
-    letter-spacing: 0.12em;
-    color: rgba(240,232,208,0.65);
-    margin-bottom: 1px;
+    font-size: 8px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(240,232,208,0.6);
   }
   .map-flash-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
-    color: #f0e8d0;
-    line-height: 1.1;
+    color: #f5ecd2;
+    line-height: 1.15;
   }
   .map-flash-place {
     font-family: 'Cinzel', serif;
-    font-size: 7px;
-    letter-spacing: 0.12em;
+    font-size: 8px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--gold);
   }
@@ -2062,6 +2064,70 @@
     transition: color 0.15s, border-color 0.15s;
   }
   .continue-reset-single:hover { color: #8b3a3a; border-color: #8b3a3a; }
+
+
+  /* ── MAP POPUP ── */
+  .leaflet-popup-content-wrapper {
+    background: #f5f0e1 !important;
+    border: 1px solid rgba(140,110,55,0.4) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25) !important;
+  }
+  .leaflet-popup-content {
+    margin: 0 !important;
+    line-height: 1.5 !important;
+  }
+  .leaflet-popup-tip {
+    background: #f5f0e1 !important;
+    border: 1px solid rgba(140,110,55,0.4) !important;
+  }
+  .leaflet-popup-close-button { color: #8c6e37 !important; padding: 6px 8px 0 0 !important; }
+  .map-popup {
+    font-family: 'EB Garamond', serif;
+    padding: 12px 16px 13px;
+    color: #1e1910;
+  }
+  .mp-head { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+  .mp-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .mp-date {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8c6e37;
+  }
+  .mp-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: #1e1910;
+    line-height: 1.2;
+    margin-bottom: 1px;
+  }
+  .mp-author {
+    font-size: 12px;
+    font-style: italic;
+    color: #50410a;
+  }
+  .mp-rule {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(140,110,55,0.4), transparent);
+    margin: 8px 0 6px;
+  }
+  .mp-place {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #6e5a28;
+  }
+  .mp-sig {
+    font-size: 12.5px;
+    font-style: italic;
+    color: #5a4a20;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
 
 </style>
 </head>
@@ -3252,16 +3318,22 @@ function mapAddMarker(vol, animate) {
   });
 
   const marker = L.marker([loc.lat, loc.lng], { icon });
-  const sigPopup = SIGNIFICANCE[vol.title] ? `<div style="font-style:italic;font-size:11px;color:#6e5a28;margin-top:4px;border-top:0.5px solid rgba(140,110,55,0.2);padding-top:4px;">${SIGNIFICANCE[vol.title]}</div>` : '';
+  const col2 = volumeColor(vol);
+  const sigText = SIGNIFICANCE[vol.title];
+  const sigPopup = sigText ? `<div class="mp-sig">${sigText}</div>` : '';
   marker.bindPopup(`
-    <div style="font-family:'EB Garamond',serif;">
-      <div style="font-family:'Cinzel',serif;font-size:8px;letter-spacing:0.1em;color:#8c6e37;">${vol.date_label}</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:600;color:#1e1910;margin:2px 0;">${vol.title}</div>
-      ${vol.author ? `<div style="font-size:11px;color:#50410a;">${vol.author}</div>` : ''}
-      <div style="font-size:10px;color:#6e5a28;margin-top:2px;">${loc.place}</div>
+    <div class="map-popup">
+      <div class="mp-head">
+        <span class="mp-dot" style="background:${col2}"></span>
+        <span class="mp-date">${vol.date_label}</span>
+      </div>
+      <div class="mp-title">${vol.title}</div>
+      ${vol.author ? `<div class="mp-author">${vol.author}</div>` : ''}
+      <div class="mp-rule"></div>
+      <div class="mp-place">${loc.place}</div>
       ${sigPopup}
     </div>
-  `, { maxWidth: 260 });
+  `, { maxWidth: 280, minWidth: 200 });
 
   marker.addTo(mapInstance);
   mapMarkers.push(marker);
@@ -4666,7 +4738,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.6 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.8 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
