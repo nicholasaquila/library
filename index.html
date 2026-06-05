@@ -1968,6 +1968,13 @@
 
 
   /* ── MAP FLASH LABEL (during play) ── */
+  .map-flash-icon {
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: none !important;
+    border: none !important;
+  }
   .map-flash-label {
     position: absolute;
     transform: translate(-50%, -100%) translateY(6px);
@@ -3351,14 +3358,14 @@ function mapFlashLabel(vol) {
   if (!loc || !mapInstance) return;
   // Transient label marker above the pin
   const labelIcon = L.divIcon({
-    className: '',
+    className: 'map-flash-icon',
     html: `<div class="map-flash-label">
       <span class="map-flash-date">${vol.date_label}</span>
       <span class="map-flash-title">${vol.title}</span>
       <span class="map-flash-place">${loc.place || ''}</span>
     </div>`,
-    iconSize: [0, 0],
-    iconAnchor: [0, 26],
+    iconSize: null,
+    iconAnchor: [0, 22],
   });
   const labelMarker = L.marker([loc.lat, loc.lng], { icon: labelIcon, interactive: false, zIndexOffset: 1000 });
   labelMarker.addTo(mapInstance);
@@ -4736,7 +4743,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.9 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v17.0 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
