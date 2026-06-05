@@ -4267,7 +4267,7 @@ function openReader(vol) {
         '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
         'line-height':  '1.8 !important',
-        'padding':      '24px 32px !important',
+        'padding':      '24px 40px !important',
         'box-sizing':   'border-box !important',
         'overflow-x':   'hidden !important',
       },
@@ -4279,6 +4279,7 @@ function openReader(vol) {
       'table': { 'max-width': '100% !important', 'table-layout': 'fixed !important' },
       'div, section, article': { 'max-width': '100% !important' },
       '*': { 'max-width': '100% !important', 'box-sizing': 'border-box !important' },
+      'p.verse': { 'margin-left': '1.6em !important', 'text-indent': '0 !important', 'padding-left': '0 !important' },
     };
     const themeDark = {
       'html': { 'overflow-x': 'hidden !important', 'box-sizing': 'border-box !important' },
@@ -4289,7 +4290,7 @@ function openReader(vol) {
         '-ms-overflow-style': 'none !important',
         'font-family':  '"EB Garamond", Georgia, serif !important',
         'line-height':  '1.8 !important',
-        'padding':      '24px 32px !important',
+        'padding':      '24px 40px !important',
         'box-sizing':   'border-box !important',
         'overflow-x':   'hidden !important',
       },
@@ -4302,6 +4303,7 @@ function openReader(vol) {
       'table': { 'max-width': '100% !important', 'table-layout': 'fixed !important' },
       'div, section, article': { 'max-width': '100% !important' },
       '*': { 'max-width': '100% !important', 'box-sizing': 'border-box !important' },
+      'p.verse': { 'margin-left': '1.6em !important', 'text-indent': '0 !important', 'padding-left': '0 !important' },
     };
 
     readerRendition.themes.register('light', themeLight);
@@ -4664,7 +4666,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.5 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.6 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
