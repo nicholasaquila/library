@@ -1736,9 +1736,10 @@
     position: relative;
     --toc-w: clamp(180px, 22vw, 280px);
   }
-  /* Desktop: permanently reserve the TOC strip so the reading column is fixed */
+  /* Desktop: reserve the TOC strip on BOTH sides so the reading column stays
+     centred in the window and never moves when the TOC opens. */
   @media (min-width: 769px) {
-    .reader-area { margin-left: var(--toc-w); }
+    .reader-area { padding-left: var(--toc-w); padding-right: var(--toc-w); box-sizing: border-box; }
   }
   /* TOC occupies a permanently-reserved strip on the left; the reading column
      never changes width, so the text never moves or reflows. */
@@ -4157,9 +4158,13 @@ function openReader(vol) {
       const tocBtn = document.getElementById('reader-toc-btn');
       if (tocBtn) tocBtn.classList.add('active');
     }
-    // reader-area reserves the TOC strip via CSS, so its width is already final
-    const RW = readerArea.offsetWidth;
-    const RH = readerArea.offsetHeight;
+    // reader-area reserves the TOC strip via CSS padding on both sides; subtract
+    // padding so epub.js renders into the true (centred) content width.
+    const cs0 = getComputedStyle(readerArea);
+    const padL = parseFloat(cs0.paddingLeft) || 0;
+    const padR = parseFloat(cs0.paddingRight) || 0;
+    const RW = readerArea.clientWidth - padL - padR;
+    const RH = readerArea.clientHeight;
 
     readerRendition = readerBook.renderTo(readerArea, {
       manager:    'continuous',
@@ -4545,7 +4550,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.8 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.9 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
