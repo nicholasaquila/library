@@ -53,7 +53,7 @@
   header {
     flex-shrink: 0;
     text-align: center;
-    padding: 28px 40px 20px;
+    padding: 10px 40px 2px;
     border-bottom: 1px solid rgba(140,110,55,0.3);
     position: relative;
   }
@@ -63,7 +63,7 @@
     width: 200px;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 16px auto 0;
+    margin: 6px auto 0;
   }
   .header-eyebrow {
     font-family: 'Cinzel', serif;
@@ -75,11 +75,11 @@
   }
   .header-title {
     font-family: 'Cinzel', serif;
-    font-size: clamp(18px, 3vw, 32px);
+    font-size: clamp(15px, 2.2vw, 22px);
     font-weight: 600;
     color: var(--ink);
-    letter-spacing: 0.08em;
-    line-height: 1.2;
+    letter-spacing: 0.1em;
+    line-height: 1;
     text-transform: uppercase;
   }
   .header-sub {
@@ -3402,7 +3402,12 @@ function renderTimeline() {
 
     const eraEl = document.createElement('div');
     eraEl.className = 'tl-era';
-    eraEl.style.minWidth = (vols.length * 160 + 40) + 'px';
+    // Count columns: the Iliad+Odyssey pair share ONE column, so subtract merged pairs
+    let colCount = vols.length;
+    for (let k = 0; k < vols.length - 1; k++) {
+      if (vols[k].title === 'The Iliad' && vols[k+1].title === 'The Odyssey') colCount -= 1;
+    }
+    eraEl.style.minWidth = (colCount * 160 + 40) + 'px';
 
     // Era label
     const labelEl = document.createElement('div');
@@ -4550,7 +4555,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.9 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.0 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
