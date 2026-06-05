@@ -1733,17 +1733,24 @@
     display: flex;
     min-height: 0;
     overflow: hidden;
+    position: relative;
   }
   .reader-toc {
-    width: 0;
-    flex-shrink: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 280px;
+    z-index: 20;
     overflow-y: auto;
     background: var(--cream-dark, #ece3cc);
     border-right: 1px solid rgba(140,110,55,0.2);
-    transition: width 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.18);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
     -webkit-overflow-scrolling: touch;
   }
-  .reader-toc.open { width: 280px; }
+  .reader-toc.open { transform: translateX(0); }
   .reader-toc-inner { padding: 18px 16px; }
   .reader-toc-heading {
     font-family: 'Cinzel', serif;
@@ -1773,7 +1780,7 @@
   #reader-toc-btn.active { background: var(--ink); color: var(--cream); border-color: var(--ink); }
   [data-theme="dark"] #reader-toc-btn.active { background: var(--gold); color: #1c1a10; border-color: var(--gold); }
   @media (max-width: 768px) {
-    .reader-toc.open { width: 78vw; position: absolute; z-index: 20; height: 100%; box-shadow: 4px 0 20px rgba(0,0,0,0.3); }
+    .reader-toc { width: 78vw; }
     .reader-body { position: relative; }
     #reader-toc-btn span, .reader-font-btn { }
   }
@@ -3992,14 +3999,13 @@ function openReader(vol) {
 
     readerBook = ePub('./' + vol.filename);
 
-    // Open TOC first on desktop so the rendition is sized to the final width up front
+    // Open TOC by default on desktop (it overlays, so it doesn't affect layout)
     if (window.innerWidth > 768) {
       const tocPanel = document.getElementById('reader-toc');
       if (tocPanel) tocPanel.classList.add('open');
       const tocBtn = document.getElementById('reader-toc-btn');
       if (tocBtn) tocBtn.classList.add('active');
     }
-    // Measure AFTER the TOC is open so width is final (no later resize reflow)
     const RW = readerArea.offsetWidth;
     const RH = readerArea.offsetHeight;
 
@@ -4197,16 +4203,7 @@ function toggleTOC(force) {
   // Reflect state on the button
   const btn = document.getElementById('reader-toc-btn');
   if (btn) btn.classList.toggle('active', open);
-  // Resize the rendition after the panel animation so text re-centres in the
-  // remaining width (desktop only — on mobile the TOC overlays, no resize needed)
-  if (window.innerWidth > 768 && readerRendition) {
-    const doResize = () => {
-      const ra = document.getElementById('reader-area');
-      if (ra && readerRendition) readerRendition.resize(ra.offsetWidth, ra.offsetHeight);
-    };
-    setTimeout(doResize, 330);
-    setTimeout(doResize, 450);
-  }
+  // TOC overlays the text now — no resize needed, the page never moves.
 }
 
 function readerFont(dir) {
@@ -4350,7 +4347,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.8 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v13.9 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
