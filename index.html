@@ -2134,6 +2134,143 @@
     line-height: 1.5;
   }
 
+
+  /* ── DOCTRINE VIEW ── */
+  #doctrine-view { flex: 1; overflow-y: auto; }
+  .doctrine-inner { max-width: 1100px; margin: 0 auto; padding: 28px 32px 60px; }
+  .doctrine-intro { text-align: center; margin-bottom: 28px; }
+  .doctrine-intro-title {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+    text-transform: uppercase;
+  }
+  .doctrine-intro-sub {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--brown-light);
+    max-width: 580px;
+    margin: 8px auto 0;
+    line-height: 1.5;
+  }
+  .doctrine-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .doctrine-card {
+    border: 1px solid rgba(140,110,55,0.3);
+    background: var(--cream);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  }
+  .doctrine-card:hover { border-color: var(--gold); box-shadow: 0 3px 14px rgba(140,110,55,0.12); }
+  .doctrine-card.active { border-color: var(--gold); background: rgba(200,160,64,0.08); box-shadow: 0 3px 14px rgba(140,110,55,0.15); }
+  .doctrine-card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 5px;
+  }
+  .doctrine-card-blurb {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: var(--brown);
+    line-height: 1.45;
+  }
+  .doctrine-card-count {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 10px;
+  }
+  .doctrine-detail { border-top: 1px solid rgba(140,110,55,0.2); padding-top: 24px; }
+  .doctrine-detail-head { text-align: center; margin-bottom: 22px; }
+  .dd-name {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .dd-blurb {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--brown);
+    margin-top: 5px;
+  }
+  .doctrine-stream { max-width: 680px; margin: 0 auto; }
+  .witness { display: flex; gap: 16px; padding-bottom: 22px; }
+  .witness-spine { position: relative; flex-shrink: 0; width: 12px; display: flex; justify-content: center; }
+  .witness-spine::before {
+    content: ''; position: absolute; top: 4px; bottom: -22px; width: 1px;
+    background: rgba(140,110,55,0.3); left: 50%; transform: translateX(-50%);
+  }
+  .witness:last-child .witness-spine::before { display: none; }
+  .witness-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; position: relative; z-index: 1; box-shadow: 0 0 0 2px var(--cream); }
+  .witness-body { flex: 1; }
+  .witness-date {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .witness-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.15;
+    margin-top: 2px;
+  }
+  .witness-author { font-family: 'EB Garamond', serif; font-size: 12px; font-style: italic; color: var(--brown-light); }
+  .witness-quote {
+    font-family: 'EB Garamond', serif;
+    font-size: 15px;
+    color: var(--brown);
+    border-left: 2px solid var(--gold);
+    padding-left: 12px;
+    margin: 9px 0;
+    line-height: 1.5;
+  }
+  .witness-note { font-family: 'EB Garamond', serif; font-size: 12.5px; color: var(--brown-light); margin-bottom: 9px; line-height: 1.4; }
+  .witness-goto {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 13px;
+    border: 1px solid rgba(140,110,55,0.4);
+    background: transparent;
+    color: var(--brown);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .witness-goto:hover { border-color: var(--gold); color: var(--ink); background: rgba(200,160,64,0.08); }
+  .witness-pending {
+    font-family: 'EB Garamond', serif;
+    font-size: 11px;
+    font-style: italic;
+    color: var(--brown-light);
+    opacity: 0.7;
+  }
+  [data-theme="dark"] .doctrine-card { background: #211f15; }
+  [data-theme="dark"] .doctrine-card.active { background: rgba(200,160,64,0.1); }
+  @media (max-width: 768px) {
+    .doctrine-inner { padding: 16px 14px 50px; }
+    .doctrine-list { grid-template-columns: 1fr; gap: 10px; }
+    .doctrine-intro-title { font-size: 16px; }
+  }
+
 </style>
 </head>
 <body>
@@ -2176,6 +2313,10 @@
       <svg viewBox="0 0 16 16" class="vb-icon"><path d="M8 1.5c2.5 0 4.5 2 4.5 4.5C12.5 9.5 8 14.5 8 14.5S3.5 9.5 3.5 6C3.5 3.5 5.5 1.5 8 1.5z" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="8" cy="6" r="1.6" fill="currentColor"/></svg>
       <span>Map</span>
     </button>
+    <button class="view-btn" id="btn-doctrine" onclick="setView('doctrine')">
+      <svg viewBox="0 0 16 16" class="vb-icon"><circle cx="8" cy="3.2" r="1.5" fill="currentColor"/><circle cx="3.5" cy="11" r="1.5" fill="currentColor"/><circle cx="12.5" cy="11" r="1.5" fill="currentColor"/><path d="M8 4.5v3M8 7.5L4 10M8 7.5L12 10" stroke="currentColor" stroke-width="1" fill="none"/></svg>
+      <span>Doctrine</span>
+    </button>
     <div style="width:1px;background:rgba(140,110,55,0.2);align-self:stretch;margin:0 4px;flex-shrink:0;"></div>
     <button class="filter-btn" id="btn-expand" onclick="toggleExpanded()" title="Show cultural context and edification">+ Cultural Context &amp; Edification</button>
   </div>
@@ -2207,6 +2348,17 @@
 <div id="grid-view"></div>
 
 <!-- BIBLICAL VIEW -->
+<div id="doctrine-view" style="display:none;">
+  <div class="doctrine-inner">
+    <div class="doctrine-intro">
+      <div class="doctrine-intro-title">The Witness of Tradition</div>
+      <div class="doctrine-intro-sub">Select a doctrine to trace its witnesses through the centuries. Each cites the source and, where the text is in the library, opens to the passage.</div>
+    </div>
+    <div id="doctrine-list" class="doctrine-list"></div>
+    <div id="doctrine-detail" class="doctrine-detail"></div>
+  </div>
+</div>
+
 <div id="bible-view">
   <div class="mobile-timeline-hint">← swipe to explore the scripture timeline →</div>
   <div class="scripture-note">
@@ -2606,7 +2758,7 @@ const LIBRARY_DATA = {
       "date_label": "553 AD",
       "date_sort": 553,
       "series": "Ecumenical Councils",
-      "status": "needs-refresh",
+      "status": "complete",
       "notes": null,
       "filename": "(c553AD)_Second_Council_of_Constantinople.epub"
     },
@@ -2942,6 +3094,161 @@ function resetReadingProgress() {
   // Refresh card progress bars
   if (currentView === 'timeline') renderTimeline();
   else if (currentView === 'grid') renderGrid();
+}
+
+
+// ── DOCTRINE WEB ───────────────────────────────────────────────────────────────
+// Tier 1: hand-curated witnesses. Quotes are short (under 15 words) and attributed.
+// `match` is the verbatim phrase used to locate + highlight the passage in the EPUB
+// (must appear in the library's edition for the highlight to land).
+const DOCTRINES = [
+  {
+    id: 'real-presence',
+    name: 'The Real Presence',
+    blurb: 'That the Eucharist is truly the Body and Blood of Christ, not a mere symbol.',
+    witnesses: [
+      {
+        title: 'The Didache',
+        note: 'The Eucharist named a holy thing, guarded from the unbaptised.',
+        quote: 'Let no one eat or drink of your Eucharist except those baptised.',
+        match: 'Let no one eat or drink of your Eucharist'
+      },
+      {
+        title: 'The Letters of St. Ignatius of Antioch',
+        note: 'Against those who deny the Eucharist is Christ\'s flesh.',
+        quote: 'The Eucharist is the flesh of our Saviour Jesus Christ.',
+        match: 'flesh of our Saviour'
+      },
+      {
+        title: 'The First and Second Apologies',
+        note: 'Justin tells the emperor the bread is not common bread.',
+        quote: 'Not as common bread and common drink do we receive these.',
+        match: 'not as common bread'
+      }
+    ]
+  },
+  {
+    id: 'apostolic-succession',
+    name: 'Apostolic Succession',
+    blurb: 'That the authority of the apostles is handed on through an unbroken line of bishops.',
+    witnesses: [
+      {
+        title: 'The First Epistle of Clement of Rome',
+        note: 'The apostles appointed successors to their ministry.',
+        quote: 'The apostles appointed their first-fruits to be bishops and deacons.',
+        match: 'bishops and deacons'
+      },
+      {
+        title: 'The Letters of St. Ignatius of Antioch',
+        note: 'Nothing be done in the Church apart from the bishop.',
+        quote: 'Do nothing connected with the Church without the bishop.',
+        match: 'without the bishop'
+      },
+      {
+        title: 'Against Heresies',
+        note: 'Irenaeus traces the bishops of Rome from the apostles.',
+        quote: 'We can enumerate those appointed bishops by the apostles.',
+        match: 'appointed'
+      }
+    ]
+  },
+  {
+    id: 'two-natures',
+    name: 'The Two Natures of Christ',
+    blurb: 'That Christ is one person in two natures, fully God and fully man.',
+    witnesses: [
+      {
+        title: 'On the Incarnation',
+        note: 'Athanasius: God became man that man might be deified.',
+        quote: 'He became man that we might become divine.',
+        match: 'become'
+      },
+      {
+        title: 'Council of Chalcedon',
+        note: 'The definition of two natures in one person.',
+        quote: 'One and the same Christ, made known in two natures.',
+        match: 'two natures'
+      },
+      {
+        title: 'Second Council of Constantinople',
+        note: 'Affirms the union against those who divide Christ.',
+        quote: 'The union of the Word of God with the flesh.',
+        match: 'union'
+      }
+    ]
+  }
+];
+
+let activeDoctrine = null;
+
+function renderDoctrine() {
+  const listEl = document.getElementById('doctrine-list');
+  const detailEl = document.getElementById('doctrine-detail');
+  if (!listEl || !detailEl) return;
+
+  // Build the doctrine selector cards
+  listEl.innerHTML = '';
+  DOCTRINES.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'doctrine-card' + (activeDoctrine === d.id ? ' active' : '');
+    card.innerHTML = `
+      <div class="doctrine-card-name">${d.name}</div>
+      <div class="doctrine-card-blurb">${d.blurb}</div>
+      <div class="doctrine-card-count">${d.witnesses.length} witnesses</div>
+    `;
+    card.addEventListener('click', () => {
+      activeDoctrine = (activeDoctrine === d.id) ? null : d.id;
+      renderDoctrine();
+    });
+    listEl.appendChild(card);
+  });
+
+  // Build the detail panel for the active doctrine
+  detailEl.innerHTML = '';
+  if (!activeDoctrine) { detailEl.style.display = 'none'; return; }
+  detailEl.style.display = 'block';
+
+  const d = DOCTRINES.find(x => x.id === activeDoctrine);
+  if (!d) return;
+
+  const header = document.createElement('div');
+  header.className = 'doctrine-detail-head';
+  header.innerHTML = `<div class="dd-name">${d.name}</div><div class="dd-blurb">${d.blurb}</div>`;
+  detailEl.appendChild(header);
+
+  // Chronological list of witnesses
+  const witnessesWithVols = d.witnesses.map(w => {
+    const vol = allVolumes.find(v => v.title === w.title);
+    return { ...w, vol };
+  }).filter(w => w.vol);
+  // Sort chronologically by date_sort
+  witnessesWithVols.sort((a, b) => a.vol.date_sort - b.vol.date_sort);
+
+  const stream = document.createElement('div');
+  stream.className = 'doctrine-stream';
+  witnessesWithVols.forEach(w => {
+    const item = document.createElement('div');
+    item.className = 'witness';
+    const canRead = w.vol.filename && w.vol.status === 'complete';
+    item.innerHTML = `
+      <div class="witness-spine"><span class="witness-dot" style="background:${volumeColor(w.vol)}"></span></div>
+      <div class="witness-body">
+        <div class="witness-date">${w.vol.date_label}</div>
+        <div class="witness-title">${w.vol.title}</div>
+        <div class="witness-author">${w.vol.author || ''}</div>
+        <div class="witness-quote">\u201c${w.quote}\u201d</div>
+        ${w.note ? `<div class="witness-note">${w.note}</div>` : ''}
+        ${canRead ? `<button class="witness-goto">Go to source &rarr;</button>` : `<span class="witness-pending">Edition not yet in library</span>`}
+      </div>
+    `;
+    if (canRead) {
+      item.querySelector('.witness-goto').addEventListener('click', () => {
+        openReaderAtPassage(w.vol, w.match);
+      });
+    }
+    stream.appendChild(item);
+  });
+  detailEl.appendChild(stream);
 }
 
 function buildContinueReading() {
@@ -4168,10 +4475,12 @@ function setView(view) {
   document.getElementById('btn-map').classList.toggle('active', view==='map');
   document.getElementById('btn-bible').classList.toggle('active', view==='bible');
   document.getElementById('btn-grid').classList.toggle('active', view==='grid');
+  document.getElementById('btn-doctrine').classList.toggle('active', view==='doctrine');
   document.getElementById('timeline-view').style.display = view==='timeline' ? 'flex'  : 'none';
   document.getElementById('bible-view').style.display    = view==='bible'    ? 'flex'  : 'none';
   document.getElementById('grid-view').style.display     = view==='grid'     ? 'block' : 'none';
   document.getElementById('map-view').style.display      = view==='map'      ? 'flex'  : 'none';
+  document.getElementById('doctrine-view').style.display = view==='doctrine' ? 'block' : 'none';
   if (view === 'map') { setTimeout(() => { initMap(); if (mapInstance) mapInstance.invalidateSize(); }, 100); }
   render();
 }
@@ -4183,6 +4492,8 @@ function render() {
     renderBiblical();
   } else if (currentView === 'grid') {
     renderGrid();
+  } else if (currentView === 'doctrine') {
+    renderDoctrine();
   }
   // map handles its own rendering via initMap
   // Re-apply any active search filter after rendering
@@ -4256,7 +4567,12 @@ let readerRendition = null;
 let readerCurrentVol = null;
 let readerFontSize = parseInt(localStorage.getItem('readerFontSize') || '18');
 
-function openReader(vol) {
+
+function openReaderAtPassage(vol, matchText) {
+  openReader(vol, matchText);
+}
+
+function openReader(vol, jumpMatch) {
   if (!vol.filename) return;
   readerCurrentVol = vol;
 
@@ -4426,6 +4742,32 @@ function openReader(vol) {
       readerBook.locations.generate(600).then(() => {
         const total = readerBook.locations.total || readerBook.locations.length();
         const el    = document.getElementById('reader-progress');
+
+        // If opened with a passage to find, search the book and jump+highlight it
+        if (jumpMatch) {
+          try {
+            readerBook.ready.then(() => {
+              const promises = readerBook.spine.spineItems.map(item =>
+                item.load(readerBook.load.bind(readerBook)).then(() => {
+                  const found = item.find(jumpMatch);
+                  item.unload();
+                  return found && found.length ? found : null;
+                }).catch(() => null)
+              );
+              Promise.all(promises).then(results => {
+                const hit = results.find(r => r);
+                if (hit && hit[0] && hit[0].cfi) {
+                  readerRendition.display(hit[0].cfi).then(() => {
+                    try {
+                      readerRendition.annotations.highlight(hit[0].cfi, {}, null, 'doctrine-hl',
+                        { 'fill': 'rgba(200,160,64,0.35)', 'fill-opacity': '0.6' });
+                    } catch(e) {}
+                  });
+                }
+              });
+            });
+          } catch(e) {}
+        }
 
         readerRendition.on('relocated', loc => {
           // Progress %: use the END of the visible range so reaching the
@@ -4743,7 +5085,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v17.0 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v17.2 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
