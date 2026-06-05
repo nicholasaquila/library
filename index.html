@@ -1833,42 +1833,33 @@
   }
   .continue-items { display: flex; gap: 12px; align-items: center; }
 
-  /* Hero resume card */
+  /* Hero resume card — compact, single line */
   .continue-hero {
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 5px 14px 5px 8px;
+    gap: 8px;
+    padding: 3px 11px 3px 4px;
     border: 1px solid rgba(140,110,55,0.3);
     background: var(--cream);
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-    max-width: 320px;
+    transition: border-color 0.2s, background 0.2s;
+    max-width: 220px;
   }
-  .continue-hero:hover { border-color: var(--gold); background: rgba(200,160,64,0.08); box-shadow: 0 1px 8px rgba(140,110,55,0.12); }
-  .continue-hero-text { display: flex; flex-direction: column; min-width: 0; gap: 1px; }
+  .continue-hero:hover { border-color: var(--gold); background: rgba(200,160,64,0.08); }
+  .continue-hero-text { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
   .continue-hero-label {
     font-family: 'Cinzel', serif;
     font-size: 7px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--gold);
+    flex-shrink: 0;
   }
   .continue-hero-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--ink);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.15;
-  }
-  .continue-hero-author {
-    font-family: 'EB Garamond', serif;
-    font-size: 11px;
-    font-style: italic;
-    color: var(--brown-light);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1877,7 +1868,7 @@
   /* Progress ring (used in hero, popover, and cards) */
   .continue-ring {
     --pct: 0;
-    width: 30px; height: 30px;
+    width: 24px; height: 24px;
     border-radius: 50%;
     flex-shrink: 0;
     background: conic-gradient(var(--gold) calc(var(--pct) * 1%), rgba(140,110,55,0.18) 0);
@@ -1887,7 +1878,7 @@
   .continue-ring::after {
     content: '';
     position: absolute;
-    width: 22px; height: 22px;
+    width: 17px; height: 17px;
     border-radius: 50%;
     background: var(--cream);
   }
@@ -2048,11 +2039,6 @@
   <div class="header-title">Bibliotheca Fidei</div>
 </header>
 
-<div id="continue-bar" class="continue-bar" style="display:none;">
-  <span class="continue-label">Continue reading</span>
-  <div id="continue-items" class="continue-items"></div>
-</div>
-
 <div class="controls-bar">
   <div class="filter-group">
     <span class="filter-label">Filter</span>
@@ -2065,6 +2051,9 @@
   <div class="search-wrap">
     <input type="text" id="search-input" class="search-input" placeholder="Search titles, authors, ideas…" oninput="onSearch(this.value)" autocomplete="off"/>
     <button class="search-clear" id="search-clear" onclick="clearSearch()" title="Clear">✕</button>
+  </div>
+  <div id="continue-bar" style="display:none;">
+    <div id="continue-items" class="continue-items"></div>
   </div>
   <div class="view-toggle">
     <button class="view-btn" id="btn-bible" onclick="setView('bible')">
@@ -2848,15 +2837,15 @@ function buildContinueReading() {
 
   items.innerHTML = '';
 
-  // Hero resume card
+  // Hero resume card — compact single line
   const heroEl = document.createElement('div');
   heroEl.className = 'continue-hero';
+  heroEl.title = 'Resume: ' + hero.vol.title + (hero.vol.author ? ' · ' + hero.vol.author : '');
   heroEl.innerHTML = `
-    <div class="continue-ring" style="--pct:${heroPct}"><span>${heroPct}%</span></div>
+    <div class="continue-ring" style="--pct:${heroPct}"><span>${heroPct}</span></div>
     <div class="continue-hero-text">
-      <span class="continue-hero-label">Resume reading</span>
+      <span class="continue-hero-label">Resume</span>
       <span class="continue-hero-title">${hero.vol.title}</span>
-      <span class="continue-hero-author">${hero.vol.author || ''}</span>
     </div>
   `;
   heroEl.addEventListener('click', () => openReader(hero.vol));
@@ -2900,6 +2889,7 @@ function buildContinueReading() {
   }
 
   bar.style.display = 'flex';
+  bar.style.alignItems = 'center';
 }
 
 // ── SEARCH ────────────────────────────────────────────────────────────────────
@@ -4559,7 +4549,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.6 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.7 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
