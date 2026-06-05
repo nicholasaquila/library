@@ -1771,7 +1771,7 @@
     transition: background 0.15s, color 0.15s;
   }
   .reader-toc-item:hover { background: rgba(140,110,55,0.12); color: var(--ink); }
-  .reader-toc-item.active { color: var(--gold); font-weight: 600; }
+  .reader-toc-item.active { color: var(--gold); font-weight: 600; background: rgba(200,160,64,0.14); border-left: 2px solid var(--gold); padding-left: 6px; }
   .reader-toc-sub { padding-left: 18px; font-size: 12px; }
   [data-theme="dark"] .reader-toc { background: #211f15; border-color: rgba(200,160,64,0.15); }
   [data-theme="dark"] .reader-toc-item { color: var(--brown); }
@@ -3999,12 +3999,13 @@ function openReader(vol) {
 
     readerBook = ePub('./' + vol.filename);
 
-    // Open TOC by default on desktop (it overlays, so it doesn't affect layout)
+    // Open TOC by default on desktop, and shift reading area to clear it
     if (window.innerWidth > 768) {
       const tocPanel = document.getElementById('reader-toc');
       if (tocPanel) tocPanel.classList.add('open');
       const tocBtn = document.getElementById('reader-toc-btn');
       if (tocBtn) tocBtn.classList.add('active');
+      readerArea.style.marginLeft = '210px';
     }
     const RW = readerArea.offsetWidth;
     const RH = readerArea.offsetHeight;
@@ -4135,6 +4136,7 @@ function openReader(vol) {
               };
               search(toc);
               if (label) chEl.textContent = label;
+              highlightTOC(href.split('#')[0]);
             } catch(e) {}
           }
         });
@@ -4182,6 +4184,7 @@ function buildReaderTOC(toc) {
       const el = document.createElement('div');
       el.className = 'reader-toc-item' + (sub ? ' reader-toc-sub' : '');
       el.textContent = item.label.trim();
+      el.setAttribute('data-href', (item.href || '').split('#')[0]);
       el.addEventListener('click', () => {
         if (readerRendition) readerRendition.display(item.href);
         if (window.innerWidth <= 768) toggleTOC(false);
@@ -4195,6 +4198,23 @@ function buildReaderTOC(toc) {
   panel.appendChild(inner);
 }
 
+function highlightTOC(currentHref) {
+  const items = document.querySelectorAll('#reader-toc .reader-toc-item');
+  let matched = null;
+  items.forEach(el => {
+    const h = el.getAttribute('data-href') || '';
+    el.classList.remove('active');
+    if (h && currentHref && (currentHref.includes(h) || h.includes(currentHref))) {
+      matched = el;
+    }
+  });
+  if (matched) {
+    matched.classList.add('active');
+    // Keep the active item in view within the TOC panel
+    matched.scrollIntoView({ block: 'nearest' });
+  }
+}
+
 function toggleTOC(force) {
   const panel = document.getElementById('reader-toc');
   if (!panel) return;
@@ -4203,7 +4223,17 @@ function toggleTOC(force) {
   // Reflect state on the button
   const btn = document.getElementById('reader-toc-btn');
   if (btn) btn.classList.toggle('active', open);
-  // TOC overlays the text now — no resize needed, the page never moves.
+  // On desktop, shift the reading area so the text clears the TOC (margin shift +
+  // one resize so epub reflows into the new width — no clipping, no double-pass).
+  const body = document.querySelector('.reader-body');
+  const area = document.getElementById('reader-area');
+  if (window.innerWidth > 768 && area) {
+    area.style.transition = 'margin-left 0.3s ease';
+    area.style.marginLeft = open ? '210px' : '0';
+    setTimeout(() => {
+      if (readerRendition && area) readerRendition.resize(area.offsetWidth, area.offsetHeight);
+    }, 320);
+  }
 }
 
 function readerFont(dir) {
@@ -4232,6 +4262,8 @@ function readerPrev() {
 function closeReader() {
   document.getElementById('reader-modal').classList.remove('open');
   document.getElementById('reader-toc').classList.remove('open');
+  const ra0 = document.getElementById('reader-area');
+  if (ra0) ra0.style.marginLeft = '0';
   document.body.style.overflow = '';
   document.removeEventListener('keydown', readerKeyHandler);
   if (readerBook) { readerBook.destroy(); readerBook = null; readerRendition = null; }
@@ -4347,7 +4379,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.0 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v14.1 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
