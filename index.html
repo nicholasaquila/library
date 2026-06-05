@@ -2842,7 +2842,7 @@ function getInProgressBooks() {
       const seen = parseInt(localStorage.getItem(key) || '0');
       const pct  = parseFloat(localStorage.getItem('readerPct:' + filename) || '0');
       const vol  = allVolumes.find(v => v.filename === filename);
-      if (vol && pct > 0.01 && pct < 0.995) inProgress.push({ vol, pct, seen });
+      if (vol && pct >= 0 && pct < 0.995) inProgress.push({ vol, pct, seen });
     }
   }
   inProgress.sort((a, b) => b.seen - a.seen);
@@ -4356,6 +4356,8 @@ function openReader(vol) {
             localStorage.setItem('readerPct:' + vol.filename, String(pctVal));
             localStorage.setItem('readerSeen:' + vol.filename, String(Date.now()));
             if (el) el.textContent = Math.round(pctVal * 100) + '%';
+            // Keep the resume bar fresh live (it's behind the modal but ready on close)
+            buildContinueReading();
           } catch(e) {}
           // Chapter name — match current spine href to TOC
           const chEl = document.getElementById('reader-chapter');
@@ -4502,28 +4504,47 @@ function readerPrev() {
   readerRendition.prev();
 }
 
+function persistCurrentPosition() {
+  return new Promise((resolve) => {
+    try {
+      if (!readerRendition || !readerCurrentVol || !readerBook || !readerBook.locations) { resolve(); return; }
+      const result = readerRendition.currentLocation();
+      const handle = (loc) => {
+        try {
+          if (loc && loc.start) {
+            const endCfi = (loc.end && loc.end.cfi) ? loc.end.cfi : loc.start.cfi;
+            let pctVal = loc.atEnd ? 1 : readerBook.locations.percentageFromCfi(endCfi);
+            localStorage.setItem('readerPos:' + readerCurrentVol.filename, loc.start.cfi);
+            localStorage.setItem('readerPct:' + readerCurrentVol.filename, String(pctVal));
+            localStorage.setItem('readerSeen:' + readerCurrentVol.filename, String(Date.now()));
+          }
+        } catch(e) {}
+        resolve();
+      };
+      // currentLocation() may return a location object OR a promise
+      if (result && typeof result.then === 'function') result.then(handle).catch(() => resolve());
+      else handle(result);
+    } catch(e) { resolve(); }
+  });
+}
+
+function refreshProgressUI() {
+  buildContinueReading();
+  if (currentView === 'timeline') renderTimeline();
+  else if (currentView === 'grid') renderGrid();
+}
+
 function closeReader() {
-  // Capture the very latest position before tearing down (relocated may be debounced)
-  try {
-    if (readerRendition && readerCurrentVol && readerBook && readerBook.locations) {
-      const loc = readerRendition.currentLocation();
-      if (loc && loc.start) {
-        const endCfi = (loc.end && loc.end.cfi) ? loc.end.cfi : loc.start.cfi;
-        let pctVal = loc.atEnd ? 1 : readerBook.locations.percentageFromCfi(endCfi);
-        localStorage.setItem('readerPos:' + readerCurrentVol.filename, loc.start.cfi);
-        localStorage.setItem('readerPct:' + readerCurrentVol.filename, String(pctVal));
-        localStorage.setItem('readerSeen:' + readerCurrentVol.filename, String(Date.now()));
-      }
-    }
-  } catch(e) {}
+  // Persist the latest position (sync or async), THEN rebuild the progress UI.
+  persistCurrentPosition().then(() => {
+    if (readerBook) { try { readerBook.destroy(); } catch(e){} readerBook = null; readerRendition = null; }
+    refreshProgressUI();
+  });
+  // Hide the modal immediately for responsiveness
   document.getElementById('reader-modal').classList.remove('open');
   document.getElementById('reader-toc').classList.remove('open');
   document.body.style.overflow = '';
   document.removeEventListener('keydown', readerKeyHandler);
-  if (readerBook) { readerBook.destroy(); readerBook = null; readerRendition = null; }
-  buildContinueReading();
-  if (currentView === 'timeline') renderTimeline();
-  else if (currentView === 'grid') renderGrid();
 }
 
 
@@ -4635,7 +4656,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.3 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.4 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
