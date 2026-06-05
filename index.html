@@ -4275,6 +4275,10 @@ function openReader(vol) {
       'p':  { 'color': '#1e1910 !important', 'margin': '0 0 1em !important' },
       'img': { 'max-width': '100% !important', 'height': 'auto !important', 'display': 'block', 'margin': '0 auto' },
       'img.cover-image, .cover-image-container': { 'max-width': '100% !important', 'max-height': '90vh !important', 'margin': '0 auto !important' },
+      'pre': { 'white-space': 'pre-wrap !important', 'word-wrap': 'break-word !important', 'overflow-wrap': 'break-word !important', 'max-width': '100% !important' },
+      'table': { 'max-width': '100% !important', 'table-layout': 'fixed !important' },
+      'div, section, article': { 'max-width': '100% !important' },
+      '*': { 'max-width': '100% !important', 'box-sizing': 'border-box !important' },
     };
     const themeDark = {
       'html': { 'overflow-x': 'hidden !important', 'box-sizing': 'border-box !important' },
@@ -4294,6 +4298,10 @@ function openReader(vol) {
       'span': { 'color': '#f0e8d0 !important' },
       'img': { 'max-width': '100% !important', 'height': 'auto !important', 'display': 'block', 'margin': '0 auto' },
       'img.cover-image, .cover-image-container': { 'max-width': '100% !important', 'max-height': '90vh !important', 'margin': '0 auto !important' },
+      'pre': { 'white-space': 'pre-wrap !important', 'word-wrap': 'break-word !important', 'overflow-wrap': 'break-word !important', 'max-width': '100% !important' },
+      'table': { 'max-width': '100% !important', 'table-layout': 'fixed !important' },
+      'div, section, article': { 'max-width': '100% !important' },
+      '*': { 'max-width': '100% !important', 'box-sizing': 'border-box !important' },
     };
 
     readerRendition.themes.register('light', themeLight);
@@ -4656,7 +4664,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.4 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v16.5 · 5 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
