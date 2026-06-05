@@ -2039,9 +2039,9 @@ const LIBRARY_DATA = {
       "date_label": "c. 1700 BC",
       "date_sort": -1700,
       "series": "Voices of the Ancient World",
-      "status": "pending",
+      "status": "complete",
       "notes": null,
-      "filename": null
+      "filename": "(c0-1700BC)_Atrahasis.epub"
     },
     {
       "id": 5,
@@ -2662,7 +2662,7 @@ function buildContinueReading() {
       const seen = parseInt(localStorage.getItem(key) || '0');
       const pct  = parseFloat(localStorage.getItem('readerPct:' + filename) || '0');
       const vol  = allVolumes.find(v => v.filename === filename);
-      if (vol && pct > 0.01 && pct < 0.985) {
+      if (vol && pct > 0.01 && pct < 0.995) {
         inProgress.push({ vol, pct, seen });
       }
     }
@@ -3933,20 +3933,22 @@ function openReader(vol) {
         }
 
         readerRendition.on('relocated', loc => {
-          // Persist reading position + progress + metadata
+          // Progress %: use the END of the visible range so reaching the
+          // final page registers as complete. Force 100% when atEnd is true.
           try {
+            let pctVal;
+            if (loc.atEnd) {
+              pctVal = 1;
+            } else {
+              const endCfi = (loc.end && loc.end.cfi) ? loc.end.cfi : loc.start.cfi;
+              pctVal = readerBook.locations.percentageFromCfi(endCfi);
+            }
+            // Persist position + progress + metadata
             localStorage.setItem('readerPos:' + vol.filename, loc.start.cfi);
-            const pctVal = readerBook.locations.percentageFromCfi(loc.start.cfi);
             localStorage.setItem('readerPct:' + vol.filename, String(pctVal));
             localStorage.setItem('readerSeen:' + vol.filename, String(Date.now()));
+            if (el) el.textContent = Math.round(pctVal * 100) + '%';
           } catch(e) {}
-          // Progress %
-          if (el) {
-            try {
-              const pct = readerBook.locations.percentageFromCfi(loc.start.cfi);
-              el.textContent = Math.round(pct * 100) + '%';
-            } catch(e) {}
-          }
           // Chapter name — match current spine href to TOC
           const chEl = document.getElementById('reader-chapter');
           if (chEl) {
@@ -4185,7 +4187,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.6 · 4 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v12.8 · 4 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
