@@ -2242,6 +2242,12 @@
     margin: 9px 0;
     line-height: 1.5;
   }
+  .witness-quote.wip {
+    font-style: italic;
+    color: var(--brown-light);
+    opacity: 0.6;
+    border-left-color: rgba(140,110,55,0.3);
+  }
   .witness-note { font-family: 'EB Garamond', serif; font-size: 12.5px; color: var(--brown-light); margin-bottom: 9px; line-height: 1.4; }
   .witness-goto {
     font-family: 'Cinzel', serif;
@@ -3110,19 +3116,19 @@ const DOCTRINES = [
       {
         title: 'The Didache',
         note: 'The Eucharist named a holy thing, guarded from the unbaptised.',
-        quote: '',
+        quote: '[work in progress]',
         match: 'Let no one eat or drink of your Eucharist'
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'Against those who deny the Eucharist is Christ\'s flesh.',
-        quote: '',
+        quote: '[work in progress]',
         match: 'flesh of our Saviour'
       },
       {
         title: 'The First and Second Apologies',
         note: 'Justin tells the emperor the bread is not common bread.',
-        quote: '',
+        quote: '[work in progress]',
         match: 'not as common bread'
       }
     ]
@@ -3135,19 +3141,19 @@ const DOCTRINES = [
       {
         title: 'The First Epistle of Clement of Rome',
         note: 'Chapter 44: the apostles foresaw strife over the office and provided for succession.',
-        quote: '',
+        quote: '[work in progress]',
         match: 'strife'
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'Nothing be done in the Church apart from the bishop.',
-        quote: '',
+        quote: '[work in progress]',
         match: 'without the bishop'
       },
       {
         title: 'Against Heresies',
         note: 'Irenaeus traces the bishops of Rome from the apostles.',
-        quote: '',
+        quote: '[work in progress]',
         match: 'appointed'
       }
     ]
@@ -3211,7 +3217,9 @@ function renderDoctrine() {
         <div class="witness-date">${w.vol.date_label}</div>
         <div class="witness-title">${w.vol.title}</div>
         <div class="witness-author">${w.vol.author || ''}</div>
-        ${w.quote ? `<div class="witness-quote">\u201c${w.quote}\u201d</div>` : ''}
+        ${w.quote ? (w.quote === '[work in progress]'
+            ? `<div class="witness-quote wip">[work in progress]</div>`
+            : `<div class="witness-quote">\u201c${w.quote}\u201d</div>`) : ''}
         ${w.note ? `<div class="witness-note">${w.note}</div>` : ''}
         ${canRead ? `<button class="witness-goto">Go to source &rarr;</button>` : `<span class="witness-pending">Edition not yet in library</span>`}
       </div>
@@ -5060,7 +5068,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v17.5 · 6 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v17.6 · 6 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
