@@ -3110,19 +3110,19 @@ const DOCTRINES = [
       {
         title: 'The Didache',
         note: 'The Eucharist named a holy thing, guarded from the unbaptised.',
-        quote: 'Let no one eat or drink of your Eucharist except those baptised.',
+        quote: '',
         match: 'Let no one eat or drink of your Eucharist'
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'Against those who deny the Eucharist is Christ\'s flesh.',
-        quote: 'The Eucharist is the flesh of our Saviour Jesus Christ.',
+        quote: '',
         match: 'flesh of our Saviour'
       },
       {
         title: 'The First and Second Apologies',
         note: 'Justin tells the emperor the bread is not common bread.',
-        quote: 'Not as common bread and common drink do we receive these.',
+        quote: '',
         match: 'not as common bread'
       }
     ]
@@ -3134,46 +3134,21 @@ const DOCTRINES = [
     witnesses: [
       {
         title: 'The First Epistle of Clement of Rome',
-        note: 'The apostles appointed successors to their ministry.',
-        quote: 'The apostles appointed their first-fruits to be bishops and deacons.',
-        match: 'bishops and deacons'
+        note: 'Chapter 44: the apostles foresaw strife over the office and provided for succession.',
+        quote: '',
+        match: 'strife'
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'Nothing be done in the Church apart from the bishop.',
-        quote: 'Do nothing connected with the Church without the bishop.',
+        quote: '',
         match: 'without the bishop'
       },
       {
         title: 'Against Heresies',
         note: 'Irenaeus traces the bishops of Rome from the apostles.',
-        quote: 'We can enumerate those appointed bishops by the apostles.',
+        quote: '',
         match: 'appointed'
-      }
-    ]
-  },
-  {
-    id: 'two-natures',
-    name: 'The Two Natures of Christ',
-    blurb: 'That Christ is one person in two natures, fully God and fully man.',
-    witnesses: [
-      {
-        title: 'On the Incarnation',
-        note: 'Athanasius: God became man that man might be deified.',
-        quote: 'He became man that we might become divine.',
-        match: 'become'
-      },
-      {
-        title: 'Council of Chalcedon',
-        note: 'The definition of two natures in one person.',
-        quote: 'One and the same Christ, made known in two natures.',
-        match: 'two natures'
-      },
-      {
-        title: 'Second Council of Constantinople',
-        note: 'Affirms the union against those who divide Christ.',
-        quote: 'The union of the Word of God with the flesh.',
-        match: 'union'
       }
     ]
   }
@@ -3236,7 +3211,7 @@ function renderDoctrine() {
         <div class="witness-date">${w.vol.date_label}</div>
         <div class="witness-title">${w.vol.title}</div>
         <div class="witness-author">${w.vol.author || ''}</div>
-        <div class="witness-quote">\u201c${w.quote}\u201d</div>
+        ${w.quote ? `<div class="witness-quote">\u201c${w.quote}\u201d</div>` : ''}
         ${w.note ? `<div class="witness-note">${w.note}</div>` : ''}
         ${canRead ? `<button class="witness-goto">Go to source &rarr;</button>` : `<span class="witness-pending">Edition not yet in library</span>`}
       </div>
@@ -5085,7 +5060,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v17.2 · 5 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v17.5 · 6 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
