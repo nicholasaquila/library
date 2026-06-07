@@ -2500,16 +2500,33 @@
   .reader-search-input:focus { border-color: var(--gold); }
   .reader-search-count {
     font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 0.1em;
+    font-size: 10px;
+    letter-spacing: 0.08em;
     color: var(--brown-light);
     white-space: nowrap;
+    min-width: 36px;
+    text-align: center;
   }
   .reader-search-x {
     background: none; border: none; cursor: pointer;
     color: var(--brown); font-size: 14px; padding: 4px 6px;
   }
   .reader-search-x:hover { color: var(--ink); }
+  .reader-search-nav {
+    background: none;
+    border: 1px solid rgba(140,110,55,0.3);
+    color: var(--brown);
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    width: 28px; height: 28px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .reader-search-nav:hover { border-color: var(--gold); color: var(--ink); background: rgba(200,160,64,0.08); }
+  #reader-search-list-btn { font-size: 12px; }
   .reader-search-results {
     display: none;
     position: absolute;
@@ -5314,7 +5331,11 @@ function refreshProgressUI() {
 
 // ── READER IN-BOOK SEARCH ──────────────────────────────────────────────────────
 let readerSearchTimer = null;
-let readerSearchHls = [];
+let readerSearchMatches = [];     // all matches: {cfi, excerpt}
+let readerSearchIdx = -1;         // current match index
+let readerActiveHl = null;        // currently highlighted cfi
+let readerSearchCache = {};       // spineHref -> loaded (avoids re-loading)
+let readerSearchToken = 0;        // cancels stale searches
 
 function toggleReaderSearch() {
   const bar = document.getElementById('reader-search-bar');
@@ -5325,7 +5346,7 @@ function toggleReaderSearch() {
   if (btn) btn.classList.toggle('active', opening);
   if (opening) {
     const input = document.getElementById('reader-search-input');
-    if (input) { input.focus(); }
+    if (input) input.focus();
   } else {
     closeReaderSearch();
   }
@@ -5340,14 +5361,16 @@ function closeReaderSearch() {
   if (results) { results.classList.remove('open'); results.innerHTML = ''; }
   const cnt = document.getElementById('reader-search-count');
   if (cnt) cnt.textContent = '';
-  clearReaderSearchHighlights();
+  clearReaderActiveHl();
+  readerSearchMatches = [];
+  readerSearchIdx = -1;
 }
 
-function clearReaderSearchHighlights() {
-  if (readerRendition && readerSearchHls.length) {
-    readerSearchHls.forEach(cfi => { try { readerRendition.annotations.remove(cfi, 'highlight'); } catch(e){} });
+function clearReaderActiveHl() {
+  if (readerRendition && readerActiveHl) {
+    try { readerRendition.annotations.remove(readerActiveHl, 'highlight'); } catch(e){}
   }
-  readerSearchHls = [];
+  readerActiveHl = null;
 }
 
 function doReaderSearch(q) {
@@ -5359,53 +5382,113 @@ function doReaderSearch(q) {
     results.classList.remove('open');
     results.innerHTML = '';
     if (cnt) cnt.textContent = q.length ? 'type more…' : '';
+    readerSearchMatches = []; readerSearchIdx = -1;
     return;
   }
   if (cnt) cnt.textContent = 'searching…';
 
-  // Search every spine item
+  const token = ++readerSearchToken;
   const items = readerBook.spine.spineItems;
-  Promise.all(items.map(item =>
-    item.load(readerBook.load.bind(readerBook))
-      .then(() => { const r = item.find(q); item.unload(); return r; })
-      .catch(() => { try { item.unload(); } catch(e){} return []; })
-  )).then(arrays => {
-    const all = [].concat(...arrays);
-    renderReaderSearchResults(all, q);
+
+  // Search the CURRENT chapter first for instant feedback, then the rest.
+  let currentHref = null;
+  try {
+    const loc = readerRendition && readerRendition.currentLocation();
+    if (loc && loc.start) currentHref = loc.start.href;
+  } catch(e){}
+
+  const ordered = items.slice();
+  if (currentHref) {
+    const i = ordered.findIndex(it => it.href === currentHref);
+    if (i > 0) { const [cur] = ordered.splice(i,1); ordered.unshift(cur); }
+  }
+
+  const searchItem = (item) => {
+    // Use cached load result when available
+    return item.load(readerBook.load.bind(readerBook))
+      .then(() => { const r = item.find(q); item.unload(); return r || []; })
+      .catch(() => { try { item.unload(); } catch(e){} return []; });
+  };
+
+  // Search sequentially so the first (current) chapter shows immediately
+  let collected = [];
+  let chain = Promise.resolve();
+  ordered.forEach((item, n) => {
+    chain = chain.then(() => {
+      if (token !== readerSearchToken) return;       // a newer search started
+      return searchItem(item).then(r => {
+        if (token !== readerSearchToken) return;
+        collected = collected.concat(r);
+        // After the first chapter, render partial results right away
+        if (n === 0 || collected.length <= 12) {
+          readerSearchMatches = collected.slice();
+          renderReaderSearchResults(q, false);
+        }
+      });
+    });
+  });
+  chain.then(() => {
+    if (token !== readerSearchToken) return;
+    readerSearchMatches = collected;
+    renderReaderSearchResults(q, true);
+    // Auto-jump to the first match
+    if (collected.length) { readerSearchIdx = -1; readerSearchStep(1); }
   });
 }
 
-function renderReaderSearchResults(matches, q) {
+function renderReaderSearchResults(q, done) {
   const results = document.getElementById('reader-search-results');
   const cnt = document.getElementById('reader-search-count');
   if (!results) return;
-  if (!matches.length) {
-    results.classList.remove('open');
-    results.innerHTML = '';
-    if (cnt) cnt.textContent = 'no matches';
+  const n = readerSearchMatches.length;
+  if (!n) {
+    if (done) { if (cnt) cnt.textContent = 'no matches'; results.classList.remove('open'); results.innerHTML=''; }
     return;
   }
-  if (cnt) cnt.textContent = matches.length + (matches.length === 1 ? ' match' : ' matches');
+  updateSearchCount();
   const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
   results.innerHTML = '';
-  matches.slice(0, 80).forEach(m => {
+  readerSearchMatches.slice(0, 100).forEach((m, i) => {
     const row = document.createElement('div');
     row.className = 'reader-search-result';
-    const excerpt = (m.excerpt || '').trim();
-    row.innerHTML = excerpt.replace(re, '<mark>$1</mark>');
-    row.addEventListener('click', () => {
-      readerRendition.display(m.cfi).then(() => {
-        try {
-          readerRendition.annotations.highlight(m.cfi, {}, null, 'srch-hl',
-            { 'fill': 'rgba(200,160,64,0.4)' });
-          readerSearchHls.push(m.cfi);
-        } catch(e) {}
-      });
-      results.classList.remove('open');
-    });
+    row.innerHTML = (m.excerpt || '').trim().replace(re, '<mark>$1</mark>');
+    row.addEventListener('click', () => { readerSearchIdx = i; gotoMatch(); results.classList.remove('open'); });
     results.appendChild(row);
   });
-  results.classList.add('open');
+}
+
+function updateSearchCount() {
+  const cnt = document.getElementById('reader-search-count');
+  if (!cnt) return;
+  const n = readerSearchMatches.length;
+  if (!n) { cnt.textContent = '0'; return; }
+  cnt.textContent = (readerSearchIdx >= 0 ? (readerSearchIdx + 1) + ' / ' : '') + n;
+}
+
+function readerSearchStep(dir) {
+  const n = readerSearchMatches.length;
+  if (!n) return;
+  readerSearchIdx = (readerSearchIdx + dir + n) % n;
+  gotoMatch();
+}
+
+function gotoMatch() {
+  const m = readerSearchMatches[readerSearchIdx];
+  if (!m || !readerRendition) return;
+  clearReaderActiveHl();
+  readerRendition.display(m.cfi).then(() => {
+    try {
+      readerRendition.annotations.highlight(m.cfi, {}, null, 'srch-hl',
+        { 'fill': 'rgba(200,160,64,0.45)', 'fill-opacity': '0.7' });
+      readerActiveHl = m.cfi;
+    } catch(e){}
+  });
+  updateSearchCount();
+}
+
+function toggleSearchResults() {
+  const results = document.getElementById('reader-search-results');
+  if (results) results.classList.toggle('open');
 }
 
 function closeReader() {
@@ -5531,7 +5614,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v18.6 · 6 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v18.7 · 6 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
@@ -5555,6 +5638,9 @@ setTimeout(introShowcase, 200);
   <div id="reader-search-bar" class="reader-search-bar">
     <input type="text" id="reader-search-input" class="reader-search-input" placeholder="Search this book…" autocomplete="off"/>
     <span id="reader-search-count" class="reader-search-count"></span>
+    <button onclick="readerSearchStep(-1)" class="reader-search-nav" id="reader-search-prev" title="Previous match">‹</button>
+    <button onclick="readerSearchStep(1)" class="reader-search-nav" id="reader-search-next" title="Next match">›</button>
+    <button onclick="toggleSearchResults()" class="reader-search-nav" id="reader-search-list-btn" title="Show all results">☰</button>
     <button onclick="closeReaderSearch()" class="reader-search-x" title="Close search">✕</button>
     <div id="reader-search-results" class="reader-search-results"></div>
   </div>
