@@ -484,14 +484,14 @@
   }
 
   /* Legend */
-  .legend-bar {
-    flex-shrink: 0;
+  .legend-bar { display: none; }
+  .legend-items {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 14px;
-    padding: 8px 28px;
-    border-top: 1px solid rgba(140,110,55,0.15);
-    background: rgba(245,240,225,0.8);
+    flex: 1;
+    min-width: 0;
   }
   .legend-item {
     display: flex;
@@ -719,16 +719,16 @@
   /* ── VERSION STAMP ── */
   .version-stamp {
     position: fixed;
-    bottom: 10px;
+    bottom: 6px;
     left: 50%;
     transform: translateX(-50%);
     font-family: 'Cinzel', serif;
     font-size: 8px;
     letter-spacing: 0.12em;
     color: rgba(140,110,55,0.4);
+    white-space: nowrap;
     pointer-events: none;
     z-index: 100;
-    white-space: nowrap;
   }
 
 
@@ -2373,7 +2373,7 @@
     /* Hide stats text (already hidden, ensure) */
     .controls-bar .stats-text, .controls-bar .stats { display: none !important; }
     /* The series legend bar becomes hidden; a Legend button in controls opens a sheet */
-    #series-legend { display: none !important; }
+    #series-legend-bar { display: none !important; }
     .status-legend-bar { display: none !important; }
 
     /* Compact mobile control chips (filter + legend) */
@@ -2681,7 +2681,10 @@
 </div>
 <div class="empty-state" id="empty-state">No volumes match the current filter.</div>
 
-<div class="legend-bar" id="series-legend"></div>
+<div class="legend-bar" id="series-legend-bar">
+  <div id="series-legend" class="legend-items"></div>
+</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v19.0 · 6 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4870,6 +4873,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v19.0 · 6 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5479,9 +5483,25 @@ function gotoMatch() {
   readerRendition.display(m.cfi).then(() => {
     try {
       readerRendition.annotations.highlight(m.cfi, {}, null, 'srch-hl',
-        { 'fill': 'rgba(200,160,64,0.45)', 'fill-opacity': '0.7' });
+        { 'fill': 'rgba(200,40,40,0.45)', 'fill-opacity': '0.75' });
       readerActiveHl = m.cfi;
     } catch(e){}
+    // Centre the match in the viewport (display() lands it at the top, often hidden
+    // under the search bar). Use the matched range inside the iframe and scroll it
+    // to the centre of the view.
+    setTimeout(() => {
+      try {
+        const range = readerRendition.getRange(m.cfi);
+        if (range) {
+          // Wrap the range start in a temporary marker to scroll precisely
+          const node = range.startContainer;
+          const el = (node.nodeType === 3) ? node.parentElement : node;
+          if (el && el.scrollIntoView) {
+            el.scrollIntoView({ block: 'center', inline: 'nearest' });
+          }
+        }
+      } catch(e){}
+    }, 260);
   });
   updateSearchCount();
 }
@@ -5614,7 +5634,6 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v18.7 · 6 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
