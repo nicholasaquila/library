@@ -2684,7 +2684,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v19.0 · 6 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v19.2 · 7 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3547,7 +3547,7 @@ function buildContinueReading() {
 
   const hero = list[0];
   const rest = list.slice(1);
-  const heroPct = Math.round(hero.pct * 100);
+  const heroPct = (typeof hero.pct === 'number' && !isNaN(hero.pct)) ? Math.round(hero.pct * 100) : 0;
 
   items.innerHTML = '';
 
@@ -4873,7 +4873,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v19.0 · 6 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v19.2 · 7 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -4964,7 +4964,12 @@ function openReader(vol, jumpMatch) {
 
   // Clear previous reader
   readerArea.innerHTML = '';
-  document.getElementById('reader-progress').textContent = '';
+  // Seed the progress readout immediately (from saved %), so it's never an empty box
+  {
+    const savedPct = parseFloat(localStorage.getItem('readerPct:' + vol.filename) || '0');
+    const seed = (savedPct > 0 && savedPct <= 1) ? Math.round(savedPct * 100) : 0;
+    document.getElementById('reader-progress').textContent = seed + '%';
+  }
   if (readerBook) { try { readerBook.destroy(); } catch(e){} readerBook = null; readerRendition = null; }
 
   // Set the reading-area background to match the page theme right away so there is
@@ -5007,15 +5012,14 @@ function openReader(vol, jumpMatch) {
       spread:     'none',
       width:      RW,
       height:     RH,
-      // Render far ahead/behind the viewport so sections are laid out before they
-      // scroll into view — eliminates the load-as-you-scroll stutter. For these
-      // mostly-short texts this effectively pre-renders the whole book.
-      offset:     3000,
+      // Large render buffer so the whole (short) book is laid out up front and
+      // stays rendered — no load-as-you-scroll. These texts are small enough that
+      // holding the entire book in memory is fine.
+      offset:     100000,
       forceEvenPages: false,
     });
-    // Push the continuous manager to keep a large buffer of rendered sections
     if (readerRendition.manager && readerRendition.manager.settings) {
-      readerRendition.manager.settings.offset = 3000;
+      readerRendition.manager.settings.offset = 100000;
     }
 
     // Theme injection
@@ -5149,13 +5153,16 @@ function openReader(vol, jumpMatch) {
               const endCfi = (loc.end && loc.end.cfi) ? loc.end.cfi : loc.start.cfi;
               pctVal = readerBook.locations.percentageFromCfi(endCfi);
             }
-            // Persist position + progress + metadata
-            localStorage.setItem('readerPos:' + vol.filename, loc.start.cfi);
-            localStorage.setItem('readerPct:' + vol.filename, String(pctVal));
-            localStorage.setItem('readerSeen:' + vol.filename, String(Date.now()));
-            if (el) el.textContent = Math.round(pctVal * 100) + '%';
-            // Keep the resume bar fresh live (it's behind the modal but ready on close)
-            buildContinueReading();
+            // Guard: percentageFromCfi can return NaN/undefined before locations
+            // are fully ready — don't write a broken value.
+            if (typeof pctVal !== 'number' || isNaN(pctVal)) pctVal = null;
+            if (pctVal !== null) {
+              localStorage.setItem('readerPos:' + vol.filename, loc.start.cfi);
+              localStorage.setItem('readerPct:' + vol.filename, String(pctVal));
+              localStorage.setItem('readerSeen:' + vol.filename, String(Date.now()));
+              if (el) el.textContent = Math.round(pctVal * 100) + '%';
+              buildContinueReading();
+            }
           } catch(e) {}
           // Chapter name — match current spine href to TOC
           const chEl = document.getElementById('reader-chapter');
