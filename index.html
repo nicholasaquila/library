@@ -1504,6 +1504,71 @@
     padding-bottom: 4px;
     border-bottom: 0.5px solid rgba(140,110,55,0.25);
   }
+
+  .at-date {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .at-author {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--brown-light);
+    margin-bottom: 8px;
+  }
+  .at-series {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border: 1px solid;
+    border-radius: 2px;
+    margin-bottom: 12px;
+  }
+  .at-sig {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--brown);
+    line-height: 1.5;
+    padding: 10px 0;
+    border-top: 1px solid rgba(140,110,55,0.15);
+    border-bottom: 1px solid rgba(140,110,55,0.15);
+    margin-bottom: 12px;
+  }
+  .at-read-btn {
+    display: block;
+    width: 100%;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 14px;
+    margin-top: 18px;
+    border: none;
+    background: var(--ink);
+    color: var(--cream);
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  .at-read-btn:active { opacity: 0.85; }
+  [data-theme="dark"] .at-read-btn { background: var(--gold); color: #1c1a10; }
+  .at-pending {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--brown-light);
+    text-align: center;
+    margin-top: 16px;
+    opacity: 0.7;
+  }
+
   .at-text {
     font-family: 'EB Garamond', serif;
     font-size: 12px;
@@ -1553,7 +1618,8 @@
   }
   .tl-card:hover .card-info-btn { opacity: 0.8; }
   @media (max-width: 768px) {
-    .card-info-btn {
+    .card-info-btn { display: none !important; }
+    .card-info-btn-DISABLED {
       opacity: 0.7 !important;
       font-size: 13px !important;
       top: 3px !important;
@@ -2299,6 +2365,184 @@
     .doctrine-intro-title { font-size: 16px; }
   }
 
+
+  /* ── MOBILE: declutter top + bottom rows ── */
+  @media (max-width: 768px) {
+    /* Hide the filter buttons row on mobile — replaced by a compact filter icon */
+    .controls-bar .filter-group { display: none !important; }
+    /* Hide stats text (already hidden, ensure) */
+    .controls-bar .stats-text, .controls-bar .stats { display: none !important; }
+    /* The series legend bar becomes hidden; a Legend button in controls opens a sheet */
+    #series-legend { display: none !important; }
+    .status-legend-bar { display: none !important; }
+
+    /* Compact mobile control chips (filter + legend) */
+    .mobile-ctl-btn {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 8px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 9px;
+      border: 1px solid rgba(140,110,55,0.4);
+      background: transparent;
+      color: var(--brown);
+      white-space: nowrap;
+      flex-shrink: 0;
+      border-radius: 3px;
+    }
+    .mobile-ctl-btn.active { border-color: var(--gold); color: var(--ink); background: rgba(200,160,64,0.1); }
+  }
+  /* Mobile control chips hidden on desktop */
+  .mobile-ctl-btn { display: none; }
+
+  /* Legend / filter sheet (reuses ancient-sheet styling) */
+  .ms-row { display: flex; align-items: center; gap: 10px; padding: 9px 4px; cursor: pointer; border-bottom: 1px solid rgba(140,110,55,0.1); }
+  .ms-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+  .ms-label { font-family: 'EB Garamond', serif; font-size: 15px; color: var(--ink); }
+  .ms-heading { font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin: 4px 0 10px; }
+  .ms-filter-opt { font-family: 'EB Garamond', serif; font-size: 16px; padding: 11px 4px; cursor: pointer; border-bottom: 1px solid rgba(140,110,55,0.1); color: var(--brown); }
+  .ms-filter-opt.active { color: var(--gold); font-weight: 600; }
+
+
+  /* ── MOBILE LANDSCAPE: short screens — reclaim vertical space for the timeline ── */
+  @media (max-height: 500px) and (orientation: landscape) {
+    /* Slim the header right down */
+    header { padding: 3px 12px !important; }
+    .header-title { font-size: 12px !important; letter-spacing: 0.05em !important; }
+    header::after { display: none !important; }
+    .dark-toggle { top: 3px !important; right: 8px !important; width: 22px !important; height: 22px !important; font-size: 10px !important; }
+
+    /* Tight single controls row */
+    .controls-bar { padding: 2px 8px !important; gap: 4px !important; flex-wrap: nowrap !important; overflow-x: auto !important; }
+    .controls-bar::-webkit-scrollbar { display: none !important; }
+    .filter-group, .stats-text, .stats { display: none !important; }
+    .view-btn { font-size: 8px !important; padding: 2px 6px !important; }
+    .view-btn .vb-icon { width: 11px; height: 11px; }
+    .mobile-ctl-btn { font-size: 7px !important; padding: 3px 7px !important; }
+    #btn-expand { font-size: 8px !important; padding: 2px 7px !important; }
+
+    /* Hide both legend bars (use the Legend chip instead) */
+    #series-legend, .status-legend-bar, .legend-bar { display: none !important; }
+
+    /* Give the timeline essentially all remaining height */
+    .timeline-outer { flex: 1 !important; min-height: 0 !important; }
+    .timeline-scroll { flex: 1 !important; }
+    .timeline-track { padding: 8px 60px 8px 0 !important; }
+
+    /* Slightly smaller cards so more fits and the spine sits centred */
+    .tl-card { width: 104px !important; padding: 4px 6px 3px !important; }
+    .tl-card-title { font-size: 9px !important; }
+    .tl-card-date { font-size: 6px !important; }
+    .tl-card-author { font-size: 8px !important; }
+    .tl-card-badge { font-size: 6px !important; padding: 1px 3px !important; }
+    .sig-tag { font-size: 8px !important; max-width: 104px !important; }
+
+    /* Bottom sheet shouldn't cover the whole short screen */
+    .ancient-sheet { max-height: 88vh !important; padding-bottom: 16px !important; }
+
+    /* Continue-reading hero stays compact */
+    .continue-hero { max-width: 150px !important; }
+
+    /* Map + bible views also get full height */
+    .map-controls-bar { padding: 3px 8px !important; }
+    .bible-legend-bar { display: none !important; }
+  }
+
+
+  /* Timeline above/below row heights (responsive) */
+  .tl-above-row, .tl-below-row { min-height: 180px; }
+
+  /* Portrait mobile: cards are smaller, so rows can be shorter */
+  @media (max-width: 768px) and (orientation: portrait) {
+    .tl-above-row, .tl-below-row { min-height: 150px; }
+  }
+  /* Landscape mobile (short screens): fit both rows + spine within the viewport
+     so no card is cut off. The era fills height; rows split the remaining space. */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .timeline-track { align-items: stretch !important; }
+    .tl-era { display: flex !important; flex-direction: column; height: 100%; }
+    .tl-layout { flex: 1 1 auto; min-height: 0; justify-content: center; }
+    .tl-above-row { min-height: 0 !important; flex: 1 1 0; align-items: flex-end !important; overflow: visible; }
+    .tl-below-row { min-height: 0 !important; flex: 1 1 0; align-items: flex-start !important; overflow: visible; }
+    /* Compact cards so they fit the shorter rows */
+    .tl-card { padding: 3px 6px !important; }
+    .tl-card-subtitle { display: none !important; }
+    .sig-wrap { display: none !important; }
+  }
+
+
+  /* ── READER IN-BOOK SEARCH ── */
+  .reader-search-bar {
+    display: none;
+    position: relative;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px;
+    background: var(--cream-dark, #ece3cc);
+    border-bottom: 1px solid rgba(140,110,55,0.2);
+    flex-shrink: 0;
+  }
+  .reader-search-bar.open { display: flex; }
+  .reader-search-input {
+    flex: 1;
+    font-family: 'EB Garamond', serif;
+    font-size: 15px;
+    padding: 7px 12px;
+    border: 1px solid rgba(140,110,55,0.35);
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 3px;
+    outline: none;
+  }
+  .reader-search-input:focus { border-color: var(--gold); }
+  .reader-search-count {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--brown-light);
+    white-space: nowrap;
+  }
+  .reader-search-x {
+    background: none; border: none; cursor: pointer;
+    color: var(--brown); font-size: 14px; padding: 4px 6px;
+  }
+  .reader-search-x:hover { color: var(--ink); }
+  .reader-search-results {
+    display: none;
+    position: absolute;
+    top: 100%; left: 18px; right: 18px;
+    z-index: 30;
+    background: var(--cream);
+    border: 1px solid rgba(140,110,55,0.3);
+    border-top: none;
+    max-height: 320px;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+  .reader-search-results.open { display: block; }
+  .reader-search-result {
+    padding: 9px 14px;
+    border-bottom: 1px solid rgba(140,110,55,0.12);
+    cursor: pointer;
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: var(--brown);
+    line-height: 1.45;
+    transition: background 0.15s;
+  }
+  .reader-search-result:hover { background: rgba(200,160,64,0.1); }
+  .reader-search-result mark {
+    background: rgba(200,160,64,0.4);
+    color: var(--ink);
+    padding: 0 1px;
+  }
+  [data-theme="dark"] .reader-search-bar { background: #211f15; }
+  [data-theme="dark"] .reader-search-input { background: #1c1a10; color: #f0e8d0; }
+  [data-theme="dark"] .reader-search-results { background: #211f15; }
+
 </style>
 </head>
 <body>
@@ -2343,6 +2587,8 @@
   <div id="continue-bar" style="display:none;">
     <div id="continue-items" class="continue-items"></div>
   </div>
+  <button class="mobile-ctl-btn" id="mobile-filter-btn" onclick="showFilterSheet()">Filter</button>
+  <button class="mobile-ctl-btn" id="mobile-legend-btn" onclick="showLegendSheet()">Legend</button>
   <div class="view-toggle">
     <button class="view-btn" id="btn-bible" onclick="setView('bible')">
       <svg viewBox="0 0 16 16" class="vb-icon"><path d="M3 2h7a2 2 0 0 1 2 2v10l-2-1.2L8 14l-2-1.2L4 14V3a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M5 5h4M5 7.5h4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
@@ -3903,11 +4149,13 @@ function renderTimeline() {
 
     // Container for the full two-row layout
     const layoutEl = document.createElement('div');
+    layoutEl.className = 'tl-layout';
     layoutEl.style.cssText = 'display:flex;flex-direction:column;padding:0 20px;';
 
     // Above row
     const aboveRow = document.createElement('div');
-    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;min-height:180px;';
+    aboveRow.className = 'tl-above-row';
+    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;';
 
     // Spine row
     const spineRow = document.createElement('div');
@@ -3918,7 +4166,8 @@ function renderTimeline() {
 
     // Below row
     const belowRow = document.createElement('div');
-    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:180px;';
+    belowRow.className = 'tl-below-row';
+    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;';
 
     // Track indices to skip (e.g. the Odyssey, merged into the Iliad column)
     const skipIdx = new Set();
@@ -4027,16 +4276,16 @@ function renderTimeline() {
         card.appendChild(infoBtn);
       }
 
-      // Card click — open reader (but not if info btn was tapped)
-      if (v.filename) {
-        card.style.cursor = 'pointer';
-        card.title = 'Click to read';
-        card.addEventListener('click', e => {
-          // If the click originated from the info button, ignore
-          if (e.target.classList.contains('card-info-btn')) return;
+      // Card click: on mobile open the detail sheet; on desktop open reader directly
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', e => {
+        if (e.target.classList.contains('card-info-btn')) return;
+        if (window.innerWidth <= 768) {
+          showBottomSheet(v.title);
+        } else if (v.filename) {
           openReader(v);
-        });
-      }
+        }
+      });
       const fileButtons = '';
       const prog = volumeProgress(v);
       const progBar = prog > 0 ? `<div class="card-prog"><div class="card-prog-fill" style="width:${Math.round(prog*100)}%"></div></div>` : '';
@@ -4222,11 +4471,11 @@ function renderGrid() {
       card.className = `vol-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}${isContextual(v) ? ' ctx-card' : ''}`;
       card.setAttribute('data-title', v.title);
       card.style.setProperty('--series-color', volumeColor(v));
-      if (v.filename) {
-        card.style.cursor = 'pointer';
-        card.title = 'Click to read';
-        card.addEventListener('click', () => openReader(v));
-      }
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        if (window.innerWidth <= 768) showBottomSheet(v.title);
+        else if (v.filename) openReader(v);
+      });
       const gprog = volumeProgress(v);
       const gprogBar = gprog > 0 ? `<div class="card-prog"><div class="card-prog-fill" style="width:${Math.round(gprog*100)}%"></div></div>` : '';
       card.innerHTML = `
@@ -4399,10 +4648,12 @@ function renderBiblical() {
     eraEl.appendChild(labelEl);
 
     const layoutEl = document.createElement('div');
+    layoutEl.className = 'tl-layout';
     layoutEl.style.cssText = 'display:flex;flex-direction:column;padding:0 20px;';
 
     const aboveRow = document.createElement('div');
-    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;min-height:180px;';
+    aboveRow.className = 'tl-above-row';
+    aboveRow.style.cssText = 'display:flex;align-items:flex-end;gap:0;';
 
     const spineRow = document.createElement('div');
     spineRow.style.cssText = 'position:relative;height:24px;display:flex;align-items:center;';
@@ -4411,7 +4662,8 @@ function renderBiblical() {
     spineRow.appendChild(spineLine);
 
     const belowRow = document.createElement('div');
-    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;min-height:180px;';
+    belowRow.className = 'tl-below-row';
+    belowRow.style.cssText = 'display:flex;align-items:flex-start;gap:0;';
 
     // Genesis anchor on first era
     if (isFirst) {
@@ -4566,15 +4818,84 @@ buildLegend();
 render();
 buildContinueReading();
 
-function showBottomSheet(title) {
-  const info = ANCIENT_WORLD_INFO[title];
-  if (!info) return;
+
+// ── MOBILE FILTER + LEGEND SHEETS ──────────────────────────────────────────────
+function showFilterSheet() {
   const content = document.getElementById('ancient-sheet-content');
-  content.innerHTML = `
-    <div class="at-title">${title}</div>
-    <div class="at-text">${info.summary}</div>
-    ${info.biblical ? `<div class="at-biblical-label">Biblical Parallels</div><div class="at-biblical">${info.biblical}</div>` : ''}
-  `;
+  const opts = [
+    { f: 'all', label: 'All volumes' },
+    { f: 'complete', label: 'Complete' },
+    { f: 'needs-refresh', label: 'Needs refresh' },
+    { f: 'pending', label: 'Pending' },
+  ];
+  let html = '<div class="ms-heading">Filter</div>';
+  opts.forEach(o => {
+    html += `<div class="ms-filter-opt ${currentFilter === o.f ? 'active' : ''}" onclick="setFilterMobile('${o.f}')">${o.label}</div>`;
+  });
+  content.innerHTML = html;
+  document.getElementById('ancient-sheet').classList.add('open');
+  document.getElementById('ancient-sheet-overlay').classList.add('open');
+}
+function setFilterMobile(f) {
+  currentFilter = f;
+  // sync desktop filter buttons + dropdown label if present
+  const labelMap = { 'all':'All', 'complete':'Complete', 'needs-refresh':'Needs Refresh', 'pending':'Pending' };
+  const mBtn = document.getElementById('mobile-filter-btn');
+  if (mBtn) { mBtn.textContent = f === 'all' ? 'Filter' : labelMap[f]; mBtn.classList.toggle('active', f !== 'all'); }
+  hideBottomSheet();
+  render();
+}
+function showLegendSheet() {
+  const content = document.getElementById('ancient-sheet-content');
+  // Build legend from series present in the library (respecting context state)
+  const seen = new Set();
+  let html = '<div class="ms-heading">Series</div>';
+  allVolumes.forEach(v => {
+    if (!showContextual && isContextual(v)) return;
+    const key = v.series + '|' + volumeColor(v);
+    if (seen.has(v.series)) return;
+    seen.add(v.series);
+    html += `<div class="ms-row"><span class="ms-dot" style="background:${volumeColor(v)}"></span><span class="ms-label">${v.series}</span></div>`;
+  });
+  html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
+  html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ⚠ Needs refresh &nbsp; ◦ Pending</span></div>';
+  content.innerHTML = html;
+  document.getElementById('ancient-sheet').classList.add('open');
+  document.getElementById('ancient-sheet-overlay').classList.add('open');
+}
+
+function showBottomSheet(title) {
+  const v = allVolumes.find(x => x.title === title);
+  const info = ANCIENT_WORLD_INFO[title];
+  const sig  = SIGNIFICANCE[title];
+  const content = document.getElementById('ancient-sheet-content');
+  if (!v && !info) return;
+
+  const canRead = v && v.filename && (v.status === 'complete');
+  const prog = v ? volumeProgress(v) : 0;
+  const progLabel = prog > 0 ? ` · ${Math.round(prog*100)}% read` : '';
+
+  let html = '';
+  if (v) {
+    html += `<div class="at-date">${v.date_label}${progLabel}</div>`;
+    html += `<div class="at-title">${v.title}</div>`;
+    if (v.author) html += `<div class="at-author">${v.author}</div>`;
+    html += `<div class="at-series" style="color:${volumeColor(v)};border-color:${volumeColor(v)}">${v.series}</div>`;
+  } else {
+    html += `<div class="at-title">${title}</div>`;
+  }
+  if (sig)  html += `<div class="at-sig">${sig}</div>`;
+  if (info) {
+    html += `<div class="at-text">${info.summary}</div>`;
+    if (info.biblical) html += `<div class="at-biblical-label">Biblical Parallels</div><div class="at-biblical">${info.biblical}</div>`;
+  }
+  if (canRead) {
+    html += `<button class="at-read-btn" onclick="hideBottomSheet(); openReader(allVolumes.find(x=>x.title===${JSON.stringify(title)}))">${prog > 0 ? 'Continue Reading' : 'Read'} &rarr;</button>`;
+  } else if (v) {
+    html += `<div class="at-pending">Not yet available to read</div>`;
+  }
+
+  content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
 }
@@ -4606,6 +4927,15 @@ function openReader(vol, jumpMatch) {
   // Populate header
   document.getElementById('reader-title').textContent  = vol.title;
   document.getElementById('reader-author').textContent = vol.author || '';
+  // Wire up in-book search input (once)
+  const rsInput = document.getElementById('reader-search-input');
+  if (rsInput && !rsInput.dataset.wired) {
+    rsInput.dataset.wired = '1';
+    rsInput.addEventListener('input', () => {
+      clearTimeout(readerSearchTimer);
+      readerSearchTimer = setTimeout(() => doReaderSearch(rsInput.value), 350);
+    });
+  }
   const dlBtn = document.getElementById('reader-dl-btn');
   if (dlBtn) { dlBtn.href = './' + vol.filename; dlBtn.setAttribute('download', vol.filename); }
 
@@ -4987,6 +5317,103 @@ function refreshProgressUI() {
   else if (currentView === 'grid') renderGrid();
 }
 
+
+// ── READER IN-BOOK SEARCH ──────────────────────────────────────────────────────
+let readerSearchTimer = null;
+let readerSearchHls = [];
+
+function toggleReaderSearch() {
+  const bar = document.getElementById('reader-search-bar');
+  const btn = document.getElementById('reader-search-btn');
+  if (!bar) return;
+  const opening = !bar.classList.contains('open');
+  bar.classList.toggle('open', opening);
+  if (btn) btn.classList.toggle('active', opening);
+  if (opening) {
+    const input = document.getElementById('reader-search-input');
+    if (input) { input.focus(); }
+  } else {
+    closeReaderSearch();
+  }
+}
+
+function closeReaderSearch() {
+  const bar = document.getElementById('reader-search-bar');
+  const btn = document.getElementById('reader-search-btn');
+  const results = document.getElementById('reader-search-results');
+  if (bar) bar.classList.remove('open');
+  if (btn) btn.classList.remove('active');
+  if (results) { results.classList.remove('open'); results.innerHTML = ''; }
+  const cnt = document.getElementById('reader-search-count');
+  if (cnt) cnt.textContent = '';
+  clearReaderSearchHighlights();
+}
+
+function clearReaderSearchHighlights() {
+  if (readerRendition && readerSearchHls.length) {
+    readerSearchHls.forEach(cfi => { try { readerRendition.annotations.remove(cfi, 'highlight'); } catch(e){} });
+  }
+  readerSearchHls = [];
+}
+
+function doReaderSearch(q) {
+  const results = document.getElementById('reader-search-results');
+  const cnt = document.getElementById('reader-search-count');
+  if (!results || !readerBook) return;
+  q = (q || '').trim();
+  if (q.length < 3) {
+    results.classList.remove('open');
+    results.innerHTML = '';
+    if (cnt) cnt.textContent = q.length ? 'type more…' : '';
+    return;
+  }
+  if (cnt) cnt.textContent = 'searching…';
+
+  // Search every spine item
+  const items = readerBook.spine.spineItems;
+  Promise.all(items.map(item =>
+    item.load(readerBook.load.bind(readerBook))
+      .then(() => { const r = item.find(q); item.unload(); return r; })
+      .catch(() => { try { item.unload(); } catch(e){} return []; })
+  )).then(arrays => {
+    const all = [].concat(...arrays);
+    renderReaderSearchResults(all, q);
+  });
+}
+
+function renderReaderSearchResults(matches, q) {
+  const results = document.getElementById('reader-search-results');
+  const cnt = document.getElementById('reader-search-count');
+  if (!results) return;
+  if (!matches.length) {
+    results.classList.remove('open');
+    results.innerHTML = '';
+    if (cnt) cnt.textContent = 'no matches';
+    return;
+  }
+  if (cnt) cnt.textContent = matches.length + (matches.length === 1 ? ' match' : ' matches');
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'ig');
+  results.innerHTML = '';
+  matches.slice(0, 80).forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'reader-search-result';
+    const excerpt = (m.excerpt || '').trim();
+    row.innerHTML = excerpt.replace(re, '<mark>$1</mark>');
+    row.addEventListener('click', () => {
+      readerRendition.display(m.cfi).then(() => {
+        try {
+          readerRendition.annotations.highlight(m.cfi, {}, null, 'srch-hl',
+            { 'fill': 'rgba(200,160,64,0.4)' });
+          readerSearchHls.push(m.cfi);
+        } catch(e) {}
+      });
+      results.classList.remove('open');
+    });
+    results.appendChild(row);
+  });
+  results.classList.add('open');
+}
+
 function closeReader() {
   // Persist the latest position (sync or async), THEN rebuild the progress UI.
   persistCurrentPosition().then(() => {
@@ -4996,6 +5423,7 @@ function closeReader() {
   // Hide the modal immediately for responsiveness
   document.getElementById('reader-modal').classList.remove('open');
   document.getElementById('reader-toc').classList.remove('open');
+  closeReaderSearch();
   document.body.style.overflow = '';
   document.removeEventListener('keydown', readerKeyHandler);
 }
@@ -5109,7 +5537,7 @@ setTimeout(introShowcase, 200);
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
-  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v17.9 · 6 June 2026</div>
+  <div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v18.5 · 6 June 2026</div>
 
 <!-- EPUB READER MODAL -->
 <div id="reader-modal" class="reader-modal">
@@ -5121,12 +5549,20 @@ setTimeout(introShowcase, 200);
       <div id="reader-chapter" class="reader-chapter"></div>
     </div>
     <div class="reader-controls">
+      <button onclick="toggleReaderSearch()" class="reader-btn" id="reader-search-btn" title="Search in book">⌕ Find</button>
       <button onclick="toggleTOC()" class="reader-btn" id="reader-toc-btn" title="Table of contents">☰ Contents</button>
       <button onclick="readerFont(-1)" class="reader-btn reader-font-btn" title="Smaller text">A−</button>
       <button onclick="readerFont(1)" class="reader-btn reader-font-btn" title="Larger text">A+</button>
       <a id="reader-dl-btn" href="#" download class="reader-btn reader-dl">↓ Download</a>
       <button onclick="closeReader()" class="reader-btn reader-close">✕ Close</button>
     </div>
+  </div>
+  <!-- In-book search bar -->
+  <div id="reader-search-bar" class="reader-search-bar">
+    <input type="text" id="reader-search-input" class="reader-search-input" placeholder="Search this book…" autocomplete="off"/>
+    <span id="reader-search-count" class="reader-search-count"></span>
+    <button onclick="closeReaderSearch()" class="reader-search-x" title="Close search">✕</button>
+    <div id="reader-search-results" class="reader-search-results"></div>
   </div>
   <!-- Body: TOC panel + reading area -->
   <div class="reader-body">
