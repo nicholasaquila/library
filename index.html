@@ -2684,7 +2684,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v19.6 · 7 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v19.7 · 7 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4873,7 +4873,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v19.6 · 7 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v19.7 · 7 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -4927,6 +4927,30 @@ let readerRendition = null;
 let readerCurrentVol = null;
 let readerFontSize = parseInt(localStorage.getItem('readerFontSize') || '18');
 
+
+
+// ── PERMANENT DOCTRINE-SOURCE HIGHLIGHTS (red, persisted) ──────────────────────
+function getDoctrineHighlights(filename) {
+  try { return JSON.parse(localStorage.getItem('doctrineHl:' + filename) || '[]'); }
+  catch(e) { return []; }
+}
+function saveDoctrineHighlight(filename, cfi) {
+  const list = getDoctrineHighlights(filename);
+  if (!list.includes(cfi)) {
+    list.push(cfi);
+    localStorage.setItem('doctrineHl:' + filename, JSON.stringify(list));
+  }
+}
+function applyDoctrineHighlights(filename) {
+  if (!readerRendition) return;
+  const list = getDoctrineHighlights(filename);
+  list.forEach(cfi => {
+    try {
+      readerRendition.annotations.highlight(cfi, {}, null, 'doctrine-hl',
+        { 'fill': 'rgba(200,40,40,0.4)', 'fill-opacity': '0.7' });
+    } catch(e) {}
+  });
+}
 
 function openReaderAtPassage(vol, matchText) {
   openReader(vol, matchText);
@@ -5116,7 +5140,11 @@ function openReader(vol, jumpMatch) {
         const total = readerBook.locations.total || readerBook.locations.length();
         const el    = document.getElementById('reader-progress');
 
-        // If opened with a passage to find, search the book and jump+highlight it
+        // Re-apply any saved permanent (red) doctrine highlights for this book
+        applyDoctrineHighlights(vol.filename);
+
+        // If opened with a passage to find: locate it, jump to it, and PERMANENTLY
+        // highlight it in red (saved so it persists across sessions).
         if (jumpMatch) {
           try {
             readerBook.ready.then(() => {
@@ -5130,11 +5158,21 @@ function openReader(vol, jumpMatch) {
               Promise.all(promises).then(results => {
                 const hit = results.find(r => r);
                 if (hit && hit[0] && hit[0].cfi) {
-                  readerRendition.display(hit[0].cfi).then(() => {
-                    try {
-                      readerRendition.annotations.highlight(hit[0].cfi, {}, null, 'doctrine-hl',
-                        { 'fill': 'rgba(200,160,64,0.35)', 'fill-opacity': '0.6' });
-                    } catch(e) {}
+                  const cfi = hit[0].cfi;
+                  saveDoctrineHighlight(vol.filename, cfi);
+                  readerRendition.display(cfi).then(() => {
+                    applyDoctrineHighlights(vol.filename);
+                    // Snap the passage to the centre of the view
+                    setTimeout(() => {
+                      try {
+                        const range = readerRendition.getRange(cfi);
+                        if (range) {
+                          const node = range.startContainer;
+                          const elx = (node.nodeType === 3) ? node.parentElement : node;
+                          if (elx && elx.scrollIntoView) elx.scrollIntoView({ block: 'center' });
+                        }
+                      } catch(e){}
+                    }, 260);
                   });
                 }
               });
