@@ -2234,6 +2234,18 @@
     color: var(--ink);
     text-transform: uppercase;
   }
+  .doctrine-intro-note {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    color: var(--brown-light);
+    max-width: 560px;
+    margin: 10px auto 0;
+    line-height: 1.5;
+    opacity: 0.8;
+    padding-top: 8px;
+    border-top: 1px solid rgba(140,110,55,0.15);
+  }
   .doctrine-intro-sub {
     font-family: 'EB Garamond', serif;
     font-style: italic;
@@ -2662,6 +2674,7 @@
     <div class="doctrine-intro">
       <div class="doctrine-intro-title">The Witness of Tradition</div>
       <div class="doctrine-intro-sub">Select a doctrine to trace its witnesses through the centuries. Each cites the source and, where the text is in the library, opens to the passage.</div>
+      <div class="doctrine-intro-note">The quotes here are given in a clear modern rendering for readability. The edition in the library may use a different translation, so the wording you find on the page may vary while the sense is the same.</div>
     </div>
     <div id="doctrine-list" class="doctrine-list"></div>
     <div id="doctrine-detail" class="doctrine-detail"></div>
@@ -2684,7 +2697,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v19.7 · 7 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v19.9 · 7 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3420,19 +3433,19 @@ const DOCTRINES = [
         title: 'The Didache',
         note: 'The Eucharist named a holy thing, guarded from the unbaptised.',
         quote: '[work in progress]',
-        match: 'Let no one eat or drink of your Eucharist'
+        match: ['eat or drink of your Eucharist', 'of your Eucharist', 'holy to dogs']
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'Against those who deny the Eucharist is Christ\'s flesh.',
         quote: '[work in progress]',
-        match: 'flesh of our Saviour'
+        match: ['flesh of our Saviour', 'flesh of our Savior', 'flesh of Jesus Christ', 'the flesh of']
       },
       {
         title: 'The First and Second Apologies',
         note: 'Justin tells the emperor the bread is not common bread.',
         quote: '[work in progress]',
-        match: 'not as common bread'
+        match: ['not as common bread', 'common bread', 'not common bread', 'made flesh']
       }
     ]
   },
@@ -3445,19 +3458,19 @@ const DOCTRINES = [
         title: 'The First Epistle of Clement of Rome',
         note: 'Chapters 42 and 44: the chain of authority runs God to Christ to the Apostles to the bishops and deacons they appointed; foreseeing strife, the Apostles provided for an ongoing succession of approved men.',
         quote: "The Apostles received the Gospel for us from the Lord Jesus Christ; Jesus Christ was sent forth from God. So then Christ is from God, and the Apostles are from Christ. ... So preaching everywhere ... they appointed their firstfruits ... to be bishops and deacons. ... And our Apostles knew ... that there would be strife over the name of the bishop's office. For this cause ... they appointed the aforesaid persons, and afterwards they provided a continuance, that if these should fall asleep, other approved men should succeed to their ministration.",
-        match: 'there would be strife over the name'
+        match: ['strife over the name', 'strife over the', 'bishops and deacons', 'succeed to their ministration']
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'To the Trallians and Smyrnaeans: the ministry descends from Christ through the apostles to the bishop, presbyters, and deacons who reflect them; without these there is no Church, and where the bishop is, there is the Catholic Church.',
         quote: 'Be subject to the bishop as to Jesus Christ ... and to the presbytery as to the apostles ... Let all reverence the deacons as Jesus Christ, and the bishop as the Father, and the presbyters as the council of God and the college of the apostles: without these there is no Church. ... Let no man do anything connected with the Church without the bishop ... Wherever the bishop shall appear, there let the multitude of the people also be; even as, wherever Jesus Christ is, there is the Catholic Church.',
-        match: 'there is the Catholic Church'
+        match: ['there is the Catholic Church', 'the Catholic Church', 'without the bishop', 'follow the bishop']
       },
       {
         title: 'Against Heresies',
         note: 'Book 3.3: the apostolic succession is public and checkable, the faith handed openly to the bishops the apostles appointed; Irenaeus traces the line at Rome from Peter and Paul, with which every Church must agree.',
         quote: 'It is within the power of all, in every Church, who may wish to see the truth, to contemplate the tradition of the apostles manifested throughout the whole world; and we are able to reckon up those who were by the apostles instituted bishops in the Churches, and the succession of these men to our own times ... the very great, very ancient, and universally known Church founded and organized at Rome by the two most glorious apostles, Peter and Paul ... For it is a matter of necessity that every Church should agree with this Church, on account of its preeminent authority.',
-        match: 'succession of these men to our own times'
+        match: ['succession of these men', 'Peter and Paul', 'preeminent authority', 'succession of the bishops']
       }
     ]
   }
@@ -4873,7 +4886,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v19.7 · 7 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v19.9 · 7 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5148,31 +5161,56 @@ function openReader(vol, jumpMatch) {
         if (jumpMatch) {
           try {
             readerBook.ready.then(() => {
-              const promises = readerBook.spine.spineItems.map(item =>
-                item.load(readerBook.load.bind(readerBook)).then(() => {
-                  const found = item.find(jumpMatch);
-                  item.unload();
-                  return found && found.length ? found : null;
-                }).catch(() => null)
-              );
-              Promise.all(promises).then(results => {
-                const hit = results.find(r => r);
+              // Accept a single phrase or an array of fallbacks (try each in order)
+              const phrases = Array.isArray(jumpMatch) ? jumpMatch : [jumpMatch];
+              const searchPhrase = (phrase) => Promise.all(
+                readerBook.spine.spineItems.map(item =>
+                  item.load(readerBook.load.bind(readerBook)).then(() => {
+                    const found = item.find(phrase);
+                    item.unload();
+                    return found && found.length ? found : null;
+                  }).catch(() => null)
+                )
+              ).then(results => results.find(r => r));
+
+              // Try each fallback phrase sequentially until one matches
+              let chain = Promise.resolve(null);
+              phrases.forEach(phrase => {
+                chain = chain.then(hit => hit ? hit : searchPhrase(phrase));
+              });
+              chain.then(hit => {
                 if (hit && hit[0] && hit[0].cfi) {
-                  const cfi = hit[0].cfi;
-                  saveDoctrineHighlight(vol.filename, cfi);
-                  readerRendition.display(cfi).then(() => {
-                    applyDoctrineHighlights(vol.filename);
-                    // Snap the passage to the centre of the view
+                  const matchCfi = hit[0].cfi;
+                  readerRendition.display(matchCfi).then(() => {
+                    // Expand the matched fragment to its containing paragraph so the
+                    // whole passage is highlighted in THIS edition's wording, even
+                    // when the translation differs from our reference phrase.
                     setTimeout(() => {
+                      let passageCfi = matchCfi;
                       try {
-                        const range = readerRendition.getRange(cfi);
+                        const range = readerRendition.getRange(matchCfi);
                         if (range) {
                           const node = range.startContainer;
-                          const elx = (node.nodeType === 3) ? node.parentElement : node;
-                          if (elx && elx.scrollIntoView) elx.scrollIntoView({ block: 'center' });
+                          let block = (node.nodeType === 3) ? node.parentElement : node;
+                          // Walk up to a block-level container (paragraph/li/blockquote)
+                          while (block && block.parentElement &&
+                                 !/^(P|LI|BLOCKQUOTE|DIV|TD)$/.test(block.tagName)) {
+                            block = block.parentElement;
+                          }
+                          if (block && block.scrollIntoView) block.scrollIntoView({ block: 'center' });
+                          // Build a CFI spanning the whole block element
+                          const contents = readerRendition.getContents()[0];
+                          if (contents && block) {
+                            const r2 = block.ownerDocument.createRange();
+                            r2.selectNodeContents(block);
+                            const blockCfi = contents.cfiFromRange(r2);
+                            if (blockCfi) passageCfi = blockCfi;
+                          }
                         }
                       } catch(e){}
-                    }, 260);
+                      saveDoctrineHighlight(vol.filename, passageCfi);
+                      applyDoctrineHighlights(vol.filename);
+                    }, 280);
                   });
                 }
               });
