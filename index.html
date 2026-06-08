@@ -2706,7 +2706,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v20.0 · 7 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v20.4 · 7 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3304,6 +3304,28 @@ const LIBRARY_DATA = {
       "series": "Literature & History",
       "status": "pending",
       "filename": null
+    },
+    {
+      "id": 53,
+      "title": "The Aeneid",
+      "subtitle": "",
+      "author": "Virgil",
+      "date_label": "c. 29-19 BC",
+      "date_sort": -25,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "filename": ""
+    },
+    {
+      "id": 54,
+      "title": "The Dead Sea Scrolls",
+      "subtitle": "",
+      "author": "The Qumran Community",
+      "date_label": "c. 250 BC - 68 AD",
+      "date_sort": -150,
+      "series": "Voices of the Ancient World",
+      "status": "pending",
+      "filename": ""
     }
   ]
 };
@@ -3812,6 +3834,8 @@ const SIGNIFICANCE = {
 // ── MAP DATA ──────────────────────────────────────────────────────────────────
 // lat/lng for each volume's place of origin
 const MAP_LOCATIONS = {
+  "The Aeneid":                              { lat: 41.9,  lng: 12.5,  place: "Rome, Italy" },
+  "The Dead Sea Scrolls":                    { lat: 31.74, lng: 35.46, place: "Qumran, by the Dead Sea" },
   "Instructions of Shuruppak":              { lat: 31.8,  lng: 45.5,  place: "Shuruppak (Tell Fara), ancient Sumer" },
   "The Hobbit":                             { lat: 51.75, lng: -1.26, place: "Oxford, England" },
   "The Epic of Gilgamesh":                    { lat: 31.3,  lng: 45.6,  place: "Uruk, ancient Mesopotamia" },
@@ -4908,7 +4932,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v20.0 · 7 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v20.4 · 7 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
