@@ -2778,7 +2778,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v22.1 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v22.2 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5004,7 +5004,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v22.1 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v22.2 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5082,8 +5082,8 @@ function applyDoctrineHighlights(filename) {
       readerRendition.annotations.remove(cfi, 'highlight');
     } catch(e) {}
     try {
-      readerRendition.annotations.highlight(cfi, {}, null, '',
-        { 'fill': 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply' });
+      readerRendition.annotations.highlight(cfi, {}, null, 'doctrine-hl',
+        { 'fill': 'rgba(220,30,30,0.4)', 'fill-opacity': '0.6' });
     } catch(e) {}
   });
 }
@@ -5367,15 +5367,17 @@ function openReader(vol, jumpSpec) {
                 cfis.forEach(cfi => {
                   try { readerRendition.annotations.remove(cfi, 'highlight'); } catch(e){}
                   try {
-                    readerRendition.annotations.highlight(cfi, {}, null, '',
-                      { 'fill': 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply' });
+                    readerRendition.annotations.highlight(cfi, {}, null, 'doctrine-hl',
+                      { 'fill': 'rgba(220,30,30,0.4)', 'fill-opacity': '0.6' });
                     saveDoctrineHighlight(vol.filename, cfi);
                   } catch(e){}
                 });
                 centreOnCfi(cfis[0]);
               };
-              setTimeout(applyAll, 200);
-              setTimeout(applyAll, 700);
+              applyAll();
+              setTimeout(applyAll, 250);
+              setTimeout(applyAll, 800);
+              setTimeout(applyAll, 1500);
             });
           }).catch(()=>{});
         }
