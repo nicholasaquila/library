@@ -2779,7 +2779,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v23.3 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v23.4 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5008,7 +5008,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v23.3 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v23.4 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5269,6 +5269,28 @@ function openReader(vol, jumpSpec) {
         hideScrollbars();
         readerRendition.on('rendered', () => setTimeout(hideScrollbars, 50));
 
+        // ── DOCTRINE "GO TO SOURCE": open Find, type the phrase, run the search ──
+        // Hooked to display() (reliable) rather than locations.generate().
+        if (jumpSpec && jumpSpec.searchphrase) {
+          const phrase = jumpSpec.searchphrase;
+          const runDoctrineSearch = () => {
+            const bar = document.getElementById('reader-search-bar');
+            const btn = document.getElementById('reader-search-btn');
+            const input = document.getElementById('reader-search-input');
+            if (bar) bar.classList.add('open');
+            if (btn) btn.classList.add('active');
+            if (input) {
+              input.value = phrase;
+              try { input.focus(); input.setSelectionRange(phrase.length, phrase.length); } catch(e){}
+            }
+            readerDoctrineMode = true;
+            doReaderSearch(phrase);
+          };
+          // Try shortly after render; retry once more in case the book is still warming
+          setTimeout(runDoctrineSearch, 400);
+          setTimeout(runDoctrineSearch, 1200);
+        }
+
       // Generate locations for page count
       // Populate chapter on first load
       readerBook.loaded.navigation.then(nav => {
@@ -5289,31 +5311,6 @@ function openReader(vol, jumpSpec) {
       readerBook.locations.generate(600).then(() => {
         const total = readerBook.locations.total || readerBook.locations.length();
         const el    = document.getElementById('reader-progress');
-
-        // ── DOCTRINE "GO TO SOURCE": run the in-reader search for the key phrase ──
-        // Reuses the proven search mechanism (find + red highlight + prev/next).
-        if (jumpSpec && jumpSpec.searchphrase) {
-          const phrase = jumpSpec.searchphrase;
-          // Open the search bar, prefill the phrase, and run the search once the
-          // book is ready. The search handles finding, highlighting and stepping.
-          setTimeout(() => {
-            try {
-              const bar = document.getElementById('reader-search-bar');
-              const btn = document.getElementById('reader-search-btn');
-              const input = document.getElementById('reader-search-input');
-              // Open the Find bar exactly as if the user tapped the Find button
-              if (bar) bar.classList.add('open');
-              if (btn) btn.classList.add('active');
-              if (input) {
-                input.value = phrase;
-                input.focus();
-                input.setSelectionRange(phrase.length, phrase.length);
-              }
-              readerDoctrineMode = true;   // expand highlight to paragraph
-              doReaderSearch(phrase);
-            } catch(e){}
-          }, 600);
-        }
 
         readerRendition.on('relocated', loc => {
           // Progress %: use the END of the visible range so reaching the
