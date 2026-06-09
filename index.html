@@ -2623,6 +2623,36 @@
   }
   [data-theme="dark"] .reader-evidence-bar { background: rgba(200,40,40,0.1); }
 
+
+  /* ── READER DOCTRINE-JUMP LOADING OVERLAY ── */
+  .reader-loading-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: var(--cream);
+    font-family: 'Cinzel', serif;
+  }
+  [data-theme="dark"] .reader-loading-overlay { background: #1c1a10; }
+  .reader-loading-overlay .rl-text {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .reader-loading-overlay .rl-spinner {
+    width: 26px; height: 26px;
+    border: 2px solid rgba(140,110,55,0.2);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: rl-spin 0.8s linear infinite;
+  }
+  @keyframes rl-spin { to { transform: rotate(360deg); } }
+
 </style>
 </head>
 <body>
@@ -2748,7 +2778,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.6 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.7 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4974,7 +5004,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.6 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.7 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5264,6 +5294,19 @@ function openReader(vol, jumpSpec) {
 
         // ── DOCTRINE "GO TO SOURCE": jump to the passage and highlight ALL quoted parts ──
         if (jumpSpec && ((jumpSpec.chapter && jumpSpec.chapter.length) || (jumpSpec.match && jumpSpec.match.length))) {
+          // Show a loading overlay and give epub.js ~2s to finish initialising
+          // (locations, section docs, CFI bases) before searching + jumping.
+          const rlOverlay = document.createElement('div');
+          rlOverlay.className = 'reader-loading-overlay';
+          rlOverlay.id = 'reader-jump-loading';
+          rlOverlay.innerHTML = '<div class="rl-spinner"></div><div class="rl-text">Locating the passage…</div>';
+          const raEl = document.getElementById('reader-area');
+          if (raEl) raEl.appendChild(rlOverlay);
+          const clearOverlay = () => { const o = document.getElementById('reader-jump-loading'); if (o) o.remove(); };
+
+          setTimeout(() => { runDoctrineJump(); }, 2000);
+
+          function runDoctrineJump() {
           const chapters = jumpSpec.chapter || [];
           const phrases  = jumpSpec.match || [];
           const quote    = jumpSpec.quote || '';
@@ -5458,9 +5501,10 @@ function openReader(vol, jumpSpec) {
                 centreOnCfi(cfis[0]);
               };
               setTimeout(applyAll, 150);
-              setTimeout(applyAll, 550);
+              setTimeout(() => { applyAll(); clearOverlay(); }, 550);
             });
-          }).catch(()=>{});
+          }).catch(()=>{ clearOverlay(); });
+          } // end runDoctrineJump
         }
 
         readerRendition.on('relocated', loc => {
