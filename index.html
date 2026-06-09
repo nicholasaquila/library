@@ -2706,7 +2706,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.3 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.4 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4932,7 +4932,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.3 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.4 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5231,28 +5231,63 @@ function openReader(vol, jumpSpec) {
           // Fallback to the match fragments if no quote present
           if (!segments.length) segments = phrases.slice();
 
-          // Build forgiving search variants for a segment: the whole thing, then a
-          // few shorter word-runs taken from the start, middle and a distinctive
-          // chunk. epub.js find() is exact, so shorter runs dodge punctuation and
-          // apostrophe (straight vs curly) differences between editions.
-          const variants = (seg) => {
-            const clean = seg.replace(/[\u2018\u2019]/g, "'").replace(/[\u201c\u201d]/g, '"').replace(/\s+/g, ' ').trim();
-            const words = clean.split(' ');
-            const out = [];
-            out.push(clean);
-            // Strip trailing/leading punctuation from a word-run
-            const run = (start, n) => words.slice(start, start + n).join(' ').replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, '');
-            if (words.length > 6) out.push(run(0, 6));
-            if (words.length > 5) out.push(run(0, 5));
-            if (words.length > 4) out.push(run(0, 4));
-            if (words.length > 8) out.push(run(Math.max(0, words.length - 5), 5)); // tail run
-            // First clause up to a comma/semicolon
-            const clause = clean.split(/[,;:]/)[0].trim();
-            if (clause && clause.length >= 10 && clause !== clean) out.push(clause);
-            return out.filter((v, i, a) => v && v.length >= 6 && a.indexOf(v) === i);
+          // Whitespace-tolerant search: epub.js find() is exact and breaks on the
+          // double-spaces / line-break joins common in these editions. Instead we
+          // walk the section's own text nodes, match against NORMALISED text with a
+          // normalised needle, and build a CFI from the matched DOM range.
+          const normalize = (s) => s.replace(/[\u2018\u2019]/g, "'")
+                                    .replace(/[\u201c\u201d]/g, '"')
+                                    .replace(/\s+/g, ' ').trim();
+
+          const findInSection = (item, needleNorm) => {
+            const doc = item.document;
+            if (!doc || !doc.body) return null;
+            // Gather text nodes and a concatenated normalised string with index map
+            const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null);
+            const nodes = [];
+            let combined = '';
+            const map = []; // map[combinedIndex] = {node, offset}
+            let n;
+            while ((n = walker.nextNode())) {
+              const raw = n.nodeValue;
+              for (let k = 0; k < raw.length; k++) {
+                // normalise on the fly: collapse runs of whitespace to single space
+                const ch = raw[k];
+                if (/\s/.test(ch)) {
+                  if (combined.length && combined[combined.length-1] === ' ') { continue; }
+                  combined += ' '; map.push({ node: n, offset: k });
+                } else {
+                  combined += ch; map.push({ node: n, offset: k });
+                }
+              }
+            }
+            const hay = combined.replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"');
+            const idx = hay.toLowerCase().indexOf(needleNorm.toLowerCase());
+            if (idx < 0) return null;
+            const startMap = map[idx];
+            const endMap = map[Math.min(idx + needleNorm.length - 1, map.length - 1)];
+            if (!startMap || !endMap) return null;
+            try {
+              const range = doc.createRange();
+              range.setStart(startMap.node, startMap.offset);
+              range.setEnd(endMap.node, endMap.offset + 1);
+              const cfi = item.cfiFromRange(range);
+              return cfi ? { cfi, range } : null;
+            } catch(e) { return null; }
           };
 
-          // Find a CFI for a given segment, trying each variant until one hits.
+          // Variants: full segment, then shorter leading/tail runs (still normalised).
+          const variants = (seg) => {
+            const clean = normalize(seg);
+            const words = clean.split(' ');
+            const out = [clean];
+            const run = (a, b) => words.slice(a, b).join(' ').replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g,'');
+            if (words.length > 6) out.push(run(0,6));
+            if (words.length > 4) out.push(run(0,4));
+            if (words.length > 8) out.push(run(words.length-5, words.length));
+            return out.filter((v,i,a)=>v && v.length>=6 && a.indexOf(v)===i);
+          };
+
           const findPhrase = (seg) => {
             const tries = variants(seg);
             let inner = Promise.resolve(null);
@@ -5262,10 +5297,11 @@ function openReader(vol, jumpSpec) {
                 return item.load(readerBook.load.bind(readerBook)).then(() => {
                   let res = null;
                   for (const v of tries) {
-                    const r = item.find(v);
-                    if (r && r.length) { res = r[0]; break; }
+                    res = findInSection(item, v);
+                    if (res) break;
                   }
-                  item.unload();
+                  // keep loaded if hit (so getRange/highlight works); else unload
+                  if (!res) { try { item.unload(); } catch(e){} }
                   return res;
                 }).catch(() => { try{item.unload();}catch(e){} return null; });
               });
@@ -5288,44 +5324,74 @@ function openReader(vol, jumpSpec) {
             return null;
           };
 
-          readerBook.ready.then(() => {
-            // Locate every segment (sequentially to keep it simple/robust)
-            let chain = Promise.resolve([]);
-            segments.forEach(seg => {
-              chain = chain.then(acc => findPhrase(seg).then(hit => { if (hit && hit.cfi) acc.push(hit.cfi); return acc; }));
+          // Find which SECTION the passage is in, using the most specific match
+          // phrase first (curated unique). This anchors us to the right place even
+          // when generic words (e.g. "Peter and Paul") occur in several books.
+          const findAnchorSection = () => {
+            let chain = Promise.resolve(null);
+            phrases.forEach(ph => {
+              chain = chain.then(hit => {
+                if (hit) return hit;
+                // search each section for this specific phrase
+                let inner = Promise.resolve(null);
+                readerBook.spine.spineItems.forEach(item => {
+                  inner = inner.then(f => {
+                    if (f) return f;
+                    return item.load(readerBook.load.bind(readerBook)).then(() => {
+                      const r = findInSection(item, normalize(ph));
+                      if (r) { return { item, cfi: r.cfi }; }
+                      try { item.unload(); } catch(e){}
+                      return null;
+                    }).catch(() => { try{item.unload();}catch(e){} return null; });
+                  });
+                });
+                return inner;
+              });
             });
             return chain;
-          }).then(cfis => {
-            if (cfis.length) {
-              // Jump to the first located segment
-              readerRendition.display(cfis[0]).then(() => {
-                const applyAll = () => {
-                  cfis.forEach(cfi => {
-                    try { readerRendition.annotations.remove(cfi, 'highlight'); } catch(e){}
-                    try {
-                      readerRendition.annotations.highlight(cfi, {}, null, '',
-                        { 'fill': 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply' });
-                      saveDoctrineHighlight(vol.filename, cfi);
-                    } catch(e){}
-                  });
-                  // Centre the first match
-                  try {
-                    const range = readerRendition.getRange(cfis[0]);
-                    if (range) {
-                      const node = range.startContainer;
-                      const elx = (node.nodeType === 3) ? node.parentElement : node;
-                      if (elx && elx.scrollIntoView) elx.scrollIntoView({ block: 'center' });
-                    }
-                  } catch(e){}
-                };
-                setTimeout(applyAll, 120);
-                setTimeout(applyAll, 500);
-              });
-            } else {
-              // No segment matched — fall back to the chapter via TOC
+          };
+
+          readerBook.ready.then(() => findAnchorSection()).then(anchor => {
+            if (!anchor || !anchor.item) {
               const href = chapterHref();
               if (href) readerRendition.display(href);
+              return;
             }
+            const item = anchor.item;
+            // Within the anchored section ONLY, locate each quote segment to highlight.
+            const cfis = [];
+            segments.forEach(seg => {
+              variants(seg).some(v => {
+                const r = findInSection(item, v);
+                if (r) { cfis.push(r.cfi); return true; }
+                return false;
+              });
+            });
+            // Always include the anchor cfi itself
+            if (!cfis.length) cfis.push(anchor.cfi);
+
+            readerRendition.display(cfis[0]).then(() => {
+              const applyAll = () => {
+                cfis.forEach(cfi => {
+                  try { readerRendition.annotations.remove(cfi, 'highlight'); } catch(e){}
+                  try {
+                    readerRendition.annotations.highlight(cfi, {}, null, '',
+                      { 'fill': 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply' });
+                    saveDoctrineHighlight(vol.filename, cfi);
+                  } catch(e){}
+                });
+                try {
+                  const range = readerRendition.getRange(cfis[0]);
+                  if (range) {
+                    const node = range.startContainer;
+                    const elx = (node.nodeType === 3) ? node.parentElement : node;
+                    if (elx && elx.scrollIntoView) elx.scrollIntoView({ block: 'center' });
+                  }
+                } catch(e){}
+              };
+              setTimeout(applyAll, 150);
+              setTimeout(applyAll, 550);
+            });
           }).catch(()=>{});
         }
 
