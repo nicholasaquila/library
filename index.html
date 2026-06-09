@@ -2748,7 +2748,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.5 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.6 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4974,7 +4974,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.5 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.6 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5286,8 +5286,7 @@ function openReader(vol, jumpSpec) {
                                     .replace(/[\u201c\u201d]/g, '"')
                                     .replace(/\s+/g, ' ').trim();
 
-          const findInSection = (item, needleNorm) => {
-            const doc = item.document;
+          const findInSection = (item, doc, needleNorm) => {
             if (!doc || !doc.body) return null;
             // Gather text nodes and a concatenated normalised string with index map
             const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null);
@@ -5318,7 +5317,14 @@ function openReader(vol, jumpSpec) {
               const range = doc.createRange();
               range.setStart(startMap.node, startMap.offset);
               range.setEnd(endMap.node, endMap.offset + 1);
-              const cfi = item.cfiFromRange(range);
+              let cfi = null;
+              try { cfi = item.cfiFromRange(range); } catch(e){}
+              if (!cfi && item.cfiBase) {
+                try {
+                  const EC = (window.ePub && window.ePub.CFI) ? new window.ePub.CFI() : null;
+                  if (EC) cfi = EC.fromRange(range, item.cfiBase);
+                } catch(e){}
+              }
               return cfi ? { cfi, range } : null;
             } catch(e) { return null; }
           };
@@ -5386,8 +5392,9 @@ function openReader(vol, jumpSpec) {
                 spineItems.forEach((item, si) => {
                   inner = inner.then(f => {
                     if (f >= 0) return f;
-                    return item.load(readerBook.load.bind(readerBook)).then(() => {
-                      const r = findInSection(item, normalize(ph));
+                    return item.load(readerBook.load.bind(readerBook)).then((doc) => {
+                      const d = doc || item.document || item.contents;
+                      const r = findInSection(item, d, normalize(ph));
                       try { item.unload(); } catch(e){}
                       return r ? si : -1;
                     }).catch(() => { try{item.unload();}catch(e){} return -1; });
@@ -5411,10 +5418,11 @@ function openReader(vol, jumpSpec) {
             let chain = Promise.resolve();
             for (let si = anchorIdx; si < spineItems.length; si++) {
               const item = spineItems[si];
-              chain = chain.then(() => item.load(readerBook.load.bind(readerBook)).then(() => {
+              chain = chain.then(() => item.load(readerBook.load.bind(readerBook)).then((doc) => {
+                const d = doc || item.document || item.contents;
                 segments.forEach(seg => {
                   variants(seg).some(v => {
-                    const r = findInSection(item, v);
+                    const r = findInSection(item, d, v);
                     if (r) { ordered.push({ si, cfi: r.cfi }); return true; }
                     return false;
                   });
