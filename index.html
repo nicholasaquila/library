@@ -2706,7 +2706,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.0 · 7 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.1 · 7 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4932,7 +4932,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.0 · 7 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.1 · 7 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5015,8 +5015,8 @@ function applyDoctrineHighlights(filename) {
 }
 
 function openReaderAtSource(vol, witness) {
-  // Pass both chapter locators and match fragments to the reader
-  openReader(vol, { chapter: witness.chapter || [], match: witness.match || [] });
+  // Pass chapter locators, match fragments, and the full quote (for segment highlight)
+  openReader(vol, { chapter: witness.chapter || [], match: witness.match || [], quote: witness.quote || '' });
 }
 // Back-compat: some callers may pass a bare match array/string
 function openReaderAtPassage(vol, matchText) {
@@ -5210,39 +5210,42 @@ function openReader(vol, jumpSpec) {
         // Re-apply any saved permanent (red) doctrine highlights for this book
         applyDoctrineHighlights(vol.filename);
 
-        // ── DOCTRINE "GO TO SOURCE": jump to the passage and highlight it red ──
-        // Strategy: find the exact fragment first (precise). If found, jump straight
-        // to its CFI and highlight that match. If not found, fall back to the chapter
-        // via the TOC. One jump only — no competing display() calls.
+        // ── DOCTRINE "GO TO SOURCE": jump to the passage and highlight ALL quoted parts ──
         if (jumpSpec && ((jumpSpec.chapter && jumpSpec.chapter.length) || (jumpSpec.match && jumpSpec.match.length))) {
           const chapters = jumpSpec.chapter || [];
           const phrases  = jumpSpec.match || [];
+          const quote    = jumpSpec.quote || '';
 
-          // Search each spine section for the first matching fragment.
-          const findFragment = () => {
-            let chain = Promise.resolve(null);
-            phrases.forEach(phrase => {
-              chain = chain.then(hit => {
-                if (hit) return hit;
-                // Search sections one at a time; keep the section loaded if it hits
-                let inner = Promise.resolve(null);
-                readerBook.spine.spineItems.forEach(item => {
-                  inner = inner.then(found => {
-                    if (found) return found;
-                    return item.load(readerBook.load.bind(readerBook)).then(() => {
-                      const res = item.find(phrase);
-                      item.unload();
-                      return (res && res.length) ? res[0] : null;
-                    }).catch(() => { try{item.unload();}catch(e){} return null; });
-                  });
-                });
-                return inner;
+          // Break the quote into its segments (the real text between the "..." gaps).
+          // Each segment is searched for and highlighted where found.
+          let segments = quote
+            .replace(/\u201c|\u201d|"/g, '')
+            .split(/\s*\.\.\.\s*/)
+            .map(s => s.trim())
+            .filter(s => s.length >= 6);
+          // Fallback to the match fragments if no quote present
+          if (!segments.length) segments = phrases.slice();
+
+          // Find a CFI for a given phrase across the spine (keeps section unloaded after)
+          const findPhrase = (phrase) => {
+            let inner = Promise.resolve(null);
+            readerBook.spine.spineItems.forEach(item => {
+              inner = inner.then(found => {
+                if (found) return found;
+                return item.load(readerBook.load.bind(readerBook)).then(() => {
+                  let res = item.find(phrase);
+                  // If the full segment isn't found, try a shorter leading slice
+                  if ((!res || !res.length) && phrase.length > 40) {
+                    res = item.find(phrase.slice(0, 40));
+                  }
+                  item.unload();
+                  return (res && res.length) ? res[0] : null;
+                }).catch(() => { try{item.unload();}catch(e){} return null; });
               });
             });
-            return chain;
+            return inner;
           };
 
-          // TOC chapter href as fallback
           const chapterHref = () => {
             const toc = (readerBook.navigation && readerBook.navigation.toc) || [];
             const flat = [];
@@ -5255,22 +5258,29 @@ function openReader(vol, jumpSpec) {
             return null;
           };
 
-          readerBook.ready.then(() => findFragment()).then(match => {
-            if (match && match.cfi) {
-              // Jump to the exact match and highlight it once the view settles.
-              readerRendition.display(match.cfi).then(() => {
-                const doHl = () => {
+          readerBook.ready.then(() => {
+            // Locate every segment (sequentially to keep it simple/robust)
+            let chain = Promise.resolve([]);
+            segments.forEach(seg => {
+              chain = chain.then(acc => findPhrase(seg).then(hit => { if (hit && hit.cfi) acc.push(hit.cfi); return acc; }));
+            });
+            return chain;
+          }).then(cfis => {
+            if (cfis.length) {
+              // Jump to the first located segment
+              readerRendition.display(cfis[0]).then(() => {
+                const applyAll = () => {
+                  cfis.forEach(cfi => {
+                    try { readerRendition.annotations.remove(cfi, 'highlight'); } catch(e){}
+                    try {
+                      readerRendition.annotations.highlight(cfi, {}, null, '',
+                        { 'fill': 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply' });
+                      saveDoctrineHighlight(vol.filename, cfi);
+                    } catch(e){}
+                  });
+                  // Centre the first match
                   try {
-                    readerRendition.annotations.remove(match.cfi, 'highlight');
-                  } catch(e){}
-                  try {
-                    readerRendition.annotations.highlight(match.cfi, {}, null, '',
-                      { 'fill': 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply' });
-                    saveDoctrineHighlight(vol.filename, match.cfi);
-                  } catch(e){}
-                  // Centre the match
-                  try {
-                    const range = readerRendition.getRange(match.cfi);
+                    const range = readerRendition.getRange(cfis[0]);
                     if (range) {
                       const node = range.startContainer;
                       const elx = (node.nodeType === 3) ? node.parentElement : node;
@@ -5278,12 +5288,11 @@ function openReader(vol, jumpSpec) {
                     }
                   } catch(e){}
                 };
-                // Try immediately and again after a beat (continuous manager settles late)
-                setTimeout(doHl, 120);
-                setTimeout(doHl, 500);
+                setTimeout(applyAll, 120);
+                setTimeout(applyAll, 500);
               });
             } else {
-              // No fragment match — fall back to the chapter via TOC
+              // No segment matched — fall back to the chapter via TOC
               const href = chapterHref();
               if (href) readerRendition.display(href);
             }
