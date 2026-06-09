@@ -2778,7 +2778,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.7 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.8 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3537,24 +3537,21 @@ const DOCTRINES = [
         cite: 'Didache 9',
         note: 'The Eucharist named a holy thing, guarded from the unbaptised.',
         quote: '[work in progress]',
-        chapter: ['Concerning the Eucharist', 'Eucharist'],
-        match: ['eat or drink of your Eucharist', 'of your Eucharist', 'holy to dogs']
+        passages: ['eat or drink of your Eucharist', 'holy to dogs']
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         cite: 'To the Smyrnaeans 7 (Roberts-Donaldson)',
         note: 'Against those who deny the Eucharist is Christ\'s flesh.',
         quote: '[work in progress]',
-        chapter: ['Epistle to the Smyrnaeans', 'Smyrnaeans'],
-        match: ['the flesh of our Saviour Jesus Christ', 'flesh of our Saviour', 'confess not the Eucharist']
+        passages: ['confess not the Eucharist', 'flesh of our']
       },
       {
         title: 'The First and Second Apologies',
         cite: 'First Apology 66',
         note: 'Justin tells the emperor the bread is not common bread.',
         quote: '[work in progress]',
-        chapter: ['Chapter 66', 'LXVI', 'the Eucharist'],
-        match: ['not as common bread', 'common bread', 'not common bread', 'made flesh']
+        passages: ['not as common bread', 'common bread', 'made flesh']
       }
     ]
   },
@@ -3568,24 +3565,21 @@ const DOCTRINES = [
         note: 'Chapters 42 and 44: the chain of authority runs God to Christ to the Apostles to the bishops and deacons they appointed; foreseeing strife, the Apostles provided for an ongoing succession of approved men.',
         quote: "The Apostles received the Gospel for us from the Lord Jesus Christ; Jesus Christ was sent forth from God. So then Christ is from God, and the Apostles are from Christ. ... So preaching everywhere ... they appointed their firstfruits ... to be bishops and deacons. ... And our Apostles knew ... that there would be strife over the name of the bishop's office. For this cause ... they appointed the aforesaid persons, and afterwards they provided a continuance, that if these should fall asleep, other approved men should succeed to their ministration.",
         cite: '1 Clement 42, 44 (Lightfoot)',
-        chapter: ['First Epistle of Clement'],
-        match: ['strife over the name of the bishop', 'they appointed their firstfruits', 'to be bishops and deacons', 'succeed to their ministration', 'The Apostles received the Gospel']
+        passages: ['The Apostles received the Gospel', 'appointed their', 'to be bishops', 'strife over the name', 'succeed to their ministration']
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'To the Trallians and Smyrnaeans: the ministry descends from Christ through the apostles to the bishop, presbyters, and deacons who reflect them; without these there is no Church, and where the bishop is, there is the Catholic Church.',
         quote: 'Let all reverence the deacons as an appointment of Jesus Christ, and the bishop as Jesus Christ, who is the Son of the Father, and the presbyters as the sanhedrin of God, and assembly of the apostles. Apart from these, there is no Church. ... Let no man do anything connected with the Church without the bishop ... wherever Jesus Christ is, there is the Catholic Church.',
         cite: 'To the Smyrnaeans 8; Trallians 3 (Roberts-Donaldson)',
-        chapter: ['Epistle to the Smyrnaeans', 'Smyrnaeans', 'Epistle to the Trallians', 'Trallians'],
-        match: ['there is the Catholic Church', 'sanhedrin of God', 'connected with the Church without the bishop', 'reverence the deacons']
+        passages: ['reverence the deacons', 'sanhedrin of God', 'without the bishop', 'there is the Catholic Church']
       },
       {
         title: 'Against Heresies',
         note: 'Book III, Ch. III (ANF/Schaff): the apostolic succession is public and traceable, the faith handed openly to the bishops the apostles appointed; Irenaeus points to the Church at Rome founded by Peter and Paul, with which every Church must agree.',
         quote: 'It is within the power of all, therefore, in every Church, who may wish to see the truth, to contemplate clearly the tradition of the apostles manifested throughout the whole world; and we are in a position to reckon up those who were by the apostles instituted bishops in the Churches, and to demonstrate the succession of these men to our own times ... the very great, the very ancient, and universally known Church founded and organized at Rome by the two most glorious apostles, Peter and Paul ... For it is a matter of necessity that every Church should agree with this Church, on account of its preeminent authority.',
         cite: 'Against Heresies III.3.1-2 (ANF)',
-        chapter: ['bk3_ch03', 'Book III'],
-        match: ['succession of these men to our own times', 'reckon up those who were', 'instituted bishops in the Churches', 'Peter and Paul', 'preeminent authority']
+        passages: ['reckon up those', 'instituted bishops', 'succession of these men', 'Peter and Paul', 'preeminent authority']
       }
     ]
   }
@@ -5004,7 +4998,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.7 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.8 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5089,8 +5083,8 @@ function applyDoctrineHighlights(filename) {
 }
 
 function openReaderAtSource(vol, witness) {
-  // Pass chapter locators, match fragments, and the full quote (for segment highlight)
-  openReader(vol, { chapter: witness.chapter || [], match: witness.match || [], quote: witness.quote || '' });
+  // Pass the list of short anchor phrases (one per evidence passage)
+  openReader(vol, { passages: witness.passages || [] });
 }
 // Back-compat: some callers may pass a bare match array/string
 function openReaderAtPassage(vol, matchText) {
@@ -5292,202 +5286,51 @@ function openReader(vol, jumpSpec) {
         // Re-apply any saved permanent (red) doctrine highlights for this book
         applyDoctrineHighlights(vol.filename);
 
-        // ── DOCTRINE "GO TO SOURCE": jump to the passage and highlight ALL quoted parts ──
-        if (jumpSpec && ((jumpSpec.chapter && jumpSpec.chapter.length) || (jumpSpec.match && jumpSpec.match.length))) {
-          // Show a loading overlay and give epub.js ~2s to finish initialising
-          // (locations, section docs, CFI bases) before searching + jumping.
-          const rlOverlay = document.createElement('div');
-          rlOverlay.className = 'reader-loading-overlay';
-          rlOverlay.id = 'reader-jump-loading';
-          rlOverlay.innerHTML = '<div class="rl-spinner"></div><div class="rl-text">Locating the passage…</div>';
-          const raEl = document.getElementById('reader-area');
-          if (raEl) raEl.appendChild(rlOverlay);
-          const clearOverlay = () => { const o = document.getElementById('reader-jump-loading'); if (o) o.remove(); };
+        // ── DOCTRINE "GO TO SOURCE": find passages via epub.js native search ──
+        // Each "passage" is a short, verified phrase. epub.js book.search/section.find
+        // returns a proper CFI for each. We jump to the first and let the Evidence
+        // bar step through the rest. No custom CFI building, no timers fighting render.
+        if (jumpSpec && jumpSpec.passages && jumpSpec.passages.length) {
+          const passages = jumpSpec.passages;
 
-          setTimeout(() => { runDoctrineJump(); }, 2000);
-
-          function runDoctrineJump() {
-          const chapters = jumpSpec.chapter || [];
-          const phrases  = jumpSpec.match || [];
-          const quote    = jumpSpec.quote || '';
-
-          // Break the quote into its segments (the real text between the "..." gaps).
-          // Each segment is searched for and highlighted where found.
-          let segments = quote
-            .replace(/\u201c|\u201d|"/g, '')
-            .split(/\s*\.\.\.\s*/)
-            .map(s => s.trim())
-            .filter(s => s.length >= 6);
-          // Fallback to the match fragments if no quote present
-          if (!segments.length) segments = phrases.slice();
-
-          // Whitespace-tolerant search: epub.js find() is exact and breaks on the
-          // double-spaces / line-break joins common in these editions. Instead we
-          // walk the section's own text nodes, match against NORMALISED text with a
-          // normalised needle, and build a CFI from the matched DOM range.
-          const normalize = (s) => s.replace(/[\u2018\u2019]/g, "'")
-                                    .replace(/[\u201c\u201d]/g, '"')
-                                    .replace(/\s+/g, ' ').trim();
-
-          const findInSection = (item, doc, needleNorm) => {
-            if (!doc || !doc.body) return null;
-            // Gather text nodes and a concatenated normalised string with index map
-            const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null);
-            const nodes = [];
-            let combined = '';
-            const map = []; // map[combinedIndex] = {node, offset}
-            let n;
-            while ((n = walker.nextNode())) {
-              const raw = n.nodeValue;
-              for (let k = 0; k < raw.length; k++) {
-                // normalise on the fly: collapse runs of whitespace to single space
-                const ch = raw[k];
-                if (/\s/.test(ch)) {
-                  if (combined.length && combined[combined.length-1] === ' ') { continue; }
-                  combined += ' '; map.push({ node: n, offset: k });
-                } else {
-                  combined += ch; map.push({ node: n, offset: k });
-                }
-              }
-            }
-            const hay = combined.replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"');
-            const idx = hay.toLowerCase().indexOf(needleNorm.toLowerCase());
-            if (idx < 0) return null;
-            const startMap = map[idx];
-            const endMap = map[Math.min(idx + needleNorm.length - 1, map.length - 1)];
-            if (!startMap || !endMap) return null;
-            try {
-              const range = doc.createRange();
-              range.setStart(startMap.node, startMap.offset);
-              range.setEnd(endMap.node, endMap.offset + 1);
-              let cfi = null;
-              try { cfi = item.cfiFromRange(range); } catch(e){}
-              if (!cfi && item.cfiBase) {
-                try {
-                  const EC = (window.ePub && window.ePub.CFI) ? new window.ePub.CFI() : null;
-                  if (EC) cfi = EC.fromRange(range, item.cfiBase);
-                } catch(e){}
-              }
-              return cfi ? { cfi, range } : null;
-            } catch(e) { return null; }
-          };
-
-          // Variants: full segment, then shorter leading/tail runs (still normalised).
-          const variants = (seg) => {
-            const clean = normalize(seg);
-            const words = clean.split(' ');
-            const out = [clean];
-            const run = (a, b) => words.slice(a, b).join(' ').replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g,'');
-            if (words.length > 6) out.push(run(0,6));
-            if (words.length > 4) out.push(run(0,4));
-            if (words.length > 8) out.push(run(words.length-5, words.length));
-            return out.filter((v,i,a)=>v && v.length>=6 && a.indexOf(v)===i);
-          };
-
-          const findPhrase = (seg) => {
-            const tries = variants(seg);
-            let inner = Promise.resolve(null);
+          // Search every spine section for a phrase; return its CFI (native find()).
+          const findCfi = (phrase) => {
+            let chain = Promise.resolve(null);
             readerBook.spine.spineItems.forEach(item => {
-              inner = inner.then(found => {
-                if (found) return found;
+              chain = chain.then(hit => {
+                if (hit) return hit;
                 return item.load(readerBook.load.bind(readerBook)).then(() => {
                   let res = null;
-                  for (const v of tries) {
-                    res = findInSection(item, v);
-                    if (res) break;
-                  }
-                  // keep loaded if hit (so getRange/highlight works); else unload
-                  if (!res) { try { item.unload(); } catch(e){} }
+                  try { const r = item.find(phrase); if (r && r.length) res = r[0].cfi; } catch(e){}
+                  try { item.unload(); } catch(e){}
                   return res;
                 }).catch(() => { try{item.unload();}catch(e){} return null; });
-              });
-            });
-            return inner;
-          };
-
-          const chapterHref = () => {
-            const toc = (readerBook.navigation && readerBook.navigation.toc) || [];
-            const flat = [];
-            (function walk(items){ items.forEach(t => { flat.push(t); if (t.subitems) walk(t.subitems); }); })(toc);
-            for (const phrase of chapters) {
-              const p = phrase.toLowerCase();
-              // Match against the chapter's href first (precise, e.g. 'bk3_ch03'),
-              // then fall back to the visible label.
-              let hit = flat.find(t => (t.href || '').toLowerCase().includes(p));
-              if (!hit) hit = flat.find(t => (t.label || '').toLowerCase().includes(p));
-              if (hit && hit.href) return hit.href;
-            }
-            return null;
-          };
-
-          // First, find the anchor section using the most specific phrase, so we know
-          // WHICH book/section the excerpt belongs to (avoids generic words matching
-          // the wrong book). Then collect every quote segment across the spine IN
-          // READING ORDER, preferring matches in/after the anchor section.
-          const spineItems = readerBook.spine.spineItems;
-
-          const findAnchorIndex = () => {
-            let chain = Promise.resolve(-1);
-            phrases.forEach(ph => {
-              chain = chain.then(found => {
-                if (found >= 0) return found;
-                let inner = Promise.resolve(-1);
-                spineItems.forEach((item, si) => {
-                  inner = inner.then(f => {
-                    if (f >= 0) return f;
-                    return item.load(readerBook.load.bind(readerBook)).then((doc) => {
-                      const d = doc || item.document || item.contents;
-                      const r = findInSection(item, d, normalize(ph));
-                      try { item.unload(); } catch(e){}
-                      return r ? si : -1;
-                    }).catch(() => { try{item.unload();}catch(e){} return -1; });
-                  });
-                });
-                return inner;
               });
             });
             return chain;
           };
 
-          readerBook.ready.then(() => findAnchorIndex()).then(anchorIdx => {
-            if (anchorIdx < 0) {
-              const href = chapterHref();
-              if (href) readerRendition.display(href);
-              return;
-            }
-            // Collect segment CFIs from the anchor section onward (excerpt may be
-            // composite, spanning the anchor section and following ones).
-            const ordered = [];
-            let chain = Promise.resolve();
-            for (let si = anchorIdx; si < spineItems.length; si++) {
-              const item = spineItems[si];
-              chain = chain.then(() => item.load(readerBook.load.bind(readerBook)).then((doc) => {
-                const d = doc || item.document || item.contents;
-                segments.forEach(seg => {
-                  variants(seg).some(v => {
-                    const r = findInSection(item, d, v);
-                    if (r) { ordered.push({ si, cfi: r.cfi }); return true; }
-                    return false;
-                  });
-                });
-                try { item.unload(); } catch(e){}
-              }).catch(() => { try{item.unload();}catch(e){} }));
-              // Stop scanning once we've gathered all segments (small optimisation)
-              chain = chain.then(() => { if (ordered.length >= segments.length) return Promise.reject('done'); });
-            }
-            return chain.catch(e => { if (e !== 'done') throw e; }).then(() => ordered);
-          }).then(ordered => {
-            if (!ordered || !ordered.length) return;
-            // Sort by spine index then keep document order; dedupe
-            ordered.sort((a, b) => a.si - b.si);
-            const cfis = ordered.map(o => o.cfi).filter((c, i, a) => a.indexOf(c) === i);
+          // Resolve all passage phrases to CFIs (in the order listed).
+          readerBook.ready.then(() => {
+            let chain = Promise.resolve([]);
+            passages.forEach(p => {
+              chain = chain.then(acc => findCfi(p).then(cfi => { if (cfi) acc.push(cfi); return acc; }));
+            });
+            return chain;
+          }).then(cfis => {
+            // Sort CFIs into reading order using epub.js comparator; dedupe.
+            try {
+              const cmp = new ePub.CFI();
+              cfis.sort((a,b) => cmp.compare(a,b));
+            } catch(e){}
+            cfis = cfis.filter((c,i,a) => a.indexOf(c) === i);
+            if (!cfis.length) return;
 
-            // Store for the reader's "next evidence" navigation
             readerEvidenceCfis = cfis.slice();
             readerEvidenceIdx = 0;
             updateEvidenceNav();
 
-            // Jump to the FIRST bit of the excerpt, highlight all bits.
+            // Jump to first evidence bit, highlight all, centre it.
             readerRendition.display(cfis[0]).then(() => {
               const applyAll = () => {
                 cfis.forEach(cfi => {
@@ -5500,11 +5343,10 @@ function openReader(vol, jumpSpec) {
                 });
                 centreOnCfi(cfis[0]);
               };
-              setTimeout(applyAll, 150);
-              setTimeout(() => { applyAll(); clearOverlay(); }, 550);
+              setTimeout(applyAll, 200);
+              setTimeout(applyAll, 700);
             });
-          }).catch(()=>{ clearOverlay(); });
-          } // end runDoctrineJump
+          }).catch(()=>{});
         }
 
         readerRendition.on('relocated', loc => {
