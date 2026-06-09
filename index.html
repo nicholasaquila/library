@@ -2778,7 +2778,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.9 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v22.0 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3569,7 +3569,7 @@ const DOCTRINES = [
         quote: "The Apostles received the Gospel for us from the Lord Jesus Christ; Jesus Christ was sent forth from God. So then Christ is from God, and the Apostles are from Christ. ... So preaching everywhere ... they appointed their firstfruits ... to be bishops and deacons. ... And our Apostles knew ... that there would be strife over the name of the bishop's office. For this cause ... they appointed the aforesaid persons, and afterwards they provided a continuance, that if these should fall asleep, other approved men should succeed to their ministration.",
         cite: '1 Clement 42, 44 (Lightfoot)',
         section: 'chapter_1',
-        passages: ['The Apostles received the Gospel', 'appointed their firstfruits', 'to be bishops', 'strife over the name', 'succeed to their ministration']
+        passages: ['The Apostles received the Gospel for us', 'So preaching everywhere in country and town', 'firstfruits, when they had proved them', 'would be strife over the name', 'should succeed to their ministration']
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
@@ -5004,7 +5004,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.9 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v22.0 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5308,15 +5308,31 @@ function openReader(vol, jumpSpec) {
             : readerBook.spine.spineItems;
           const itemsToSearch = targetItems.length ? targetItems : readerBook.spine.spineItems;
 
+          // Try a phrase, then variants that tolerate the double-spaces these
+          // editions contain at line-wrap points (epub.js find() is exact).
+          const phraseVariants = (phrase) => {
+            const vs = [phrase];
+            // Double every single space (covers one double-space gap anywhere)
+            vs.push(phrase.replace(/ /g, '  '));
+            // For each single space, a variant where THAT space is doubled
+            const parts = phrase.split(' ');
+            for (let i = 1; i < parts.length; i++) {
+              vs.push(parts.slice(0,i).join(' ') + '  ' + parts.slice(i).join(' '));
+            }
+            return vs;
+          };
           // Search only the target section(s) for a phrase; return its CFI.
           const findCfi = (phrase) => {
+            const variants = phraseVariants(phrase);
             let chain = Promise.resolve(null);
             itemsToSearch.forEach(item => {
               chain = chain.then(hit => {
                 if (hit) return hit;
                 return item.load(readerBook.load.bind(readerBook)).then(() => {
                   let res = null;
-                  try { const r = item.find(phrase); if (r && r.length) res = r[0].cfi; } catch(e){}
+                  for (const v of variants) {
+                    try { const r = item.find(v); if (r && r.length) { res = r[0].cfi; break; } } catch(e){}
+                  }
                   try { item.unload(); } catch(e){}
                   return res;
                 }).catch(() => { try{item.unload();}catch(e){} return null; });
