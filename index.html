@@ -2706,7 +2706,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v20.9 · 7 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.0 · 7 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4932,7 +4932,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v20.9 · 7 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.0 · 7 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5005,8 +5005,11 @@ function applyDoctrineHighlights(filename) {
   const list = getDoctrineHighlights(filename);
   list.forEach(cfi => {
     try {
-      readerRendition.annotations.highlight(cfi, {}, null, 'doctrine-hl',
-        { 'fill': 'rgba(200,40,40,0.4)', 'fill-opacity': '0.7' });
+      readerRendition.annotations.remove(cfi, 'highlight');
+    } catch(e) {}
+    try {
+      readerRendition.annotations.highlight(cfi, {}, null, '',
+        { 'fill': 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply' });
     } catch(e) {}
   });
 }
@@ -5207,75 +5210,84 @@ function openReader(vol, jumpSpec) {
         // Re-apply any saved permanent (red) doctrine highlights for this book
         applyDoctrineHighlights(vol.filename);
 
-        // OPTION D: reliably jump to the CHAPTER first (via TOC/spine), then try to
-        // highlight the exact passage as a bonus when a fragment matches.
-        if (jumpSpec && (jumpSpec.chapter || jumpSpec.match)) {
-          try {
-            readerBook.ready.then(() => {
-              const chapters = (jumpSpec.chapter || []);
-              const phrases  = (jumpSpec.match || []);
+        // ── DOCTRINE "GO TO SOURCE": jump to the passage and highlight it red ──
+        // Strategy: find the exact fragment first (precise). If found, jump straight
+        // to its CFI and highlight that match. If not found, fall back to the chapter
+        // via the TOC. One jump only — no competing display() calls.
+        if (jumpSpec && ((jumpSpec.chapter && jumpSpec.chapter.length) || (jumpSpec.match && jumpSpec.match.length))) {
+          const chapters = jumpSpec.chapter || [];
+          const phrases  = jumpSpec.match || [];
 
-              // ── Step 1: jump to the chapter, reliably, using the TOC ──
-              let jumped = false;
-              const toc = (readerBook.navigation && readerBook.navigation.toc) || [];
-              const flat = [];
-              (function walk(items){ items.forEach(t => { flat.push(t); if (t.subitems) walk(t.subitems); }); })(toc);
-              for (const phrase of chapters) {
-                const p = phrase.toLowerCase();
-                const hit = flat.find(t => (t.label || '').toLowerCase().includes(p));
-                if (hit && hit.href) { readerRendition.display(hit.href); jumped = true; break; }
-              }
-
-              // ── Step 2: find the exact fragment for the red highlight (bonus) ──
-              const searchPhrase = (phrase) => Promise.all(
-                readerBook.spine.spineItems.map(item =>
-                  item.load(readerBook.load.bind(readerBook)).then(() => {
-                    const found = item.find(phrase);
-                    item.unload();
-                    return found && found.length ? found : null;
-                  }).catch(() => { try{item.unload();}catch(e){} return null; })
-                )
-              ).then(results => results.find(r => r));
-
-              let chain = Promise.resolve(null);
-              phrases.forEach(phrase => { chain = chain.then(hit => hit ? hit : searchPhrase(phrase)); });
-              chain.then(hit => {
-                if (hit && hit[0] && hit[0].cfi) {
-                  const matchCfi = hit[0].cfi;
-                  // If we didn't already jump via TOC, jump to the match now
-                  const go = jumped ? Promise.resolve() : readerRendition.display(matchCfi);
-                  go.then(() => {
-                    setTimeout(() => {
-                      let passageCfi = matchCfi;
-                      try {
-                        const range = readerRendition.getRange(matchCfi);
-                        if (range) {
-                          const node = range.startContainer;
-                          let block = (node.nodeType === 3) ? node.parentElement : node;
-                          while (block && block.parentElement &&
-                                 !/^(P|LI|BLOCKQUOTE|DIV|TD)$/.test(block.tagName)) {
-                            block = block.parentElement;
-                          }
-                          if (block && block.scrollIntoView) block.scrollIntoView({ block: 'center' });
-                          const contents = readerRendition.getContents()[0];
-                          if (contents && block) {
-                            const r2 = block.ownerDocument.createRange();
-                            r2.selectNodeContents(block);
-                            const blockCfi = contents.cfiFromRange(r2);
-                            if (blockCfi) passageCfi = blockCfi;
-                          }
-                        }
-                      } catch(e){}
-                      saveDoctrineHighlight(vol.filename, passageCfi);
-                      applyDoctrineHighlights(vol.filename);
-                    }, 300);
+          // Search each spine section for the first matching fragment.
+          const findFragment = () => {
+            let chain = Promise.resolve(null);
+            phrases.forEach(phrase => {
+              chain = chain.then(hit => {
+                if (hit) return hit;
+                // Search sections one at a time; keep the section loaded if it hits
+                let inner = Promise.resolve(null);
+                readerBook.spine.spineItems.forEach(item => {
+                  inner = inner.then(found => {
+                    if (found) return found;
+                    return item.load(readerBook.load.bind(readerBook)).then(() => {
+                      const res = item.find(phrase);
+                      item.unload();
+                      return (res && res.length) ? res[0] : null;
+                    }).catch(() => { try{item.unload();}catch(e){} return null; });
                   });
-                }
-                // If no fragment matched but we jumped to the chapter, that's still a
-                // successful, reliable landing — the citation on the card names the spot.
+                });
+                return inner;
               });
             });
-          } catch(e) {}
+            return chain;
+          };
+
+          // TOC chapter href as fallback
+          const chapterHref = () => {
+            const toc = (readerBook.navigation && readerBook.navigation.toc) || [];
+            const flat = [];
+            (function walk(items){ items.forEach(t => { flat.push(t); if (t.subitems) walk(t.subitems); }); })(toc);
+            for (const phrase of chapters) {
+              const p = phrase.toLowerCase();
+              const hit = flat.find(t => (t.label || '').toLowerCase().includes(p));
+              if (hit && hit.href) return hit.href;
+            }
+            return null;
+          };
+
+          readerBook.ready.then(() => findFragment()).then(match => {
+            if (match && match.cfi) {
+              // Jump to the exact match and highlight it once the view settles.
+              readerRendition.display(match.cfi).then(() => {
+                const doHl = () => {
+                  try {
+                    readerRendition.annotations.remove(match.cfi, 'highlight');
+                  } catch(e){}
+                  try {
+                    readerRendition.annotations.highlight(match.cfi, {}, null, '',
+                      { 'fill': 'red', 'fill-opacity': '0.3', 'mix-blend-mode': 'multiply' });
+                    saveDoctrineHighlight(vol.filename, match.cfi);
+                  } catch(e){}
+                  // Centre the match
+                  try {
+                    const range = readerRendition.getRange(match.cfi);
+                    if (range) {
+                      const node = range.startContainer;
+                      const elx = (node.nodeType === 3) ? node.parentElement : node;
+                      if (elx && elx.scrollIntoView) elx.scrollIntoView({ block: 'center' });
+                    }
+                  } catch(e){}
+                };
+                // Try immediately and again after a beat (continuous manager settles late)
+                setTimeout(doHl, 120);
+                setTimeout(doHl, 500);
+              });
+            } else {
+              // No fragment match — fall back to the chapter via TOC
+              const href = chapterHref();
+              if (href) readerRendition.display(href);
+            }
+          }).catch(()=>{});
         }
 
         readerRendition.on('relocated', loc => {
