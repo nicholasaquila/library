@@ -2706,7 +2706,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.2 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.3 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3474,7 +3474,7 @@ const DOCTRINES = [
         note: 'Against those who deny the Eucharist is Christ\'s flesh.',
         quote: '[work in progress]',
         chapter: ['Epistle to the Smyrnaeans', 'Smyrnaeans'],
-        match: ['the flesh of our Saviour Jesus Christ', 'flesh of our Saviour', 'Eucharist to be the flesh']
+        match: ['the flesh of our Saviour Jesus Christ', 'flesh of our Saviour', 'confess not the Eucharist']
       },
       {
         title: 'The First and Second Apologies',
@@ -3496,24 +3496,24 @@ const DOCTRINES = [
         note: 'Chapters 42 and 44: the chain of authority runs God to Christ to the Apostles to the bishops and deacons they appointed; foreseeing strife, the Apostles provided for an ongoing succession of approved men.',
         quote: "The Apostles received the Gospel for us from the Lord Jesus Christ; Jesus Christ was sent forth from God. So then Christ is from God, and the Apostles are from Christ. ... So preaching everywhere ... they appointed their firstfruits ... to be bishops and deacons. ... And our Apostles knew ... that there would be strife over the name of the bishop's office. For this cause ... they appointed the aforesaid persons, and afterwards they provided a continuance, that if these should fall asleep, other approved men should succeed to their ministration.",
         cite: '1 Clement 42, 44 (Lightfoot)',
-        chapter: ['44', '42', 'Chapter 44', 'Chapter 42', 'XLIV', 'XLII'],
-        match: ['there would be strife over the name of the bishop', 'strife over the name', 'they appointed their firstfruits', 'to be bishops and deacons', 'succeed to their ministration']
+        chapter: ['First Epistle of Clement'],
+        match: ['strife over the name of the bishop', 'they appointed their firstfruits', 'to be bishops and deacons', 'succeed to their ministration', 'The Apostles received the Gospel']
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'To the Trallians and Smyrnaeans: the ministry descends from Christ through the apostles to the bishop, presbyters, and deacons who reflect them; without these there is no Church, and where the bishop is, there is the Catholic Church.',
-        quote: 'Let all reverence the deacons as Jesus Christ, and the bishop as the Father, and the presbyters as the sanhedrim of God, and assembly of the apostles. Apart from these, there is no Church. ... Let no man do anything connected with the Church without the bishop ... Wheresoever the bishop shall appear, there let the multitude also be; even as, wherever Jesus Christ is, there is the Catholic Church.',
+        quote: 'Let all reverence the deacons as an appointment of Jesus Christ, and the bishop as Jesus Christ, who is the Son of the Father, and the presbyters as the sanhedrin of God, and assembly of the apostles. Apart from these, there is no Church. ... Let no man do anything connected with the Church without the bishop ... wherever Jesus Christ is, there is the Catholic Church.',
         cite: 'To the Smyrnaeans 8; Trallians 3 (Roberts-Donaldson)',
         chapter: ['Epistle to the Smyrnaeans', 'Smyrnaeans', 'Epistle to the Trallians', 'Trallians'],
-        match: ['there is the Catholic Church', 'sanhedrim of God', 'do anything connected with the Church without the bishop', 'without the bishop']
+        match: ['there is the Catholic Church', 'sanhedrin of God', 'connected with the Church without the bishop', 'reverence the deacons']
       },
       {
         title: 'Against Heresies',
         note: 'Book III, Ch. III (ANF/Schaff): the apostolic succession is public and traceable, the faith handed openly to the bishops the apostles appointed; Irenaeus points to the Church at Rome founded by Peter and Paul, with which every Church must agree.',
         quote: 'It is within the power of all, therefore, in every Church, who may wish to see the truth, to contemplate clearly the tradition of the apostles manifested throughout the whole world; and we are in a position to reckon up those who were by the apostles instituted bishops in the Churches, and to demonstrate the succession of these men to our own times ... the very great, the very ancient, and universally known Church founded and organized at Rome by the two most glorious apostles, Peter and Paul ... For it is a matter of necessity that every Church should agree with this Church, on account of its preeminent authority.',
         cite: 'Against Heresies III.3.1-2 (ANF)',
-        chapter: ['perpetual succession of bishops', 'succession of bishops', 'Book III', 'Chapter III', 'Chapter 3'],
-        match: ['the succession of these men to our own times', 'succession of these men', 'two most glorious apostles, Peter and Paul', 'Peter and Paul', 'preeminent authority']
+        chapter: ['bk3_ch03', 'Book III'],
+        match: ['succession of these men to our own times', 'reckon up those who were', 'instituted bishops in the Churches', 'Peter and Paul', 'preeminent authority']
       }
     ]
   }
@@ -4932,7 +4932,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.2 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.3 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5279,7 +5279,10 @@ function openReader(vol, jumpSpec) {
             (function walk(items){ items.forEach(t => { flat.push(t); if (t.subitems) walk(t.subitems); }); })(toc);
             for (const phrase of chapters) {
               const p = phrase.toLowerCase();
-              const hit = flat.find(t => (t.label || '').toLowerCase().includes(p));
+              // Match against the chapter's href first (precise, e.g. 'bk3_ch03'),
+              // then fall back to the visible label.
+              let hit = flat.find(t => (t.href || '').toLowerCase().includes(p));
+              if (!hit) hit = flat.find(t => (t.label || '').toLowerCase().includes(p));
               if (hit && hit.href) return hit.href;
             }
             return null;
