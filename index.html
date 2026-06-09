@@ -2778,7 +2778,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v22.3 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v22.4 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5004,7 +5004,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v22.3 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v22.4 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5068,6 +5068,7 @@ function getDoctrineHighlights(filename) {
   catch(e) { return []; }
 }
 function saveDoctrineHighlight(filename, cfi) {
+  if (!cfi || /,\/1:0,\/1:1\)/.test(cfi)) return; // skip degenerate CFIs
   const list = getDoctrineHighlights(filename);
   if (!list.includes(cfi)) {
     list.push(cfi);
@@ -5339,7 +5340,13 @@ function openReader(vol, jumpSpec) {
                   for (const v of phraseVariants(p)) {
                     try {
                       const r = item.find(v);
-                      if (r && r.length) { cfis.push(r[0].cfi); break; }
+                      if (r && r.length) {
+                        // Pick the first result with a usable cfi + real excerpt.
+                        const good = r.find(m => m && m.cfi && m.excerpt &&
+                          m.excerpt.replace(/\s/g,'').length > 2 &&
+                          !/,\/1:0,\/1:1\)/.test(m.cfi));
+                        if (good) { cfis.push(good.cfi); break; }
+                      }
                     } catch(e){}
                   }
                 });
@@ -5357,7 +5364,10 @@ function openReader(vol, jumpSpec) {
 
             // Jump to the first evidence bit; highlight all; centre. Retry so the
             // highlight lands once the section view is attached.
-            readerRendition.display(cfis[0]).then(() => {
+            readerRendition.display(cfis[0]).catch(() => {
+              // If the first CFI won't resolve, try the next one
+              return cfis[1] ? readerRendition.display(cfis[1]) : Promise.resolve();
+            }).then(() => {
               const applyAll = () => {
                 cfis.forEach(cfi => {
                   try { readerRendition.annotations.remove(cfi, 'highlight'); } catch(e){}
@@ -5805,7 +5815,6 @@ function closeReader() {
   document.getElementById('reader-toc').classList.remove('open');
   closeReaderSearch();
   document.body.style.overflow = '';
-  document.removeEventListener('keydown', readerKeyHandler);
 }
 
 
