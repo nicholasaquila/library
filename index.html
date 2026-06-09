@@ -2779,7 +2779,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v23.4 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v23.5 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5008,7 +5008,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v23.4 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v23.5 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5523,6 +5523,7 @@ let readerSearchMatches = [];     // all matches: {cfi, excerpt}
 let readerSearchIdx = -1;         // current match index
 let readerActiveHl = null;        // currently highlighted cfi
 let readerActiveHlExtra = [];     // extra paragraph highlights (doctrine mode)
+let doctrineBlanketEls = [];      // DOM elements given a blanket background
 let readerDoctrineMode = false;   // expand highlight to whole paragraph
 let readerSearchCache = {};       // spineHref -> loaded (avoids re-loading)
 let readerSearchToken = 0;        // cancels stale searches
@@ -5556,6 +5557,12 @@ function closeReaderSearch() {
   readerSearchIdx = -1;
 }
 
+function clearDoctrineBlanket() {
+  doctrineBlanketEls.forEach(b => {
+    try { b.style.backgroundColor = ''; b.style.borderRadius = ''; b.removeAttribute('data-doctrine-blanket'); } catch(e){}
+  });
+  doctrineBlanketEls = [];
+}
 function clearReaderActiveHl() {
   if (readerRendition && readerActiveHl) {
     try { readerRendition.annotations.remove(readerActiveHl, 'highlight'); } catch(e){}
@@ -5564,6 +5571,7 @@ function clearReaderActiveHl() {
     readerActiveHlExtra.forEach(c => { try { readerRendition.annotations.remove(c, 'highlight'); } catch(e){} });
   }
   readerActiveHlExtra = [];
+  clearDoctrineBlanket();
   readerActiveHl = null;
 }
 
@@ -5706,36 +5714,30 @@ function gotoMatch() {
         if (range) {
           const node = range.startContainer;
           let el = (node.nodeType === 3) ? node.parentElement : node;
-          // Doctrine mode: blanket-highlight the whole containing paragraph(s)
+          // Doctrine mode: blanket-highlight the containing paragraph(s) by styling
+          // the DOM elements directly (no CFI building — that was throwing errors).
           if (readerDoctrineMode && el) {
             try {
-              // Walk up to the block-level paragraph
+              clearDoctrineBlanket();
               let block = el;
               while (block && block.parentElement &&
                      !/^(P|LI|BLOCKQUOTE|DIV|TD)$/.test(block.tagName)) {
                 block = block.parentElement;
               }
-              const contents = readerRendition.getContents()[0];
-              const targets = [block];
-              // Also include the next paragraph so the surrounding context is lit
-              if (block && block.nextElementSibling &&
-                  /^(P|LI|BLOCKQUOTE)$/.test(block.nextElementSibling.tagName)) {
-                targets.push(block.nextElementSibling);
-              }
+              const targets = [];
               if (block && block.previousElementSibling &&
-                  /^(P|LI|BLOCKQUOTE)$/.test(block.previousElementSibling.tagName)) {
-                targets.unshift(block.previousElementSibling);
-              }
+                  /^(P|LI|BLOCKQUOTE)$/.test(block.previousElementSibling.tagName))
+                targets.push(block.previousElementSibling);
+              if (block) targets.push(block);
+              if (block && block.nextElementSibling &&
+                  /^(P|LI|BLOCKQUOTE)$/.test(block.nextElementSibling.tagName))
+                targets.push(block.nextElementSibling);
               targets.forEach(b => {
-                if (!b || !contents) return;
-                const r2 = b.ownerDocument.createRange();
-                r2.selectNodeContents(b);
-                const cfi2 = contents.cfiFromRange(r2);
-                if (cfi2 && cfi2 !== m.cfi) {
-                  readerRendition.annotations.highlight(cfi2, {}, null, 'srch-hl',
-                    { 'fill': 'rgba(200,40,40,0.28)', 'fill-opacity': '0.6' });
-                  readerActiveHlExtra.push(cfi2);
-                }
+                if (!b) return;
+                b.style.backgroundColor = 'rgba(200,40,40,0.18)';
+                b.style.borderRadius = '3px';
+                b.setAttribute('data-doctrine-blanket', '1');
+                doctrineBlanketEls.push(b);
               });
             } catch(e){}
           }
