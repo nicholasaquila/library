@@ -2778,7 +2778,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v22.2 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v22.3 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5004,7 +5004,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v22.2 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v22.3 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5275,15 +5275,19 @@ function openReader(vol, jumpSpec) {
       // Generate locations for page count
       // Populate chapter on first load
       readerBook.loaded.navigation.then(nav => {
+        const toc = (nav && nav.toc) ? nav.toc : [];
         const chEl = document.getElementById('reader-chapter');
-        if (chEl && nav.toc) {
-          const first = nav.toc.find(t => t.subitems && t.subitems.length)
-                     || nav.toc.find(t => !t.href.includes('title') && !t.href.includes('cover'))
-                     || nav.toc[0];
-          if (first) chEl.textContent = (first.subitems && first.subitems.length ? first.subitems[0].label : first.label).trim();
+        if (chEl && toc.length) {
+          const first = toc.find(t => t.subitems && t.subitems.length)
+                     || toc.find(t => t.href && !t.href.includes('title') && !t.href.includes('cover'))
+                     || toc[0];
+          if (first) {
+            const lbl = (first.subitems && first.subitems.length ? first.subitems[0].label : first.label) || '';
+            chEl.textContent = lbl.trim();
+          }
         }
-        buildReaderTOC(nav.toc || []);
-      });
+        buildReaderTOC(toc);
+      }).catch(() => { buildReaderTOC([]); });
 
       readerBook.locations.generate(600).then(() => {
         const total = readerBook.locations.total || readerBook.locations.length();
@@ -5321,47 +5325,38 @@ function openReader(vol, jumpSpec) {
             }
             return vs;
           };
-          // Search only the target section(s) for a phrase; return its CFI.
-          const findCfi = (phrase) => {
-            const variants = phraseVariants(phrase);
-            let chain = Promise.resolve(null);
-            itemsToSearch.forEach(item => {
-              chain = chain.then(hit => {
-                if (hit) return hit;
-                return item.load(readerBook.load.bind(readerBook)).then(() => {
-                  let res = null;
-                  for (const v of variants) {
-                    try { const r = item.find(v); if (r && r.length) { res = r[0].cfi; break; } } catch(e){}
-                  }
-                  try { item.unload(); } catch(e){}
-                  return res;
-                }).catch(() => { try{item.unload();}catch(e){} return null; });
-              });
-            });
-            return chain;
-          };
-
-          // Resolve all passage phrases to CFIs (in the order listed).
+          // Universal resolver: walk the target sections IN SPINE ORDER, and within
+          // each, find every passage phrase. Collect CFIs in reading order directly
+          // (no CFI string-compare sort — that was sending some books to the end).
           readerBook.ready.then(() => {
-            let chain = Promise.resolve([]);
-            passages.forEach(p => {
-              chain = chain.then(acc => findCfi(p).then(cfi => { if (cfi) acc.push(cfi); return acc; }));
+            // Order the items by their spine index so results are in reading order.
+            const ordered = itemsToSearch.slice().sort((a, b) => (a.index || 0) - (b.index || 0));
+            const cfis = [];
+            let chain = Promise.resolve();
+            ordered.forEach(item => {
+              chain = chain.then(() => item.load(readerBook.load.bind(readerBook)).then(() => {
+                passages.forEach(p => {
+                  for (const v of phraseVariants(p)) {
+                    try {
+                      const r = item.find(v);
+                      if (r && r.length) { cfis.push(r[0].cfi); break; }
+                    } catch(e){}
+                  }
+                });
+                try { item.unload(); } catch(e){}
+              }).catch(() => { try{item.unload();}catch(e){} }));
             });
-            return chain;
+            return chain.then(() => cfis);
           }).then(cfis => {
-            // Sort CFIs into reading order using epub.js comparator; dedupe.
-            try {
-              const cmp = new ePub.CFI();
-              cfis.sort((a,b) => cmp.compare(a,b));
-            } catch(e){}
-            cfis = cfis.filter((c,i,a) => a.indexOf(c) === i);
+            cfis = cfis.filter((c,i,a) => c && a.indexOf(c) === i);
             if (!cfis.length) return;
 
             readerEvidenceCfis = cfis.slice();
             readerEvidenceIdx = 0;
             updateEvidenceNav();
 
-            // Jump to first evidence bit, highlight all, centre it.
+            // Jump to the first evidence bit; highlight all; centre. Retry so the
+            // highlight lands once the section view is attached.
             readerRendition.display(cfis[0]).then(() => {
               const applyAll = () => {
                 cfis.forEach(cfi => {
@@ -5375,9 +5370,9 @@ function openReader(vol, jumpSpec) {
                 centreOnCfi(cfis[0]);
               };
               applyAll();
-              setTimeout(applyAll, 250);
-              setTimeout(applyAll, 800);
-              setTimeout(applyAll, 1500);
+              setTimeout(applyAll, 300);
+              setTimeout(applyAll, 900);
+              setTimeout(applyAll, 1600);
             });
           }).catch(()=>{});
         }
@@ -5468,7 +5463,7 @@ function buildReaderTOC(toc) {
     items.forEach(item => {
       const el = document.createElement('div');
       el.className = 'reader-toc-item' + (sub ? ' reader-toc-sub' : '');
-      el.textContent = item.label.trim();
+      el.textContent = (item.label || '').trim() || '—';
       el.setAttribute('data-href', (item.href || '').split('#')[0]);
       el.addEventListener('click', () => {
         if (readerRendition) {
@@ -5493,6 +5488,13 @@ function buildReaderTOC(toc) {
     });
   };
   addItems(toc, false);
+  if (!toc || !toc.length) {
+    const note = document.createElement('div');
+    note.className = 'reader-toc-item';
+    note.style.opacity = '0.6';
+    note.textContent = 'This text has no chapter list.';
+    inner.appendChild(note);
+  }
   panel.innerHTML = '';
   panel.appendChild(inner);
 }
