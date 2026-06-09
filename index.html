@@ -2778,7 +2778,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.8 · 9 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v21.9 · 9 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3537,6 +3537,7 @@ const DOCTRINES = [
         cite: 'Didache 9',
         note: 'The Eucharist named a holy thing, guarded from the unbaptised.',
         quote: '[work in progress]',
+        section: 'chapter_2',
         passages: ['eat or drink of your Eucharist', 'holy to dogs']
       },
       {
@@ -3544,6 +3545,7 @@ const DOCTRINES = [
         cite: 'To the Smyrnaeans 7 (Roberts-Donaldson)',
         note: 'Against those who deny the Eucharist is Christ\'s flesh.',
         quote: '[work in progress]',
+        section: 'ch_smyrnaeans',
         passages: ['confess not the Eucharist', 'flesh of our']
       },
       {
@@ -3551,7 +3553,8 @@ const DOCTRINES = [
         cite: 'First Apology 66',
         note: 'Justin tells the emperor the bread is not common bread.',
         quote: '[work in progress]',
-        passages: ['not as common bread', 'common bread', 'made flesh']
+        section: '',
+        passages: ['not as common bread', 'made flesh']
       }
     ]
   },
@@ -3565,20 +3568,23 @@ const DOCTRINES = [
         note: 'Chapters 42 and 44: the chain of authority runs God to Christ to the Apostles to the bishops and deacons they appointed; foreseeing strife, the Apostles provided for an ongoing succession of approved men.',
         quote: "The Apostles received the Gospel for us from the Lord Jesus Christ; Jesus Christ was sent forth from God. So then Christ is from God, and the Apostles are from Christ. ... So preaching everywhere ... they appointed their firstfruits ... to be bishops and deacons. ... And our Apostles knew ... that there would be strife over the name of the bishop's office. For this cause ... they appointed the aforesaid persons, and afterwards they provided a continuance, that if these should fall asleep, other approved men should succeed to their ministration.",
         cite: '1 Clement 42, 44 (Lightfoot)',
-        passages: ['The Apostles received the Gospel', 'appointed their', 'to be bishops', 'strife over the name', 'succeed to their ministration']
+        section: 'chapter_1',
+        passages: ['The Apostles received the Gospel', 'appointed their firstfruits', 'to be bishops', 'strife over the name', 'succeed to their ministration']
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
         note: 'To the Trallians and Smyrnaeans: the ministry descends from Christ through the apostles to the bishop, presbyters, and deacons who reflect them; without these there is no Church, and where the bishop is, there is the Catholic Church.',
         quote: 'Let all reverence the deacons as an appointment of Jesus Christ, and the bishop as Jesus Christ, who is the Son of the Father, and the presbyters as the sanhedrin of God, and assembly of the apostles. Apart from these, there is no Church. ... Let no man do anything connected with the Church without the bishop ... wherever Jesus Christ is, there is the Catholic Church.',
         cite: 'To the Smyrnaeans 8; Trallians 3 (Roberts-Donaldson)',
-        passages: ['reverence the deacons', 'sanhedrin of God', 'without the bishop', 'there is the Catholic Church']
+        section: ['ch_trallians', 'ch_smyrnaeans'],
+        passages: ['sanhedrin of God', 'there is the Catholic Church']
       },
       {
         title: 'Against Heresies',
         note: 'Book III, Ch. III (ANF/Schaff): the apostolic succession is public and traceable, the faith handed openly to the bishops the apostles appointed; Irenaeus points to the Church at Rome founded by Peter and Paul, with which every Church must agree.',
         quote: 'It is within the power of all, therefore, in every Church, who may wish to see the truth, to contemplate clearly the tradition of the apostles manifested throughout the whole world; and we are in a position to reckon up those who were by the apostles instituted bishops in the Churches, and to demonstrate the succession of these men to our own times ... the very great, the very ancient, and universally known Church founded and organized at Rome by the two most glorious apostles, Peter and Paul ... For it is a matter of necessity that every Church should agree with this Church, on account of its preeminent authority.',
         cite: 'Against Heresies III.3.1-2 (ANF)',
+        section: 'bk3_ch03',
         passages: ['reckon up those', 'instituted bishops', 'succession of these men', 'Peter and Paul', 'preeminent authority']
       }
     ]
@@ -4998,7 +5004,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.8 · 9 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v21.9 · 9 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5083,8 +5089,8 @@ function applyDoctrineHighlights(filename) {
 }
 
 function openReaderAtSource(vol, witness) {
-  // Pass the list of short anchor phrases (one per evidence passage)
-  openReader(vol, { passages: witness.passages || [] });
+  // Pass the anchor phrases AND the section href(s) to restrict the search
+  openReader(vol, { passages: witness.passages || [], section: witness.section || '' });
 }
 // Back-compat: some callers may pass a bare match array/string
 function openReaderAtPassage(vol, matchText) {
@@ -5292,11 +5298,20 @@ function openReader(vol, jumpSpec) {
         // bar step through the rest. No custom CFI building, no timers fighting render.
         if (jumpSpec && jumpSpec.passages && jumpSpec.passages.length) {
           const passages = jumpSpec.passages;
+          // Restrict search to the relevant section(s) — avoids wrong-book matches
+          // and the cost of scanning every section (e.g. Irenaeus has 174).
+          const secHints = Array.isArray(jumpSpec.section) ? jumpSpec.section
+                          : (jumpSpec.section ? [jumpSpec.section] : []);
+          const targetItems = secHints.length
+            ? readerBook.spine.spineItems.filter(it =>
+                secHints.some(h => (it.href || '').includes(h) || (it.idref || '').includes(h)))
+            : readerBook.spine.spineItems;
+          const itemsToSearch = targetItems.length ? targetItems : readerBook.spine.spineItems;
 
-          // Search every spine section for a phrase; return its CFI (native find()).
+          // Search only the target section(s) for a phrase; return its CFI.
           const findCfi = (phrase) => {
             let chain = Promise.resolve(null);
-            readerBook.spine.spineItems.forEach(item => {
+            itemsToSearch.forEach(item => {
               chain = chain.then(hit => {
                 if (hit) return hit;
                 return item.load(readerBook.load.bind(readerBook)).then(() => {
