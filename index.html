@@ -719,6 +719,109 @@
     flex-shrink: 0;
   }
 
+  /* ── TIMELINE SCRUBBER ── */
+  .tl-scrubber {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 3px 28px 4px;
+    border-bottom: 1px solid rgba(140,110,55,0.15);
+    background: rgba(140,110,55,0.04);
+    user-select: none;
+  }
+  .tl-scrubber-readout {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-align: center;
+    white-space: nowrap;
+    min-height: 10px;
+  }
+  .tl-scrubber-readout .yr { color: var(--ink); font-size: 9px; }
+  .tl-scrubber-track {
+    position: relative;
+    height: 11px;
+    cursor: pointer;
+    overflow: visible;
+  }
+  .tl-scrubber-line {
+    position: absolute;
+    left: 0; right: 0; top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: rgba(140,110,55,0.25);
+    border-radius: 1px;
+  }
+  .tl-scrubber-progress {
+    position: absolute;
+    left: 0; top: 50%;
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--gold);
+    border-radius: 1px;
+    width: 0;
+    pointer-events: none;
+  }
+  .tl-scrubber-dot {
+    position: absolute;
+    top: 50%;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid var(--cream);
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    z-index: 2;
+  }
+  .tl-scrubber-dot:hover { transform: translate(-50%,-50%) scale(1.6); box-shadow: 0 0 6px rgba(200,160,64,0.6); z-index: 4; }
+  .tl-scrubber-dot.diamond { border-radius: 0; transform: translate(-50%,-50%) rotate(45deg); }
+  .tl-scrubber-dot.diamond:hover { transform: translate(-50%,-50%) rotate(45deg) scale(1.6); }
+  .tl-scrubber-cross {
+    position: absolute;
+    bottom: calc(50% + 3px);
+    transform: translateX(-50%);
+    cursor: pointer;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+    transition: transform 0.15s;
+  }
+  .tl-scrubber-cross::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 4px;
+    background: #8b0000;
+    opacity: 0.6;
+  }
+  .tl-scrubber-cross:hover { transform: translateX(-50%) scale(1.25); }
+  .tl-scrubber-marker {
+    position: absolute;
+    top: 50%;
+    width: 3px; height: 12px;
+    transform: translate(-50%, -50%);
+    background: var(--ink);
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 3;
+    box-shadow: 0 0 0 1px var(--cream);
+  }
+  [data-theme="dark"] .tl-scrubber { background: rgba(200,160,64,0.04); border-color: rgba(200,160,64,0.15); }
+  [data-theme="dark"] .tl-scrubber-marker { background: var(--gold); }
+  @media (max-width: 768px) {
+    .tl-scrubber { padding: 6px 16px 8px; }
+    .tl-scrubber-readout { font-size: 8px; }
+    .tl-scrubber-dot { width: 6px; height: 6px; }
+  }
+
 
   /* ── VERSION STAMP ── */
   .version-stamp {
@@ -880,6 +983,7 @@
     border-bottom: 1px solid rgba(139,0,0,0.25);
     width: 120px;
   }
+  .pleroma-cross { display: block; margin-bottom: 2px; }
   .pleroma-greek {
     font-family: 'EB Garamond', serif;
     font-size: 13px;
@@ -2678,18 +2782,9 @@
   /* ── MOBILE PORTRAIT: bottom tab bar + collapsed search + scroll hint ── */
   .mobile-tabbar { display: none; }
   @media (max-width: 768px) and (orientation: portrait) {
-    /* Keep the version/compilation text visible, lifted just above the tab bar
-       so it doesn't sit under it. */
-    .version-stamp {
-      display: block !important;
-      bottom: 58px !important;
-      font-size: 7px !important;
-      background: var(--cream);
-      padding: 2px 10px;
-      border-radius: 8px;
-      z-index: 95;
-    }
-    [data-theme="dark"] .version-stamp { background: #1c1a10; }
+    /* Version/compilation text lives at the top of the Legend sheet in portrait,
+       not floating in the main view. */
+    .version-stamp { display: none !important; }
     /* Fixed bottom tab bar with the 5 views — always visible */
     .mobile-tabbar {
       display: flex;
@@ -2930,7 +3025,14 @@
 
 <!-- TIMELINE VIEW (default) -->
 <div class="timeline-outer" id="timeline-view">
-  <div class="mobile-timeline-hint">← swipe to explore the timeline →</div>
+  <div class="tl-scrubber" id="tl-scrubber">
+    <div class="tl-scrubber-readout" id="tl-scrubber-readout"></div>
+    <div class="tl-scrubber-track" id="tl-scrubber-track">
+      <div class="tl-scrubber-line"></div>
+      <div class="tl-scrubber-progress" id="tl-scrubber-progress"></div>
+      <div class="tl-scrubber-marker" id="tl-scrubber-marker"></div>
+    </div>
+  </div>
   <div class="timeline-scroll" id="timeline-scroll">
     <div class="timeline-track" id="timeline-track"></div>
   </div>
@@ -2982,7 +3084,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v25.6 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v26.8 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4080,6 +4182,12 @@ function toggleExpanded() {
   if (gridView) gridView.classList.toggle('hide-context', !showContextual);
   if (currentView === 'grid')  renderGrid();
   if (currentView === 'bible') renderBiblical();
+  // Context change adds/removes timeline dots — rebuild AFTER the width-expand
+  // transition finishes, else the columns are mid-animation and report bad rects.
+  if (typeof buildScrubber === 'function') {
+    setTimeout(buildScrubber, 60);    // quick pass (collapsing case)
+    setTimeout(buildScrubber, 520);   // after the 0.45s width transition settles
+  }
 
   // Feedback: when revealing, pulse the newly-shown contextual cards + their spine
   // dots so the eye catches them. Only target columns with a data-title (the card
@@ -4861,7 +4969,7 @@ function renderTimeline() {
       // Text centred on spine
       const ptxt = document.createElement('div');
       ptxt.className = 'pleroma-text';
-      ptxt.innerHTML = '<span class="pleroma-greek">πλήρωμα τοῦ χρόνου</span><span class="pleroma-latin">the fullness of time</span><span class="pleroma-ref">Galatians 4:4</span>';
+      ptxt.innerHTML = '<svg class="pleroma-cross" viewBox="0 0 24 32" width="14" height="19" aria-hidden="true"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg><span class="pleroma-greek">πλήρωμα τοῦ χρόνου</span><span class="pleroma-latin">the fullness of time</span><span class="pleroma-ref">Galatians 4:4</span>';
       pSpine.appendChild(ptxt);
       pLayout.appendChild(pSpine);
 
@@ -4878,6 +4986,8 @@ function renderTimeline() {
   });
 
   updateStats(filtered);
+  // Rebuild the year scrubber to match the freshly-rendered timeline
+  if (typeof buildScrubber === 'function') setTimeout(buildScrubber, 30);
 }
 
 // ── GRID RENDER ───────────────────────────────────────────────────────────────
@@ -5200,6 +5310,7 @@ function setView(view) {
   document.getElementById('map-view').style.display      = view==='map'      ? 'flex'  : 'none';
   document.getElementById('doctrine-view').style.display = view==='doctrine' ? 'block' : 'none';
   if (view === 'map') { setTimeout(() => { initMap(); if (mapInstance) mapInstance.invalidateSize(); }, 100); }
+  if (view === 'timeline') { setTimeout(() => { if (typeof buildScrubber === 'function') buildScrubber(); }, 80); }
   render();
 }
 
@@ -5234,6 +5345,229 @@ scroll.addEventListener('mousemove', e => {
   const x = e.pageX - scroll.offsetLeft;
   scroll.scrollLeft = scrollLeft - (x - startX) * 1.2;
 });
+
+// ── TIMELINE SCRUBBER ───────────────────────────────────────────────────────
+// Dots placed by linear year (date_sort). The marker + readout track scroll
+// position; tap/drag on the track jumps the timeline to that year.
+let scrubBuilt = false;
+let scrubMinYr = -2500, scrubMaxYr = 2000;
+let scrubCards = [];   // [{year, frac, title, color}]
+
+function yearToFrac(yr) {
+  return (yr - scrubMinYr) / (scrubMaxYr - scrubMinYr);
+}
+function fmtYear(yr) {
+  yr = Math.round(yr);
+  return yr < 0 ? Math.abs(yr) + ' BC' : (yr === 0 ? '1 AD' : yr + ' AD');
+}
+function scrubEraName(yr) {
+  const e = ERAS.find(e => yr >= e.from && yr < e.to);
+  return e ? e.label : '';
+}
+
+function buildScrubber() {
+  const track = document.getElementById('tl-scrubber-track');
+  const sc = document.getElementById('timeline-scroll');
+  const tlTrack = document.getElementById('timeline-track');
+  if (!track || !sc || !tlTrack) return;
+  // Remove old dots + pleroma cross
+  track.querySelectorAll('.tl-scrubber-dot, .tl-scrubber-cross').forEach(d => d.remove());
+
+  const maxScroll = sc.scrollWidth - sc.clientWidth;
+  if (maxScroll <= 0) { scrubBuilt = true; return; }
+
+  const scRect = sc.getBoundingClientRect();
+  const colContentX = (el) => {
+    const r = el.getBoundingClientRect();
+    return (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
+  };
+
+  const cols = Array.from(document.querySelectorAll('#timeline-track .tl-col[data-title]'));
+  const seen = new Set();
+  cols.forEach(col => {
+    const title = col.getAttribute('data-title');
+    if (seen.has(title)) return;
+    const v = allVolumes.find(x => x.title === title);
+    if (!v) return;
+    if (!col.querySelector('.tl-card') && !col.querySelector('.tl-dot')) return;
+    seen.add(title);
+
+    // A collapsed contextual column (context OFF) has ~0 width and gives a
+    // degenerate position. Fall back to the position of its parent era so the
+    // dot still appears in roughly the right place (earliest = far left).
+    const rect = col.getBoundingClientRect();
+    let centreX;
+    if (rect.width < 3) {
+      const era = col.closest('.tl-era');
+      centreX = era ? colContentX(era) - era.getBoundingClientRect().width / 2 + 30 : colContentX(col);
+    } else {
+      centreX = colContentX(col);
+    }
+    const targetScroll = centreX - sc.clientWidth / 2;
+    const frac = Math.max(0, Math.min(1, targetScroll / maxScroll));
+
+    const dot = document.createElement('div');
+    dot.className = 'tl-scrubber-dot' + (v.series === 'Voices of the Ancient World' ? ' diamond' : '');
+    dot.style.left = (frac * 100) + '%';
+    dot.style.background = volumeColor(v);
+    dot.title = v.title + ' · ' + fmtYear(v.date_sort);
+    dot.addEventListener('click', (e) => { e.stopPropagation(); scrubJumpToTitle(v.title); });
+    track.appendChild(dot);
+  });
+
+  // Pleroma (fullness of time) cross marker on the scrubber, at the πλήρωμα column.
+  const pcol = document.getElementById('pleroma-col');
+  if (pcol) {
+    const pr = pcol.getBoundingClientRect();
+    if (pr.width > 0) {
+      const px = (pr.left - scRect.left) + sc.scrollLeft + pr.width / 2;
+      const pfrac = Math.max(0, Math.min(1, (px - sc.clientWidth / 2) / maxScroll));
+      const cross = document.createElement('div');
+      cross.className = 'tl-scrubber-cross';
+      cross.style.left = (pfrac * 100) + '%';
+      cross.title = 'The fullness of time — Galatians 4:4';
+      cross.innerHTML = '<svg viewBox="0 0 24 32" width="12" height="16"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg>';
+      cross.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const target = px - sc.clientWidth / 2;
+        sc.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+      });
+      track.appendChild(cross);
+    }
+  }
+
+  scrubBuilt = true;
+  syncScrubberFromScroll();
+}
+
+// Map a card title to its real scroll offset and scroll there (centred)
+function scrubJumpToTitle(title) {
+  const sc = document.getElementById('timeline-scroll');
+  if (!sc) return;
+  // Prefer the column that actually holds the card
+  const cands = Array.from(document.querySelectorAll('#timeline-track .tl-col[data-title="' + cssEsc(title) + '"]'));
+  const col = cands.find(c => c.querySelector('.tl-card')) || cands[0];
+  if (!col) return;
+  const scRect = sc.getBoundingClientRect();
+  const r = col.getBoundingClientRect();
+  const contentX = (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
+  const target = contentX - sc.clientWidth / 2;
+  sc.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+}
+function cssEsc(s) { return (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/"/g, '\\"'); }
+
+// As the timeline scrolls, work out the year at the viewport centre by
+// interpolating between the card columns' real offsets, then move the marker.
+function syncScrubberFromScroll() {
+  if (!scrubBuilt) return;
+  const sc = document.getElementById('timeline-scroll');
+  const marker = document.getElementById('tl-scrubber-marker');
+  const prog = document.getElementById('tl-scrubber-progress');
+  const readout = document.getElementById('tl-scrubber-readout');
+  if (!sc || !marker) return;
+
+  const maxScroll = sc.scrollWidth - sc.clientWidth;
+  // Position the marker by SCROLL FRACTION (matches the equal-width era layout),
+  // not by year — the two don't align because eras aren't year-proportional.
+  const frac = maxScroll > 0 ? Math.max(0, Math.min(1, sc.scrollLeft / maxScroll)) : 0;
+  marker.style.left = (frac * 100) + '%';
+  if (prog) prog.style.width = (frac * 100) + '%';
+
+  // The readout still shows the true year/era at the viewport centre, derived
+  // from the nearest card column on screen.
+  if (readout) {
+    const scRect = sc.getBoundingClientRect();
+    const viewportCentre = scRect.left + sc.clientWidth / 2;
+    // If the fullness-of-time (pleroma) column is near the centre, show it.
+    const pcol = document.getElementById('pleroma-col');
+    let onPleroma = false;
+    if (pcol) {
+      const pr = pcol.getBoundingClientRect();
+      if (pr.width > 0) {
+        const pcx = pr.left + pr.width / 2;
+        if (Math.abs(pcx - viewportCentre) < pr.width * 0.6 + 40) onPleroma = true;
+      }
+    }
+    if (onPleroma) {
+      readout.innerHTML = `<span style="color:#8b0000;">✝</span> <span class="yr" style="color:#8b0000;">The Fullness of Time</span>`;
+    } else {
+      const cols = Array.from(document.querySelectorAll('#timeline-track .tl-col[data-title]'));
+      let bestYr = null, bestDiff = Infinity;
+      cols.forEach(col => {
+        if (!col.querySelector('.tl-card') && !col.querySelector('.tl-dot')) return;
+        const v = allVolumes.find(x => x.title === col.getAttribute('data-title'));
+        if (!v) return;
+        const r = col.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const diff = Math.abs(cx - viewportCentre);
+        if (diff < bestDiff) { bestDiff = diff; bestYr = v.date_sort; }
+      });
+      if (bestYr !== null) {
+        const era = scrubEraName(bestYr);
+        readout.innerHTML = `<span class="yr">${fmtYear(bestYr)}</span>${era ? ' &nbsp;·&nbsp; ' + era : ''}`;
+      }
+    }
+  }
+}
+
+// Tap / drag anywhere on the scrubber track → jump timeline to that year
+// Convert a target year to a scroll-left position by interpolating between the
+// real on-screen card offsets (so dragging moves the timeline continuously
+// rather than snapping between cards).
+function scrubberSeek(clientX, smooth) {
+  const track = document.getElementById('tl-scrubber-track');
+  const sc = document.getElementById('timeline-scroll');
+  if (!track || !sc) return;
+  const rect = track.getBoundingClientRect();
+  const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+  // Track fraction maps directly to scroll range — dots, marker and seek all use
+  // the same scroll-fraction space, so they can never disagree.
+  const maxScroll = sc.scrollWidth - sc.clientWidth;
+  const left = frac * maxScroll;
+  sc.scrollTo({ left: left, behavior: smooth ? 'smooth' : 'auto' });
+}
+
+(function wireScrubber() {
+  const track = document.getElementById('tl-scrubber-track');
+  const sc = document.getElementById('timeline-scroll');
+  if (!track || !sc) return;
+
+  let scrubbing = false, moved = false, downX = 0;
+
+  // Keep marker synced to scroll (but not while actively scrubbing, to avoid
+  // a feedback loop between seek → scroll → sync → seek).
+  sc.addEventListener('scroll', () => {
+    if (scrubbing) return;
+    window.requestAnimationFrame(syncScrubberFromScroll);
+  }, { passive: true });
+
+  track.addEventListener('mousedown', e => {
+    scrubbing = true; moved = false; downX = e.clientX;
+    e.preventDefault();
+  });
+  window.addEventListener('mousemove', e => {
+    if (!scrubbing) return;
+    if (Math.abs(e.clientX - downX) > 2) moved = true;
+    scrubberSeek(e.clientX, false);          // instant follow while dragging
+    syncScrubberFromScroll();                 // keep marker under the cursor
+  });
+  window.addEventListener('mouseup', e => {
+    if (scrubbing && !moved) scrubberSeek(e.clientX, true);  // single tap → smooth
+    scrubbing = false;
+  });
+
+  // Touch
+  track.addEventListener('touchstart', e => {
+    scrubbing = true;
+    scrubberSeek(e.touches[0].clientX, false);
+    syncScrubberFromScroll();
+  }, { passive: true });
+  track.addEventListener('touchmove', e => {
+    scrubberSeek(e.touches[0].clientX, false);
+    syncScrubberFromScroll();
+  }, { passive: true });
+  track.addEventListener('touchend', () => { scrubbing = false; });
+})();
 
 // Bible scroll drag
 const bscroll = document.getElementById('bible-scroll');
@@ -5298,7 +5632,8 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div class="ms-heading">Series</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v26.8 · 10 June 2026</div>';
+  html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
     const key = v.series + '|' + volumeColor(v);
@@ -5308,7 +5643,6 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v25.6 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -6231,6 +6565,8 @@ function handleOrientationChange() {
       const ra = document.getElementById('reader-area');
       if (ra) { try { readerRendition.resize(ra.offsetWidth, ra.offsetHeight); } catch(e){} }
     }
+    // Scrubber dot fractions depend on scrollWidth — rebuild after layout settles
+    if (currentView === 'timeline' && typeof buildScrubber === 'function') buildScrubber();
   };
   refit();
   setTimeout(refit, 250);
