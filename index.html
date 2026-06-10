@@ -60,6 +60,9 @@
     background: var(--cream);
     color: var(--ink);
     font-family: 'EB Garamond', Georgia, serif;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 
   body {
@@ -2675,9 +2678,18 @@
   /* ── MOBILE PORTRAIT: bottom tab bar + collapsed search + scroll hint ── */
   .mobile-tabbar { display: none; }
   @media (max-width: 768px) and (orientation: portrait) {
-    /* The floating version stamp would sit under the tab bar — hide it here
-       (it still appears in the mobile Legend sheet). */
-    .version-stamp { display: none !important; }
+    /* Keep the version/compilation text visible, lifted just above the tab bar
+       so it doesn't sit under it. */
+    .version-stamp {
+      display: block !important;
+      bottom: 58px !important;
+      font-size: 7px !important;
+      background: var(--cream);
+      padding: 2px 10px;
+      border-radius: 8px;
+      z-index: 95;
+    }
+    [data-theme="dark"] .version-stamp { background: #1c1a10; }
     /* Fixed bottom tab bar with the 5 views — always visible */
     .mobile-tabbar {
       display: flex;
@@ -2970,7 +2982,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v25.5 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v25.6 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5296,7 +5308,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v25.5 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v25.6 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -6205,6 +6217,35 @@ function introShowcase() {
 
 // Run showcase after a short delay to let render settle
 setTimeout(introShowcase, 200);
+
+// ── ORIENTATION CHANGE: re-fit layout so rotating doesn't leave a zoomed/broken view ──
+function handleOrientationChange() {
+  // Leaflet must recompute its container size after a rotate, or it renders
+  // zoomed/clipped. Do it a couple of times as the viewport settles.
+  const refit = () => {
+    if (mapInstance && currentView === 'map') {
+      mapInstance.invalidateSize();
+    }
+    // Nudge the epub reader to re-measure if open
+    if (readerRendition) {
+      const ra = document.getElementById('reader-area');
+      if (ra) { try { readerRendition.resize(ra.offsetWidth, ra.offsetHeight); } catch(e){} }
+    }
+  };
+  refit();
+  setTimeout(refit, 250);
+  setTimeout(refit, 600);
+}
+window.addEventListener('orientationchange', handleOrientationChange);
+// Some mobile browsers fire resize (not orientationchange) on rotate
+let _lastOrient = window.innerWidth > window.innerHeight;
+window.addEventListener('resize', () => {
+  const nowLandscape = window.innerWidth > window.innerHeight;
+  if (nowLandscape !== _lastOrient) {
+    _lastOrient = nowLandscape;
+    handleOrientationChange();
+  }
+});
 
 </script>
   <div class="dl-toast" id="dl-toast">Complete volumes are readable — click any card to open · save from the reader</div>
