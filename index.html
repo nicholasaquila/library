@@ -2657,6 +2657,71 @@
   }
   @keyframes rl-spin { to { transform: rotate(360deg); } }
 
+
+  /* ── MOBILE PORTRAIT: bottom tab bar + collapsed search + scroll hint ── */
+  .mobile-tabbar { display: none; }
+  @media (max-width: 768px) and (orientation: portrait) {
+    /* Fixed bottom tab bar with the 5 views — always visible */
+    .mobile-tabbar {
+      display: flex;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 90;
+      background: var(--cream);
+      border-top: 1px solid rgba(140,110,55,0.25);
+      padding: 4px 4px calc(4px + env(safe-area-inset-bottom, 0px));
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+    }
+    .mtab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 5px 2px;
+      color: var(--brown-light);
+      font-family: 'Cinzel', serif;
+      font-size: 7px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .mtab svg { width: 17px; height: 17px; }
+    .mtab.active { color: var(--gold); }
+    [data-theme="dark"] .mobile-tabbar { background: #1c1a10; border-color: rgba(200,160,64,0.2); }
+
+    /* Hide the inline view-toggle (now in the bottom bar) in portrait */
+    .controls-bar .view-toggle { display: none !important; }
+
+    /* Give page content room so the bottom bar doesn't cover it */
+    body { padding-bottom: 52px; }
+
+    /* Collapse search to an icon that expands on focus */
+    .search-wrap { flex-shrink: 0; }
+    .search-input {
+      width: 28px !important;
+      padding: 4px 6px 4px 24px !important;
+      cursor: pointer;
+      transition: width 0.2s ease;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='7' cy='7' r='4.2' fill='none' stroke='%238a6e37' stroke-width='1.4'/%3E%3Cline x1='10.2' y1='10.2' x2='14' y2='14' stroke='%238a6e37' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 6px center;
+      background-size: 13px;
+    }
+    .search-input:focus {
+      width: 150px !important;
+      cursor: text;
+    }
+
+    /* Scroll-fade hint on the right edge of the controls bar */
+    .controls-bar {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent 100%);
+      mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent 100%);
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -2728,6 +2793,30 @@
   </div>
 </div>
 
+<!-- MOBILE PORTRAIT: fixed bottom tab bar for views -->
+<nav class="mobile-tabbar" id="mobile-tabbar">
+  <button class="mtab" id="mtab-bible" onclick="setView('bible')">
+    <svg viewBox="0 0 16 16"><path d="M3 2h7a2 2 0 0 1 2 2v10l-2-1.2L8 14l-2-1.2L4 14V3a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.1"/><path d="M5 5h4M5 7.5h4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    <span>Scripture</span>
+  </button>
+  <button class="mtab active" id="mtab-timeline" onclick="setView('timeline')">
+    <svg viewBox="0 0 16 16"><line x1="2" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.1"/><circle cx="4.5" cy="8" r="1.6" fill="currentColor"/><circle cx="8" cy="8" r="1.6" fill="currentColor"/><circle cx="11.5" cy="8" r="1.6" fill="currentColor"/></svg>
+    <span>Library</span>
+  </button>
+  <button class="mtab" id="mtab-grid" onclick="setView('grid')">
+    <svg viewBox="0 0 16 16"><rect x="2.5" y="2.5" width="4.5" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.1"/><rect x="9" y="2.5" width="4.5" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.1"/><rect x="2.5" y="9" width="4.5" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.1"/><rect x="9" y="9" width="4.5" height="4.5" rx="0.6" fill="none" stroke="currentColor" stroke-width="1.1"/></svg>
+    <span>Grid</span>
+  </button>
+  <button class="mtab" id="mtab-map" onclick="setView('map')">
+    <svg viewBox="0 0 16 16"><path d="M8 1.5c2.5 0 4.5 2 4.5 4.5C12.5 9.5 8 14.5 8 14.5S3.5 9.5 3.5 6C3.5 3.5 5.5 1.5 8 1.5z" fill="none" stroke="currentColor" stroke-width="1.1"/><circle cx="8" cy="6" r="1.6" fill="currentColor"/></svg>
+    <span>Map</span>
+  </button>
+  <button class="mtab" id="mtab-doctrine" onclick="setView('doctrine')">
+    <svg viewBox="0 0 16 16"><circle cx="8" cy="3.2" r="1.5" fill="currentColor"/><circle cx="3.5" cy="11" r="1.5" fill="currentColor"/><circle cx="12.5" cy="11" r="1.5" fill="currentColor"/><path d="M8 4.5v3M8 7.5L4 10M8 7.5L12 10" stroke="currentColor" stroke-width="1" fill="none"/></svg>
+    <span>Doctrine</span>
+  </button>
+</nav>
+
 <!-- TIMELINE VIEW (default) -->
 <div class="timeline-outer" id="timeline-view">
   <div class="mobile-timeline-hint">← swipe to explore the timeline →</div>
@@ -2782,7 +2871,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.0 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.1 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4932,6 +5021,11 @@ function setView(view) {
   document.getElementById('btn-bible').classList.toggle('active', view==='bible');
   document.getElementById('btn-grid').classList.toggle('active', view==='grid');
   document.getElementById('btn-doctrine').classList.toggle('active', view==='doctrine');
+  // Sync mobile bottom tab bar
+  ['bible','timeline','grid','map','doctrine'].forEach(v => {
+    const mt = document.getElementById('mtab-' + v);
+    if (mt) mt.classList.toggle('active', view === v);
+  });
   document.getElementById('timeline-view').style.display = view==='timeline' ? 'flex'  : 'none';
   document.getElementById('bible-view').style.display    = view==='bible'    ? 'flex'  : 'none';
   document.getElementById('grid-view').style.display     = view==='grid'     ? 'block' : 'none';
@@ -5038,7 +5132,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.0 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.1 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
