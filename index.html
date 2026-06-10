@@ -2433,6 +2433,7 @@
   }
   /* Mobile control chips hidden on desktop */
   .mobile-ctl-btn { display: none; }
+  #btn-expand.expanded { background: rgba(140,110,55,0.2); border-color: var(--gold); }
 
   /* Legend / filter sheet (reuses ancient-sheet styling) */
   .ms-row { display: flex; align-items: center; gap: 10px; padding: 9px 4px; cursor: pointer; border-bottom: 1px solid rgba(140,110,55,0.1); }
@@ -2736,6 +2737,50 @@
     }
   }
 
+
+  /* ── MOBILE PORTRAIT: tidy, consistent top control chips ── */
+  @media (max-width: 768px) and (orientation: portrait) {
+    .controls-bar {
+      padding: 8px 12px !important;
+      gap: 8px !important;
+      align-items: center !important;
+    }
+    /* Unify the chip family: search, filter, legend, cultural-context */
+    .controls-bar .mobile-ctl-btn,
+    .controls-bar #btn-expand {
+      font-family: 'Cinzel', serif !important;
+      font-size: 8px !important;
+      letter-spacing: 0.1em !important;
+      text-transform: uppercase !important;
+      padding: 0 11px !important;
+      height: 28px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      border: 1px solid rgba(140,110,55,0.35) !important;
+      border-radius: 3px !important;
+      background: transparent !important;
+      color: var(--brown) !important;
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+      margin: 0 !important;
+    }
+    /* Cultural Context: keep its inviting gold accent, just match the shape */
+    .controls-bar #btn-expand {
+      border-color: rgba(200,160,64,0.55) !important;
+      color: var(--gold) !important;
+    }
+    .controls-bar #btn-expand.expanded {
+      background: rgba(200,160,64,0.12) !important;
+    }
+    /* Search pill: same height + rounded, icon centred */
+    .controls-bar .search-wrap { height: 28px !important; }
+    .controls-bar .search-input {
+      height: 28px !important;
+      border-radius: 3px !important;
+      border-color: rgba(140,110,55,0.35) !important;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -2802,9 +2847,8 @@
       <svg viewBox="0 0 16 16" class="vb-icon"><circle cx="8" cy="3.2" r="1.5" fill="currentColor"/><circle cx="3.5" cy="11" r="1.5" fill="currentColor"/><circle cx="12.5" cy="11" r="1.5" fill="currentColor"/><path d="M8 4.5v3M8 7.5L4 10M8 7.5L12 10" stroke="currentColor" stroke-width="1" fill="none"/></svg>
       <span>Doctrine</span>
     </button>
-    <div style="width:1px;background:rgba(140,110,55,0.2);align-self:stretch;margin:0 4px;flex-shrink:0;"></div>
-    <button class="filter-btn" id="btn-expand" onclick="toggleExpanded()" title="Show cultural context and edification">+ Cultural Context &amp; Edification</button>
   </div>
+  <button class="filter-btn" id="btn-expand" onclick="toggleExpanded()" title="Show cultural context and edification" style="margin-left:6px;">+ Cultural Context &amp; Edification</button>
 </div>
 
 <!-- MOBILE PORTRAIT: fixed bottom tab bar for views -->
@@ -2885,7 +2929,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.4 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.8 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3949,8 +3993,7 @@ function toggleExpanded() {
   const btn = document.getElementById('btn-expand');
   if (btn) {
     btn.textContent = showContextual ? '− Cultural Context & Edification' : '+ Cultural Context & Edification';
-    btn.style.background = showContextual ? 'rgba(140,110,55,0.2)' : '';
-    btn.style.borderColor = showContextual ? 'var(--gold)' : '';
+    btn.classList.toggle('expanded', showContextual);
   }
   // Stop the shimmer once the user has discovered the button
   if (btn) btn.classList.add('activated');
@@ -4131,7 +4174,7 @@ function initMap() {
   // Add correct layer for current theme
   const initDark = document.documentElement.getAttribute('data-theme') === 'dark';
   (initDark ? window.mapDarkLayer : window.mapLightLayer).addTo(mapInstance);
-  mapInstance.getContainer().style.filter = 'sepia(0.45) saturate(1.4) brightness(0.75) contrast(1.35) hue-rotate(-10deg)';
+  updateMapFilter();
 
   mapSortedVols = [...LIBRARY_DATA.volumes]
     .filter(v => MAP_LOCATIONS[v.title])
@@ -5146,7 +5189,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.4 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.8 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5965,7 +6008,7 @@ function updateMapFilter() {
   }
   // Apply filter
   mapInstance.getContainer().style.filter = isDark
-    ? 'sepia(0.4) saturate(0.9) brightness(0.85) contrast(1.2) hue-rotate(10deg)'
+    ? 'sepia(0.55) saturate(1.5) brightness(1.15) contrast(1.7) hue-rotate(-8deg)'
     : 'sepia(0.45) saturate(1.4) brightness(0.75) contrast(1.35) hue-rotate(-10deg)';
 }
 
