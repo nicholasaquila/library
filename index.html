@@ -876,13 +876,9 @@
   /* ── VERSION STAMP ── */
   .version-stamp {
     position: fixed;
-    bottom: 5px;
-    left: 0; right: 0;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 18px;
-    padding: 0 24px;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
     font-family: 'Cinzel', serif;
     font-size: 8px;
     letter-spacing: 0.12em;
@@ -891,21 +887,13 @@
     pointer-events: none;
     z-index: 100;
   }
-  .version-stamp { color: rgba(120,92,40,0.7); }
-  .version-stamp .vs-zone { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-  .version-stamp .vs-left   { text-align: left; }
-  .version-stamp .vs-centre { text-align: center; flex: 0 0 auto; }
-  .version-stamp .vs-right  { text-align: right; }
-  .version-stamp .vs-stats { opacity: 0.95; }
   .version-stamp .vs-motto {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 11px;
-    letter-spacing: 0.03em;
-    color: rgba(120,92,40,0.85);
+    letter-spacing: 0.02em;
     text-transform: none;
   }
-  [data-theme="dark"] .version-stamp .vs-motto { color: rgba(212,170,68,0.8); }
+  .version-stamp .vs-bar { opacity: 0.5; padding: 0 2px; }
 
 
   /* ── TAB INTRO ANIMATION ── */
@@ -1454,7 +1442,7 @@
 
   [data-theme="dark"] .tl-era-subtitle { color: rgba(212,170,68,0.7); }
 
-  [data-theme="dark"] .version-stamp { color: rgba(212,170,68,0.6); }
+  [data-theme="dark"] .version-stamp { color: rgba(212,170,68,0.35); }
 
 
   /* ── READER MODAL ── */
@@ -3176,11 +3164,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">
-  <span class="vs-zone vs-left"><span class="vs-stats" id="stats-bar"></span></span>
-  <span class="vs-zone vs-centre"><span class="vs-motto">fides quaerens intellectum<span class="vs-motto-en"> &middot; faith seeking understanding</span></span></span>
-  <span class="vs-zone vs-right">Compiled by Nicholas Aquila &nbsp;·&nbsp; v31.1 · 10 June 2026</span>
-</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v31.2 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5944,7 +5928,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v31.1 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v31.2 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
