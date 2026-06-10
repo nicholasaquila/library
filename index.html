@@ -1890,18 +1890,22 @@
   .search-wrap { position: relative; display: flex; align-items: center; flex-shrink: 0; }
   .search-input {
     font-family: 'EB Garamond', serif; font-size: 13px;
-    padding: 5px 26px 5px 10px; border: 1px solid rgba(140,110,55,0.4);
-    background: rgba(255,255,255,0.4); color: var(--ink);
+    padding: 5px 26px 5px 28px; border: 1px solid rgba(140,110,55,0.4);
+    background-color: rgba(255,255,255,0.4); color: var(--ink);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='7' cy='7' r='4.2' fill='none' stroke='%238a6e37' stroke-width='1.4'/%3E%3Cline x1='10.2' y1='10.2' x2='14' y2='14' stroke='%238a6e37' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 9px center;
+    background-size: 13px;
     width: 190px; transition: width 0.25s ease, border-color 0.2s; outline: none;
   }
   .search-input:focus { border-color: var(--gold); width: 230px; }
   .search-input::placeholder { color: var(--brown-light); opacity: 0.7; font-style: italic; }
   .search-clear { position: absolute; right: 6px; background: none; border: none; color: var(--brown-light); cursor: pointer; font-size: 11px; display: none; padding: 2px; }
   .search-clear.show { display: block; }
-  [data-theme="dark"] .search-input { background: rgba(0,0,0,0.25); color: var(--ink); border-color: rgba(200,160,64,0.3); }
+  [data-theme="dark"] .search-input { background-color: rgba(0,0,0,0.25); color: var(--ink); border-color: rgba(200,160,64,0.3); }
   .tl-col.search-hidden, .vol-card.search-hidden, .era-section.search-hidden { display: none !important; }
   @media (max-width: 768px) {
-    .search-input { width: 110px; font-size: 12px; padding: 4px 22px 4px 8px; }
+    .search-input { width: 120px; font-size: 12px; padding: 4px 22px 4px 26px; }
     .search-input:focus { width: 140px; }
   }
 
@@ -2661,6 +2665,9 @@
   /* ── MOBILE PORTRAIT: bottom tab bar + collapsed search + scroll hint ── */
   .mobile-tabbar { display: none; }
   @media (max-width: 768px) and (orientation: portrait) {
+    /* The floating version stamp would sit under the tab bar — hide it here
+       (it still appears in the mobile Legend sheet). */
+    .version-stamp { display: none !important; }
     /* Fixed bottom tab bar with the 5 views — always visible */
     .mobile-tabbar {
       display: flex;
@@ -2871,7 +2878,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.1 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.3 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5132,7 +5139,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.1 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.3 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
