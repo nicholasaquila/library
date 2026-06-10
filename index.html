@@ -110,9 +110,11 @@
   .header-sub {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 14px;
+    font-size: 12.5px;
     color: var(--brown-light);
-    margin-top: 5px;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+    opacity: 0.85;
   }
 
   /* ── CONTROLS BAR ── */
@@ -253,6 +255,9 @@
     padding: 20px 80px 20px 0;
     height: 100%;
     position: relative;
+    /* Column width scales with the card (which is clamp(15px,1.05vw,18px));
+       card max width ~178px, plus gutter. Keeps cards from clipping when they grow. */
+    --col-w: clamp(160px, 11.6vw, 196px);
   }
 
   /* Era group */
@@ -320,8 +325,12 @@
   }
 
   .tl-card {
-    width: 148px;
-    padding: 12px 12px 10px;
+    /* The card's font-size is the master scale: width, padding and all inner
+       text are in em, so the whole card + its text grow together. clamp() lets
+       it scale up on wide screens up to a tasteful cap, never below the base. */
+    font-size: clamp(15px, 1.05vw, 18px);
+    width: 9.87em;            /* 148px / 15px base */
+    padding: 0.8em 0.8em 0.67em;
     background: linear-gradient(160deg, #faf6ea, #f0e9d4);
     border: 1px solid rgba(140,110,55,0.25);
     position: relative;
@@ -348,46 +357,46 @@
 
   .tl-card-date {
     font-family: 'Cinzel', serif;
-    font-size: 11px;
+    font-size: 0.73em;        /* ~11px */
     letter-spacing: 0.12em;
     color: var(--gold);
-    margin-bottom: 5px;
+    margin-bottom: 0.45em;
   }
   .tl-card-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 15px;
+    font-size: 1em;           /* 15px master */
     font-weight: 600;
     color: var(--ink);
     line-height: 1.3;
-    margin-bottom: 2px;
+    margin-bottom: 0.13em;
   }
   .tl-card-subtitle {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 13px;
+    font-size: 0.87em;        /* ~13px */
     color: var(--brown-light);
-    margin-bottom: 3px;
+    margin-bottom: 0.2em;
     line-height: 1.2;
   }
   .tl-card-author {
     font-family: 'EB Garamond', serif;
-    font-size: 11px;
+    font-size: 0.73em;        /* ~11px */
     color: var(--brown);
-    margin-bottom: 6px;
+    margin-bottom: 0.5em;
   }
   .tl-card-badge {
     font-family: 'Cinzel', serif;
-    font-size: 8px;
+    font-size: 0.53em;        /* ~8px */
     letter-spacing: 0.1em;
-    padding: 2px 6px;
+    padding: 0.25em 0.75em;
     border: 1px solid var(--sc);
     color: var(--sc);
     display: inline-block;
   }
   .tl-card-status {
     position: absolute;
-    top: 7px; right: 7px;
-    font-size: 10px;
+    top: 0.47em; right: 0.47em;
+    font-size: 0.67em;        /* ~10px */
     opacity: 0.65;
   }
 
@@ -542,6 +551,7 @@
     flex-direction: row;
     padding: 28px 120px 28px 60px;
     min-height: 100%;
+    --col-w: 160px;
   }
   /* reuse tl-era, tl-card etc — bible cards get a distinct top accent via --sc */
   .bible-card {
@@ -689,7 +699,8 @@
     .lg-item { font-size: 10px; }
 
     /* On mobile, grid is the default visible view — timeline still accessible */
-    .tl-card { width: 120px; }
+    .tl-card { width: 120px; font-size: 12px; }
+    .timeline-track { --col-w: 132px; }
     .tl-card-title { font-size: 11px; }
     .tl-card-date  { font-size: 8px; }
     .tl-card-author { font-size: 10px; }
@@ -1829,8 +1840,20 @@
     /* Header: single line, left-aligned, minimal */
     header { padding: 6px 12px 5px !important; text-align: left !important; display: flex !important; align-items: center !important; }
     header::after { display: none !important; }
-    .header-title { font-size: 13px !important; letter-spacing: 0.03em !important; white-space: nowrap !important; margin-right: auto !important; }
-    .header-sub, .header-eyebrow { display: none !important; }
+    .header-title { font-size: 13px !important; letter-spacing: 0.03em !important; white-space: nowrap !important; }
+    .header-eyebrow { display: none !important; }
+    /* Motto sits inline next to the title on mobile, then pushes the toggle right */
+    .header-sub {
+      display: block !important;
+      font-size: 9px !important;
+      margin: 0 auto 0 8px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      opacity: 0.7 !important;
+      align-self: center !important;
+    }
+    .header-sub-en { display: none !important; }
     /* Dark toggle sits neatly at the end of the header row (not a cramped float) */
     .dark-toggle {
       position: static !important;
@@ -1858,7 +1881,8 @@
     .status-legend-bar { display: none !important; }
 
     /* Timeline cards */
-    .tl-card { width: 108px !important; padding: 5px 6px 4px !important; }
+    .tl-card { width: 108px !important; padding: 5px 6px 4px !important; font-size: 11px !important; }
+    .timeline-track { --col-w: 120px !important; }
     .tl-card-title { font-size: 10px !important; }
     .tl-card-date { font-size: 7px !important; }
     .tl-card-author { font-size: 9px !important; }
@@ -2616,7 +2640,8 @@
     .timeline-track { padding: 8px 60px 8px 0 !important; }
 
     /* Slightly smaller cards so more fits and the spine sits centred */
-    .tl-card { width: 104px !important; padding: 4px 6px 3px !important; }
+    .tl-card { width: 104px !important; padding: 4px 6px 3px !important; font-size: 10.5px !important; }
+    .timeline-track { --col-w: 116px !important; }
     .tl-card-title { font-size: 9px !important; }
     .tl-card-date { font-size: 6px !important; }
     .tl-card-author { font-size: 8px !important; }
@@ -2992,6 +3017,7 @@
 
 <header>
   <h1 class="header-title">Bibliotheca Fidei</h1>
+  <div class="header-sub">fides quaerens intellectum<span class="header-sub-en"> &middot; faith seeking understanding</span></div>
   <button class="dark-toggle" id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()"><svg viewBox="0 0 16 16" width="13" height="13" style="display:block;"><circle cx="8" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M13 3l-1.4 1.4M4.4 11.6L3 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
 </header>
 
@@ -3122,7 +3148,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v28.6 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v28.9 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4768,7 +4794,7 @@ function renderTimeline() {
     for (let k = 0; k < vols.length - 1; k++) {
       if (mergePartner(vols[k].title) === vols[k+1].title) colCount -= 1;
     }
-    eraEl.style.minWidth = (colCount * 160 + 40) + 'px';
+    eraEl.style.minWidth = 'calc(' + colCount + ' * var(--col-w) + 40px)';
 
     // Era label
     const labelEl = document.createElement('div');
@@ -4851,7 +4877,7 @@ function renderTimeline() {
         const ac = document.createElement('div');
         ac.className = 'tl-col' + ctxC;
         ac.setAttribute('data-title', il.title);
-        ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
+        ac.style.cssText = 'width:var(--col-w);display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
         ac.appendChild(stemUp);
         ac.appendChild(buildHomerCard(il));
         // Shared significance tag above the first card (keyed "A & B")
@@ -4870,7 +4896,7 @@ function renderTimeline() {
         const bc = document.createElement('div');
         bc.className = 'tl-col' + ctxC;
         bc.setAttribute('data-title', od.title);
-        bc.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
+        bc.style.cssText = 'width:var(--col-w);display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
         bc.appendChild(stemDn);
         bc.appendChild(buildHomerCard(od));
         belowRow.appendChild(bc);
@@ -4878,7 +4904,7 @@ function renderTimeline() {
         // SPINE: single shared dot
         const spineDot = document.createElement('div');
         spineDot.className = 'tl-col' + ctxC;
-        spineDot.style.cssText = 'width:160px;display:flex;justify-content:center;flex-shrink:0;';
+        spineDot.style.cssText = 'width:var(--col-w);display:flex;justify-content:center;flex-shrink:0;';
         const sd = document.createElement('div');
         sd.style.cssText = `width:10px;height:10px;border-radius:50%;background:${col};border:2px solid var(--cream);box-shadow:0 0 0 1px ${col};z-index:2;`;
         spineDot.appendChild(sd);
@@ -4887,7 +4913,7 @@ function renderTimeline() {
       }
 
       const col = document.createElement('div');
-      col.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
+      col.style.cssText = 'width:var(--col-w);display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
 
       const card = document.createElement('div');
       card.className = `tl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
@@ -4970,7 +4996,7 @@ function renderTimeline() {
         const bc = document.createElement('div');
         bc.className = 'tl-col' + ctxClass;
         bc.setAttribute('data-title', v.title);
-        bc.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
+        bc.style.cssText = 'width:var(--col-w);display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
         bc.appendChild(dot.cloneNode());
         bc.appendChild(stem.cloneNode());
         bc.appendChild(card);
@@ -4981,14 +5007,14 @@ function renderTimeline() {
         // Placeholder in above row — add mobile info tag here (above spine = opposite side)
         const ph = document.createElement('div');
         ph.className = 'tl-col' + ctxClass;
-        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        ph.style.cssText = 'width:var(--col-w);flex-shrink:0;';
         aboveRow.appendChild(ph);
       } else {
         // Card above spine
         const ac = document.createElement('div');
         ac.className = 'tl-col' + ctxClass;
         ac.setAttribute('data-title', v.title);
-        ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
+        ac.style.cssText = 'width:var(--col-w);display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
         ac.appendChild(dot.cloneNode());
         ac.appendChild(stem.cloneNode());
         ac.appendChild(card);
@@ -4999,7 +5025,7 @@ function renderTimeline() {
         // Placeholder in below row — add mobile info tag here (below spine = opposite side)
         const ph = document.createElement('div');
         ph.className = 'tl-col' + ctxClass;
-        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        ph.style.cssText = 'width:var(--col-w);flex-shrink:0;';
         belowRow.appendChild(ph);
       }
 
@@ -5007,7 +5033,7 @@ function renderTimeline() {
       const spineDot = document.createElement('div');
       spineDot.className = 'tl-col' + ctxClass;
       if (ctxClass) spineDot.setAttribute('data-title', v.title);
-      spineDot.style.cssText = `width:160px;display:flex;justify-content:center;flex-shrink:0;`;
+      spineDot.style.cssText = `width:var(--col-w);display:flex;justify-content:center;flex-shrink:0;`;
       const sd = document.createElement('div');
       sd.style.cssText = `width:8px;height:8px;border-radius:50%;background:${volumeColor(v)};border:2px solid var(--cream);box-shadow:0 0 0 1px ${volumeColor(v)};z-index:2;`;
       spineDot.appendChild(sd);
@@ -5344,30 +5370,30 @@ function renderBiblical() {
 
       // spine dot
       const spineDotWrap = document.createElement('div');
-      spineDotWrap.style.cssText = 'width:160px;display:flex;justify-content:center;flex-shrink:0;';
+      spineDotWrap.style.cssText = 'width:var(--col-w);display:flex;justify-content:center;flex-shrink:0;';
       const sd = dot.cloneNode();
       spineDotWrap.appendChild(sd);
       spineRow.appendChild(spineDotWrap);
 
       if (isAbove) {
         const ac = document.createElement('div');
-        ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
+        ac.style.cssText = 'width:var(--col-w);display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
         ac.appendChild(dot);
         ac.appendChild(stem);
         ac.appendChild(card);
         aboveRow.appendChild(ac);
         const ph = document.createElement('div');
-        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        ph.style.cssText = 'width:var(--col-w);flex-shrink:0;';
         belowRow.appendChild(ph);
       } else {
         const bc = document.createElement('div');
-        bc.style.cssText = 'width:160px;display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
+        bc.style.cssText = 'width:var(--col-w);display:flex;flex-direction:column;align-items:center;flex-shrink:0;';
         bc.appendChild(dot);
         bc.appendChild(stem);
         bc.appendChild(card);
         belowRow.appendChild(bc);
         const ph = document.createElement('div');
-        ph.style.cssText = 'width:160px;flex-shrink:0;';
+        ph.style.cssText = 'width:var(--col-w);flex-shrink:0;';
         aboveRow.appendChild(ph);
       }
     });
@@ -5779,7 +5805,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v28.6 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v28.9 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
