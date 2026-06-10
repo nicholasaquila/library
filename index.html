@@ -577,6 +577,43 @@
     flex-shrink: 0;
     align-self: center;
   }
+  /* ── LIBRARY TIMELINE OPENING ANCHOR ── */
+  .tl-opener {
+    flex-shrink: 0;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 0 36px 0 28px;
+    text-align: center;
+  }
+  .tl-opener-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--gold);
+    white-space: nowrap;
+  }
+  .tl-opener-sub {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brown-light);
+    white-space: nowrap;
+  }
+  .tl-opener-arrow {
+    font-size: 16px;
+    color: var(--gold);
+    opacity: 0.6;
+    margin-bottom: 2px;
+  }
+  @media (max-width: 768px) {
+    .tl-opener { padding: 0 24px 0 16px; }
+    .tl-opener-text { font-size: 14px; }
+  }
   .genesis-anchor-text {
     font-family: 'Cinzel', serif;
     font-size: 9px;
@@ -2861,6 +2898,11 @@
     .controls-bar .search-wrap  { order: 2 !important; }
     .controls-bar #mobile-filter-btn { order: 3 !important; }
     .controls-bar #mobile-legend-btn { order: 4 !important; }
+    /* Everything else (continue-reading bar, filter group, stats) goes AFTER, so
+       it can never push the Cultural Context button rightward. */
+    .controls-bar #continue-bar { order: 5 !important; }
+    .controls-bar .filter-group { order: 6 !important; }
+    .controls-bar .stats-text   { order: 7 !important; }
     /* Unify the chip family: search, filter, legend, cultural-context */
     .controls-bar .mobile-ctl-btn,
     .controls-bar #btn-expand {
@@ -3084,7 +3126,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v26.8 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v27.2 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4663,6 +4705,16 @@ function renderTimeline() {
   // Apply current context state to track
   track.classList.toggle('hide-context', !showContextual);
 
+  // Opening anchor — lets you scroll slightly before the first text
+  const opener = document.createElement('div');
+  opener.className = 'tl-opener';
+  opener.id = 'tl-opener';
+  opener.innerHTML = `
+    <div class="tl-opener-arrow">&larr;</div>
+    <div class="tl-opener-text">In the beginning&hellip;</div>
+  `;
+  track.appendChild(opener);
+
   ERAS.forEach(era => {
     const vols = groups[era.label];
     if (!vols || vols.length === 0) return;
@@ -5377,6 +5429,7 @@ function buildScrubber() {
   if (maxScroll <= 0) { scrubBuilt = true; return; }
 
   const scRect = sc.getBoundingClientRect();
+  const contentW = sc.scrollWidth;
   const colContentX = (el) => {
     const r = el.getBoundingClientRect();
     return (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
@@ -5392,9 +5445,6 @@ function buildScrubber() {
     if (!col.querySelector('.tl-card') && !col.querySelector('.tl-dot')) return;
     seen.add(title);
 
-    // A collapsed contextual column (context OFF) has ~0 width and gives a
-    // degenerate position. Fall back to the position of its parent era so the
-    // dot still appears in roughly the right place (earliest = far left).
     const rect = col.getBoundingClientRect();
     let centreX;
     if (rect.width < 3) {
@@ -5403,8 +5453,9 @@ function buildScrubber() {
     } else {
       centreX = colContentX(col);
     }
-    const targetScroll = centreX - sc.clientWidth / 2;
-    const frac = Math.max(0, Math.min(1, targetScroll / maxScroll));
+    // Fraction of the whole content width (so the first/last texts sit at the
+    // true ends of the bar, not pulled inward by viewport-centring).
+    const frac = Math.max(0, Math.min(1, centreX / contentW));
 
     const dot = document.createElement('div');
     dot.className = 'tl-scrubber-dot' + (v.series === 'Voices of the Ancient World' ? ' diamond' : '');
@@ -5421,7 +5472,7 @@ function buildScrubber() {
     const pr = pcol.getBoundingClientRect();
     if (pr.width > 0) {
       const px = (pr.left - scRect.left) + sc.scrollLeft + pr.width / 2;
-      const pfrac = Math.max(0, Math.min(1, (px - sc.clientWidth / 2) / maxScroll));
+      const pfrac = Math.max(0, Math.min(1, px / contentW));
       const cross = document.createElement('div');
       cross.className = 'tl-scrubber-cross';
       cross.style.left = (pfrac * 100) + '%';
@@ -5466,37 +5517,51 @@ function syncScrubberFromScroll() {
   const readout = document.getElementById('tl-scrubber-readout');
   if (!sc || !marker) return;
 
+  const contentW = sc.scrollWidth;
+  // Marker = the viewport CENTRE as a fraction of the whole content width, so it
+  // aligns with the dots (also content-fraction). At the extremes the centre
+  // can't reach the very edges, so nudge to 0/1 when scrolled fully.
+  let frac = contentW > 0 ? (sc.scrollLeft + sc.clientWidth / 2) / contentW : 0;
   const maxScroll = sc.scrollWidth - sc.clientWidth;
-  // Position the marker by SCROLL FRACTION (matches the equal-width era layout),
-  // not by year — the two don't align because eras aren't year-proportional.
-  const frac = maxScroll > 0 ? Math.max(0, Math.min(1, sc.scrollLeft / maxScroll)) : 0;
+  if (sc.scrollLeft <= 1) frac = 0;
+  else if (maxScroll > 0 && sc.scrollLeft >= maxScroll - 1) frac = 1;
+  frac = Math.max(0, Math.min(1, frac));
   marker.style.left = (frac * 100) + '%';
   if (prog) prog.style.width = (frac * 100) + '%';
 
-  // The readout still shows the true year/era at the viewport centre, derived
-  // from the nearest card column on screen.
+  // The readout shows the true year/era at the viewport centre, derived from the
+  // nearest card — but constrained to the correct side of the pleroma, so the
+  // pre-Incarnation zone never shows an AD (Apostolic) era and vice versa.
   if (readout) {
     const scRect = sc.getBoundingClientRect();
     const viewportCentre = scRect.left + sc.clientWidth / 2;
-    // If the fullness-of-time (pleroma) column is near the centre, show it.
     const pcol = document.getElementById('pleroma-col');
-    let onPleroma = false;
+    let pcx = null, pWidth = 0;
     if (pcol) {
       const pr = pcol.getBoundingClientRect();
-      if (pr.width > 0) {
-        const pcx = pr.left + pr.width / 2;
-        if (Math.abs(pcx - viewportCentre) < pr.width * 0.6 + 40) onPleroma = true;
-      }
+      if (pr.width > 0) { pcx = pr.left + pr.width / 2; pWidth = pr.width; }
     }
+    // On the pleroma itself?
+    let onPleroma = false;
+    if (pcx !== null && Math.abs(pcx - viewportCentre) < pWidth * 0.6 + 30) onPleroma = true;
+
     if (onPleroma) {
       readout.innerHTML = `<span style="color:#8b0000;">✝</span> <span class="yr" style="color:#8b0000;">The Fullness of Time</span>`;
     } else {
+      // Which side of the Incarnation are we on?
+      const beforeChrist = (pcx !== null) ? (viewportCentre < pcx) : false;
       const cols = Array.from(document.querySelectorAll('#timeline-track .tl-col[data-title]'));
       let bestYr = null, bestDiff = Infinity;
       cols.forEach(col => {
         if (!col.querySelector('.tl-card') && !col.querySelector('.tl-dot')) return;
         const v = allVolumes.find(x => x.title === col.getAttribute('data-title'));
         if (!v) return;
+        // Constrain to the matching side: pre-pleroma → only BC/ancient texts;
+        // post-pleroma → only AD texts.
+        if (pcx !== null) {
+          if (beforeChrist && v.date_sort >= 0) return;
+          if (!beforeChrist && v.date_sort < 0) return;
+        }
         const r = col.getBoundingClientRect();
         const cx = r.left + r.width / 2;
         const diff = Math.abs(cx - viewportCentre);
@@ -5520,10 +5585,12 @@ function scrubberSeek(clientX, smooth) {
   if (!track || !sc) return;
   const rect = track.getBoundingClientRect();
   const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-  // Track fraction maps directly to scroll range — dots, marker and seek all use
-  // the same scroll-fraction space, so they can never disagree.
-  const maxScroll = sc.scrollWidth - sc.clientWidth;
-  const left = frac * maxScroll;
+  // Track fraction → content fraction: scroll so the point at frac*contentW sits
+  // at the viewport centre (matches how dots + marker are placed).
+  const contentW = sc.scrollWidth;
+  const targetContentX = frac * contentW;
+  let left = targetContentX - sc.clientWidth / 2;
+  left = Math.max(0, Math.min(sc.scrollWidth - sc.clientWidth, left));
   sc.scrollTo({ left: left, behavior: smooth ? 'smooth' : 'auto' });
 }
 
@@ -5632,7 +5699,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v26.8 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v27.2 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
