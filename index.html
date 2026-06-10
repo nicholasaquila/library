@@ -3122,7 +3122,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v27.9 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v28.3 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3228,6 +3228,30 @@ const LIBRARY_DATA = {
       "author": "Homer",
       "date_label": "c. 725\u2013675 BC",
       "date_sort": -700,
+      "series": "Voices of the Ancient World",
+      "status": "uncertain",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 55,
+      "title": "Theogony",
+      "subtitle": null,
+      "author": "Hesiod",
+      "date_label": "c. 730\u2013700 BC",
+      "date_sort": -690,
+      "series": "Voices of the Ancient World",
+      "status": "uncertain",
+      "notes": null,
+      "filename": null
+    },
+    {
+      "id": 56,
+      "title": "Works and Days",
+      "subtitle": null,
+      "author": "Hesiod",
+      "date_label": "c. 700 BC",
+      "date_sort": -690,
       "series": "Voices of the Ancient World",
       "status": "uncertain",
       "notes": null,
@@ -3821,6 +3845,17 @@ const CONTEXTUAL_TITLES = new Set([
 ]);
 let showContextual = false;
 
+// Pairs of consecutive texts that share ONE timeline column + spine dot
+// (same author/work-group). first = card above, second = card below.
+const MERGE_PAIRS = [
+  { first: 'The Iliad',  second: 'The Odyssey' },
+  { first: 'Theogony',   second: 'Works and Days' },
+];
+function mergePartner(title) {
+  const p = MERGE_PAIRS.find(p => p.first === title);
+  return p ? p.second : null;
+}
+
 
 
 // ── CONTINUE READING ──────────────────────────────────────────────────────────
@@ -4301,6 +4336,7 @@ const SIGNIFICANCE = {
   "The Code of Hammurabi":                     "One of the oldest law codes surviving in a substantially complete copy; lex talionis (eye for an eye); reflects themes in Mosaic law",
   "Atrahasis":                                 "Preserves one of the oldest surviving flood and creation narratives; human creation from clay; reflects themes in Genesis",
   "Enuma Elish":                               "Preserves one of the oldest surviving Babylonian creation accounts; cosmos from chaos; reflects themes in Genesis 1",
+  "Theogony & Works and Days":                 "Hesiod's epics; a lost Golden Age when man lived close to the gods, and the long fall away from it through the Ages of Silver, Bronze, Heroes and Iron",
 
   // Ante-Nicene Fathers: verified milestones
   "The First Epistle of Clement of Rome":      "Apostolic succession affirmed; Rome's authority beyond its own church attested",
@@ -4352,6 +4388,8 @@ const MAP_LOCATIONS = {
   "Enuma Elish":                              { lat: 32.2,  lng: 44.8,  place: "Babylon, Mesopotamia" },
   "The Iliad":                                { lat: 38.9,  lng: 27.05,  place: "Ancient Greece / Troy" },
   "The Odyssey":                              { lat: 38.9,  lng: 26.75,  place: "Ancient Greece" },
+  "Theogony":                                 { lat: 38.3,  lng: 22.95,  place: "Ascra, Boeotia (Greece)" },
+  "Works and Days":                           { lat: 38.32, lng: 22.88,  place: "Ascra, Boeotia (Greece)" },
   "The Didache":                              { lat: 36.2,  lng: 37.1,  place: "Syria / Antioch" },
   "The Epistle of Barnabas":                  { lat: 31.2,  lng: 30.12,  place: "Alexandria, Egypt" },
   "The First Epistle of Clement of Rome":     { lat: 41.9,  lng: 12.72,  place: "Rome" },
@@ -4638,6 +4676,14 @@ const ANCIENT_WORLD_INFO = {
     summary: "Odysseus\'s ten-year journey home from Troy, encountering monsters, gods and the temptation to abandon his identity and duty. A foundational text of Western literature.",
     biblical: "The theme of the long journey home through endurance and faithfulness resonates with the Exodus narrative and the parable of the Prodigal Son. Odysseus\'s resistance of the Sirens has long been read as a figure for resisting temptation.",
   },
+  "Theogony": {
+    summary: "Hesiod\'s account of the origin of the cosmos and the genealogy of the Greek gods, from primordial Chaos through the generations of the Titans to the reign of Zeus. A founding text of Greek religious thought.",
+    biblical: "Where Genesis opens with one transcendent God speaking an ordered creation out of nothing, the Theogony depicts gods themselves emerging from a pre-existing Chaos. Read as a preamble, it expresses humanity\'s reaching after the divine and the longing for order out of formlessness which Scripture answers with the Creator who is Himself uncreated.",
+  },
+  "Works and Days": {
+    summary: "A poem of practical wisdom and moral instruction addressed to Hesiod\'s brother Perses, on honest labour, justice and the rhythms of the farming year. It contains the myth of Pandora and the fable of the Five Ages of Man.",
+    biblical: "Its praise of honest toil and warnings against idleness and injustice sit close to the book of Proverbs. The Five Ages, descending from a lost Golden Age, echo the memory of a primordial paradise and a fall, themes Genesis records as revealed history. The Pandora story, in which evil enters the world, has long been compared with Genesis 3 as a parallel reaching after the same truth.",
+  },
 }
 // ── HOVER TOOLTIP ─────────────────────────────────────────────────────────────
 let infoTooltip = null;
@@ -4717,10 +4763,10 @@ function renderTimeline() {
 
     const eraEl = document.createElement('div');
     eraEl.className = 'tl-era';
-    // Count columns: the Iliad+Odyssey pair share ONE column, so subtract merged pairs
+    // Count columns: merged pairs share ONE column, so subtract each merged pair
     let colCount = vols.length;
     for (let k = 0; k < vols.length - 1; k++) {
-      if (vols[k].title === 'The Iliad' && vols[k+1].title === 'The Odyssey') colCount -= 1;
+      if (mergePartner(vols[k].title) === vols[k+1].title) colCount -= 1;
     }
     eraEl.style.minWidth = (colCount * 160 + 40) + 'px';
 
@@ -4769,9 +4815,9 @@ function renderTimeline() {
     vols.forEach((v, i) => {
       if (skipIdx.has(i)) return;
 
-      // ── SPECIAL CASE: merge The Iliad + The Odyssey into one shared-dot column ──
+      // ── SPECIAL CASE: merge a pair into one shared-dot column ──
       const next = vols[i + 1];
-      if (v.title === 'The Iliad' && next && next.title === 'The Odyssey') {
+      if (next && mergePartner(v.title) === next.title) {
         skipIdx.add(i + 1);
         const il = v, od = next;
         const ctxC = isContextual(il) ? ' ctx-col' : '';
@@ -4801,15 +4847,15 @@ function renderTimeline() {
         stemUp.className = 'tl-stem'; stemUp.style.cssText = 'height:20px;width:1px;background:rgba(140,110,55,0.28);';
         const stemDn = stemUp.cloneNode();
 
-        // ABOVE: Iliad card (column-reverse so card sits up, stem down to spine)
+        // ABOVE: first card (column-reverse so card sits up, stem down to spine)
         const ac = document.createElement('div');
         ac.className = 'tl-col' + ctxC;
         ac.setAttribute('data-title', il.title);
         ac.style.cssText = 'width:160px;display:flex;flex-direction:column-reverse;align-items:center;flex-shrink:0;';
         ac.appendChild(stemUp);
         ac.appendChild(buildHomerCard(il));
-        // Shared significance tag (ambrosia) above the Iliad
-        const sigText2 = SIGNIFICANCE['The Iliad & The Odyssey'];
+        // Shared significance tag above the first card (keyed "A & B")
+        const sigText2 = SIGNIFICANCE[il.title + ' & ' + od.title];
         if (sigText2) {
           const wrap = document.createElement('div');
           wrap.className = 'sig-wrap up';
@@ -4820,7 +4866,7 @@ function renderTimeline() {
         }
         aboveRow.appendChild(ac);
 
-        // BELOW: Odyssey card
+        // BELOW: second card
         const bc = document.createElement('div');
         bc.className = 'tl-col' + ctxC;
         bc.setAttribute('data-title', od.title);
@@ -4846,7 +4892,7 @@ function renderTimeline() {
       const card = document.createElement('div');
       card.className = `tl-card ${v.status}${v.series === 'TBC' ? ' tbc' : ''}${v.status === 'uncertain' ? ' uncertain' : ''}`;
       card.style.setProperty('--sc', volumeColor(v));
-      const noHover = ['The Iliad', 'The Odyssey'];
+      const noHover = ['The Iliad', 'The Odyssey', 'Theogony', 'Works and Days'];
       const isAncientInfo = v.series === 'Voices of the Ancient World' && ANCIENT_WORLD_INFO[v.title] && !noHover.includes(v.title);
 
       if (isAncientInfo) {
@@ -5433,9 +5479,12 @@ function buildScrubber() {
 
   const cols = Array.from(document.querySelectorAll('#timeline-track .tl-col[data-title]'));
   const seen = new Set();
+  // Second members of merged pairs share a dot with the first — skip them
+  const mergeSeconds = new Set(MERGE_PAIRS.map(p => p.second));
   cols.forEach(col => {
     const title = col.getAttribute('data-title');
     if (seen.has(title)) return;
+    if (mergeSeconds.has(title)) return;
     const v = allVolumes.find(x => x.title === title);
     if (!v) return;
     if (!col.querySelector('.tl-card') && !col.querySelector('.tl-dot')) return;
@@ -5533,6 +5582,22 @@ function syncScrubberFromScroll() {
     const viewportCentre = scRect.left + sc.clientWidth / 2;
     const atStart = sc.scrollLeft <= 1;
     const atEnd = maxScroll > 0 && sc.scrollLeft >= maxScroll - 1;
+
+    // If the viewport centre is still over the opening anchor ("In the beginning…"),
+    // show that rather than the first text's era — avoids e.g. "Apostolic" appearing
+    // at the far-left extreme when the ancient texts are hidden.
+    const opener = document.getElementById('tl-opener');
+    // At the far-left extreme, or while the viewport centre is still over the
+    // opening anchor, show "In the beginning…" rather than the first text's era.
+    let overOpener = atStart;
+    if (!overOpener && opener) {
+      const r = opener.getBoundingClientRect();
+      if (viewportCentre <= r.right) overOpener = true;
+    }
+    if (overOpener) {
+      readout.innerHTML = `<span class="yr" style="font-style:italic;font-family:'Cormorant Garamond',serif;text-transform:none;letter-spacing:0.04em;">In the beginning…</span>`;
+      return;
+    }
 
     // At the very ends, show the earliest / latest text outright (viewport centre
     // can't reach the edge content, especially on wide desktop screens).
@@ -5714,7 +5779,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v27.9 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v28.3 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
