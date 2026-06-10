@@ -1767,13 +1767,15 @@
   }
   /* Only contextual columns clip — so dots in normal columns aren't bitten */
   .tl-col.ctx-col {
-    overflow: hidden;
+    overflow: visible;
     opacity: 1;
   }
+  /* While hidden/collapsing, clip to width:0 cleanly */
   .hide-context .tl-col.ctx-col {
     width: 0 !important;
     opacity: 0;
     pointer-events: none;
+    overflow: hidden;
   }
 
 
@@ -2804,6 +2806,22 @@
   }
   .doctrine-detail.dd-animate { animation: dd-enter 0.4s ease both; }
 
+  /* Pulse newly-revealed contextual cards when Cultural Context is switched on */
+  @keyframes ctx-reveal-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(200,160,64,0); }
+    35%  { box-shadow: 0 0 0 3px rgba(200,160,64,0.55), 0 4px 18px rgba(200,160,64,0.4); }
+    100% { box-shadow: 0 0 0 0 rgba(200,160,64,0); }
+  }
+  .ctx-reveal { animation: ctx-reveal-pulse 1.1s ease-in-out 2; position: relative; z-index: 12; }
+
+  /* Stronger ring for the small spine dots so the timeline segment clearly lights up */
+  @keyframes ctx-reveal-dot {
+    0%   { box-shadow: 0 0 0 0 rgba(200,160,64,0); }
+    35%  { box-shadow: 0 0 0 6px rgba(200,160,64,0.5), 0 0 14px 4px rgba(200,160,64,0.55); }
+    100% { box-shadow: 0 0 0 0 rgba(200,160,64,0); }
+  }
+  .ctx-reveal-dot { animation: ctx-reveal-dot 1.1s ease-in-out 2; position: relative; z-index: 12; border-radius: 50%; }
+
 </style>
 </head>
 <body>
@@ -2952,7 +2970,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v25.2 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v25.5 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4024,11 +4042,18 @@ document.addEventListener('keydown', e => {
   }
 });
 
+function countContextual() {
+  return allVolumes.filter(v => isContextual(v)).length;
+}
+
 function toggleExpanded() {
   showContextual = !showContextual;
+  const n = countContextual();
   const btn = document.getElementById('btn-expand');
   if (btn) {
-    btn.textContent = showContextual ? '− Cultural Context & Edification' : '+ Cultural Context & Edification';
+    btn.textContent = showContextual
+      ? `− Cultural Context & Edification`
+      : `+ Cultural Context & Edification (${n})`;
     btn.classList.toggle('expanded', showContextual);
   }
   // Stop the shimmer once the user has discovered the button
@@ -4043,6 +4068,41 @@ function toggleExpanded() {
   if (gridView) gridView.classList.toggle('hide-context', !showContextual);
   if (currentView === 'grid')  renderGrid();
   if (currentView === 'bible') renderBiblical();
+
+  // Feedback: when revealing, pulse the newly-shown contextual cards + their spine
+  // dots so the eye catches them. Only target columns with a data-title (the card
+  // and its spine dot) — never the empty placeholder on the opposite side.
+  if (showContextual) {
+    setTimeout(() => {
+      if (currentView === 'grid') {
+        document.querySelectorAll('#grid-view .ctx-card').forEach(card => {
+          card.classList.remove('ctx-reveal');
+          void card.offsetWidth;
+          card.classList.add('ctx-reveal');
+          card.addEventListener('animationend', () => card.classList.remove('ctx-reveal'), { once: true });
+        });
+      } else {
+        document.querySelectorAll('#timeline-track .ctx-col[data-title]').forEach(col => {
+          const card = col.querySelector('.tl-card');
+          if (card) {
+            // The card column — pulse the card
+            card.classList.remove('ctx-reveal');
+            void card.offsetWidth;
+            card.classList.add('ctx-reveal');
+            card.addEventListener('animationend', () => card.classList.remove('ctx-reveal'), { once: true });
+          } else {
+            // The spine-dot column — pulse the dot itself (stronger ring)
+            const dot = col.firstElementChild;
+            if (!dot) return;
+            dot.classList.remove('ctx-reveal-dot');
+            void dot.offsetWidth;
+            dot.classList.add('ctx-reveal-dot');
+            dot.addEventListener('animationend', () => dot.classList.remove('ctx-reveal-dot'), { once: true });
+          }
+        });
+      }
+    }, 480);   // wait for the width-expand transition to finish
+  }
 }
 
 function isContextual(v) {
@@ -4732,6 +4792,7 @@ function renderTimeline() {
       // Add dot to spine row at the right x position
       const spineDot = document.createElement('div');
       spineDot.className = 'tl-col' + ctxClass;
+      if (ctxClass) spineDot.setAttribute('data-title', v.title);
       spineDot.style.cssText = `width:160px;display:flex;justify-content:center;flex-shrink:0;`;
       const sd = document.createElement('div');
       sd.style.cssText = `width:8px;height:8px;border-radius:50%;background:${volumeColor(v)};border:2px solid var(--cream);box-shadow:0 0 0 1px ${volumeColor(v)};z-index:2;`;
@@ -5184,6 +5245,14 @@ addWheelScroll(document.getElementById('timeline-scroll'));
 addWheelScroll(document.getElementById('bible-scroll'));
 
 buildLegend();
+// Seed the Cultural Context button with the count of contextual texts
+(function(){
+  const b = document.getElementById('btn-expand');
+  if (b && !showContextual) {
+    const n = countContextual();
+    if (n) b.textContent = `+ Cultural Context & Edification (${n})`;
+  }
+})();
 render();
 buildContinueReading();
 
@@ -5227,7 +5296,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v25.2 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v25.5 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
