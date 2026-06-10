@@ -2922,21 +2922,17 @@
       flex-shrink: 0 !important;
       margin: 0 !important;
     }
-    /* Cultural Context: the primary action — give it a solid gold fill so it
-       clearly stands out and reads as a button, not just another chip. */
+    /* Cultural Context: consistent with the other chips — outlined, with a gold
+       accent border/text so it reads as the special control without a solid fill. */
     .controls-bar #btn-expand {
       border-color: var(--gold) !important;
-      background: var(--gold) !important;
-      color: var(--cream) !important;
-      font-weight: 600 !important;
-    }
-    [data-theme="dark"] .controls-bar #btn-expand {
-      color: #1c1a10 !important;
+      background: transparent !important;
+      color: var(--gold) !important;
     }
     .controls-bar #btn-expand.expanded {
-      background: var(--brown) !important;
-      border-color: var(--brown) !important;
-      color: var(--cream) !important;
+      background: rgba(200,160,64,0.12) !important;
+      border-color: var(--gold) !important;
+      color: var(--gold) !important;
     }
     /* Search pill: same height + rounded, icon centred */
     .controls-bar .search-wrap { height: 28px !important; }
@@ -3126,7 +3122,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v27.2 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v27.3 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5535,6 +5531,25 @@ function syncScrubberFromScroll() {
   if (readout) {
     const scRect = sc.getBoundingClientRect();
     const viewportCentre = scRect.left + sc.clientWidth / 2;
+    const atStart = sc.scrollLeft <= 1;
+    const atEnd = maxScroll > 0 && sc.scrollLeft >= maxScroll - 1;
+
+    // At the very ends, show the earliest / latest text outright (viewport centre
+    // can't reach the edge content, especially on wide desktop screens).
+    if (atStart || atEnd) {
+      const shown = allVolumes.filter(v => {
+        if (currentFilter !== 'all' && v.status !== currentFilter) return false;
+        if (!showContextual && isContextual(v)) return false;
+        return true;
+      });
+      if (shown.length) {
+        const v = atStart ? shown[0] : shown[shown.length - 1];   // allVolumes is date-sorted
+        const era = scrubEraName(v.date_sort);
+        readout.innerHTML = `<span class="yr">${fmtYear(v.date_sort)}</span>${era ? ' &nbsp;·&nbsp; ' + era : ''}`;
+        return;
+      }
+    }
+
     const pcol = document.getElementById('pleroma-col');
     let pcx = null, pWidth = 0;
     if (pcol) {
@@ -5699,7 +5714,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v27.2 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v27.3 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
