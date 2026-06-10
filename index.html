@@ -3171,7 +3171,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v31.9 · 10 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v32.2 · 11 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3266,7 +3266,7 @@ const LIBRARY_DATA = {
       "date_label": "c. 750\u2013650 BC",
       "date_sort": -700,
       "series": "Voices of the Ancient World",
-      "status": "uncertain",
+      "status": "pending",
       "notes": null,
       "filename": null
     },
@@ -3278,7 +3278,7 @@ const LIBRARY_DATA = {
       "date_label": "c. 725\u2013675 BC",
       "date_sort": -700,
       "series": "Voices of the Ancient World",
-      "status": "uncertain",
+      "status": "pending",
       "notes": null,
       "filename": null
     },
@@ -3290,7 +3290,7 @@ const LIBRARY_DATA = {
       "date_label": "c. 730\u2013700 BC",
       "date_sort": -690,
       "series": "Voices of the Ancient World",
-      "status": "uncertain",
+      "status": "pending",
       "notes": null,
       "filename": null
     },
@@ -3302,7 +3302,7 @@ const LIBRARY_DATA = {
       "date_label": "c. 700 BC",
       "date_sort": -690,
       "series": "Voices of the Ancient World",
-      "status": "uncertain",
+      "status": "pending",
       "notes": null,
       "filename": null
     },
@@ -5841,12 +5841,29 @@ function scrubberSeek(clientX, smooth) {
     // Only glow actual text cards — never the pleroma marker (it should just be
     // a snap point, no glow or movement).
     if (colEl.id === 'pleroma-col') return;
-    const card = colEl.querySelector('.tl-card');
-    if (!card) return;
-    card.classList.remove('snap-glow');
-    void card.offsetWidth;            // restart the animation
-    card.classList.add('snap-glow');
-    card.addEventListener('animationend', () => card.classList.remove('snap-glow'), { once: true });
+    const applyGlow = (card) => {
+      if (!card) return;
+      card.classList.remove('snap-glow');
+      void card.offsetWidth;          // restart the animation
+      card.classList.add('snap-glow');
+      card.addEventListener('animationend', () => card.classList.remove('snap-glow'), { once: true });
+    };
+    // Glow this column's card(s)
+    colEl.querySelectorAll('.tl-card').forEach(applyGlow);
+    // Merged double-cards (Iliad/Odyssey, Theogony/Works and Days) live in two
+    // separate columns sharing the same x — glow the partner column too.
+    const title = colEl.getAttribute && colEl.getAttribute('data-title');
+    if (title) {
+      let partner = null;
+      MERGE_PAIRS.forEach(p => {
+        if (p.first === title) partner = p.second;
+        else if (p.second === title) partner = p.first;
+      });
+      if (partner) {
+        const pcol = document.querySelector(`#timeline-track .tl-col[data-title="${partner}"]`);
+        if (pcol) pcol.querySelectorAll('.tl-card').forEach(applyGlow);
+      }
+    }
   }
 
   function gentleScrollTo(target, el) {
@@ -6145,7 +6162,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v31.9 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v32.2 · 11 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
