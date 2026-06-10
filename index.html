@@ -1041,11 +1041,11 @@
   }
   .pleroma-ref {
     font-family: 'Cinzel', serif;
-    font-size: 8px;
-    letter-spacing: 0.12em;
-    color: rgba(139,0,0,0.45);
+    font-size: 6.5px;
+    letter-spacing: 0.1em;
+    color: rgba(139,0,0,0.28);
     white-space: nowrap;
-    margin-top: 2px;
+    margin-top: 3px;
   }
 
 
@@ -1418,7 +1418,7 @@
 
   [data-theme="dark"] .pleroma-greek { color: var(--gold); }
   [data-theme="dark"] .pleroma-latin { color: var(--brown); }
-  [data-theme="dark"] .pleroma-ref   { color: rgba(212,170,68,0.5); }
+  [data-theme="dark"] .pleroma-ref   { color: rgba(212,170,68,0.32); }
 
   [data-theme="dark"] .tl-era-subtitle { color: rgba(212,170,68,0.7); }
 
@@ -3122,7 +3122,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v27.4 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v27.8 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4730,7 +4730,7 @@ function renderTimeline() {
     const isAncientEra = era.label === 'Ancient World';
     labelEl.innerHTML = `
       <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.25em;color:var(--gold);text-transform:uppercase;white-space:nowrap;">${era.label}</div>
-      ${isAncientEra ? '<div class="tl-era-subtitle">præambula fidei — preambles of faith</div>' : ''}
+      ${isAncientEra ? '<div class="tl-era-subtitle">λόγος σπερματικός — seeds of the Word &nbsp;·&nbsp; radii Veritatis — rays of truth &nbsp;·&nbsp; præambula fidei — preambles of faith</div>' : ''}
       <div style="height:1px;background:linear-gradient(90deg,var(--gold-light),transparent);margin-top:4px;"></div>
     `;
     eraEl.appendChild(labelEl);
@@ -5714,7 +5714,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v27.4 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v27.8 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
