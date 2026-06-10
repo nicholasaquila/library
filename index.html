@@ -2929,7 +2929,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.8 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.9 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5189,7 +5189,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.8 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.9 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -6008,7 +6008,7 @@ function updateMapFilter() {
   }
   // Apply filter
   mapInstance.getContainer().style.filter = isDark
-    ? 'sepia(0.55) saturate(1.5) brightness(1.15) contrast(1.7) hue-rotate(-8deg)'
+    ? 'sepia(0.5) saturate(1.3) brightness(1.5) contrast(1.15) hue-rotate(-8deg)'
     : 'sepia(0.45) saturate(1.4) brightness(0.75) contrast(1.35) hue-rotate(-10deg)';
 }
 
