@@ -548,8 +548,9 @@
   .bible-track {
     display: inline-flex;
     flex-direction: row;
-    padding: 28px 120px 28px 60px;
+    padding: 44px 120px 28px 60px;
     min-height: 100%;
+    position: relative;
     --col-w: 160px;
   }
   /* reuse tl-era, tl-card etc — bible cards get a distinct top accent via --sc */
@@ -3170,7 +3171,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v31.3 · 10 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v31.8 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5228,10 +5229,11 @@ const BIBLICAL_ERAS = [
   { label: 'Divided Kingdom & Prophets',         from: -931,  to: -586  },
   { label: 'Exile & Return',                     from: -586,  to: -167  },
   { label: 'Maccabean Age',                   from: -167,  to: -6    },
-  { label: 'Gospel Era & Apostolic Age',         from: -6,    to: 100   },
+  { label: 'The Apostolic Age',         from: -6,    to: 100   },
 ];
 
 // accent colour per era
+const LIFE_OF_CHRIST = new Set(['The Nativity','Baptism of Jesus','The Sermon on the Mount','The Last Supper','Crucifixion & Resurrection','The Ascension']);
 const BIBLE_ERA_COLORS = {
   'Patriarchal Age':                 '#5c3d1e',
   'Exodus & Conquest':               '#4a3000',
@@ -5239,7 +5241,7 @@ const BIBLE_ERA_COLORS = {
   'Divided Kingdom & Prophets':      '#1e3a5c',
   'Exile & Return':                  '#3d1e5c',
   'Maccabean Age':                '#5c1e3d',
-  'Gospel Era & Apostolic Age':      '#6b1a2a',
+  'The Apostolic Age':      '#6b1a2a',
 };
 
 // ── BIBLICAL EVENTS ───────────────────────────────────────────────────────────
@@ -5286,6 +5288,7 @@ const BIBLICAL_EVENTS = [
   { event:'The Sermon on the Mount',  book:'Matthew',                        greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ',                note:null,              yr:28    },
   { event:'The Last Supper',          book:'Matthew · Mark · Luke · John',   greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:33    },
   { event:'Crucifixion & Resurrection',book:'Matthew · Mark · Luke · John',  greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:33    },
+  { event:'The Ascension',            book:'Luke · Acts',                    greek:'ΚΑΤΑ ΛΟΥΚΑΝ · ΠΡΑΞΕΙΣ',        note:null,              yr:33    },
   { event:'Pentecost',                book:'Acts',                           greek:'ΠΡΑΞΕΙΣ ΑΠΟΣΤΟΛΩΝ',            note:null,              yr:33    },
   { event:"Paul's Missions",          book:'Acts · Romans · Corinthians',    greek:'ΠΡΑΞΕΙΣ · ΡΩΜΑΙΟΥΣ κ.α.',     note:null,              yr:47    },
   { event:'Council of Jerusalem',     book:'Acts',                           greek:'ΠΡΑΞΕΙΣ ΑΠΟΣΤΟΛΩΝ',            note:null,              yr:49    },
@@ -5365,6 +5368,30 @@ function renderBiblical() {
 
     // Place events alternating above/below
     evs.forEach((ev, i) => {
+      // Crimson bracket: open before the Nativity, close after the Ascension —
+      // framing the life of Christ as the fullness of time (the expanded form of
+      // the main timeline's single pleroma marker).
+      const insertBracket = (which) => {
+        const mkLine = () => {
+          const w = document.createElement('div');
+          w.style.cssText = 'width:0;flex-shrink:0;position:relative;align-self:stretch;display:flex;justify-content:center;';
+          const line = document.createElement('div');
+          line.style.cssText = 'position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 12%,#8b0000 88%,transparent 100%);';
+          w.appendChild(line);
+          return w;
+        };
+        aboveRow.appendChild(mkLine());
+        const sCell = document.createElement('div');
+        sCell.style.cssText = 'width:0;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;';
+        if (which === 'start') sCell.id = 'bs-pleroma-col';
+        const sLine = document.createElement('div');
+        sLine.style.cssText = 'position:absolute;top:-9999px;bottom:-9999px;width:2px;background:#8b0000;';
+        sCell.appendChild(sLine);
+        spineRow.appendChild(sCell);
+        belowRow.appendChild(mkLine());
+      };
+      if (ev.event === 'The Nativity') insertBracket('start');
+
       const isAbove = i % 2 !== 0;
 
       const card = document.createElement('div');
@@ -5376,7 +5403,7 @@ function renderBiblical() {
         <div class="bc-book">${ev.book}</div>
         <div class="bc-greek">${ev.greek}</div>
         ${ev.note ? `<div class="bc-note">${ev.note}</div>` : ''}
-        <div class="bc-badge">${era.label}</div>
+        <div class="bc-badge">${LIFE_OF_CHRIST.has(ev.event) ? 'The Fullness of Time' : era.label}</div>
       `;
 
       const stem = document.createElement('div');
@@ -5416,6 +5443,8 @@ function renderBiblical() {
         ph.style.cssText = 'width:var(--col-w);flex-shrink:0;';
         aboveRow.appendChild(ph);
       }
+
+      if (ev.event === 'The Ascension') insertBracket('end');
     });
 
     layoutEl.appendChild(aboveRow);
@@ -5427,39 +5456,6 @@ function renderBiblical() {
     const div = document.createElement('div');
     div.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(140,110,55,0.2);';
     eraEl.appendChild(div);
-
-    // Fullness of Time marker — before the Gospel Era, tying to the main timeline's pleroma
-    if (era.label === 'Gospel Era & Apostolic Age') {
-      const pcol = document.createElement('div');
-      pcol.id = 'bs-pleroma-col';
-      pcol.style.cssText = 'display:flex;flex-direction:column;flex-shrink:0;width:140px;position:relative;';
-      const pLabelSpacer = document.createElement('div');
-      pLabelSpacer.style.cssText = 'flex-shrink:0;height:32px;';
-      pcol.appendChild(pLabelSpacer);
-      const pLayout = document.createElement('div');
-      pLayout.style.cssText = 'display:flex;flex-direction:column;padding:0 20px;flex:1;';
-      const pAbove = document.createElement('div');
-      pAbove.style.cssText = 'min-height:160px;flex-shrink:0;';
-      pLayout.appendChild(pAbove);
-      const pSpine = document.createElement('div');
-      pSpine.style.cssText = 'height:24px;position:relative;display:flex;align-items:center;justify-content:center;';
-      const ll = document.createElement('div');
-      ll.style.cssText = 'position:absolute;left:0;top:-9999px;bottom:-9999px;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 15%,#8b0000 85%,transparent 100%);';
-      pSpine.appendChild(ll);
-      const rl = document.createElement('div');
-      rl.style.cssText = 'position:absolute;right:0;top:-9999px;bottom:-9999px;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 15%,#8b0000 85%,transparent 100%);';
-      pSpine.appendChild(rl);
-      const ptxt = document.createElement('div');
-      ptxt.className = 'pleroma-text';
-      ptxt.innerHTML = '<svg class="pleroma-cross" viewBox="0 0 24 32" width="14" height="19" aria-hidden="true"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg><span class="pleroma-greek">πλήρωμα τοῦ χρόνου</span><span class="pleroma-latin">the fullness of time</span><span class="pleroma-ref">Galatians 4:4</span>';
-      pSpine.appendChild(ptxt);
-      pLayout.appendChild(pSpine);
-      const pBelow = document.createElement('div');
-      pBelow.style.cssText = 'min-height:160px;flex-shrink:0;';
-      pLayout.appendChild(pBelow);
-      pcol.appendChild(pLayout);
-      track.appendChild(pcol);
-    }
 
     track.appendChild(eraEl);
   });
@@ -5945,25 +5941,70 @@ function buildBibleScrubber() {
     });
     track.appendChild(dot);
   });
-  // Fullness-of-time cross at the bible pleroma column
+  // Star of Bethlehem at the fullness-of-time (Nativity) column
   const pcol = document.getElementById('bs-pleroma-col');
   if (pcol) {
     const r = pcol.getBoundingClientRect();
-    if (r.width > 0) {
+    if (r.left || r.right) {
       const px = (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
       const pfrac = Math.max(0, Math.min(1, px / contentW));
-      const cross = document.createElement('div');
-      cross.className = 'tl-scrubber-cross';
-      cross.style.left = (pfrac * 100) + '%';
-      cross.title = 'The fullness of time — Galatians 4:4';
-      cross.innerHTML = '<svg viewBox="0 0 24 32" width="12" height="16"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg>';
-      cross.addEventListener('click', (e) => {
+      const star = document.createElement('div');
+      star.className = 'tl-scrubber-cross';
+      star.style.left = (pfrac * 100) + '%';
+      star.title = 'The fullness of time — the Nativity';
+      star.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 1L13.4 10.6 21 12 13.4 13.4 12 23 10.6 13.4 3 12 10.6 10.6Z" fill="#b8902a"/></svg>';
+      star.addEventListener('click', (e) => {
         e.stopPropagation();
         sc.scrollTo({ left: Math.max(0, px - sc.clientWidth / 2), behavior: 'smooth' });
       });
-      track.appendChild(cross);
+      track.appendChild(star);
     }
   }
+  // Cross at the Crucifixion & Resurrection column (several events share yr 33,
+  // so anchor to the exact event rather than interpolating by year)
+  (function placeCrucifixion() {
+    let el = null;
+    document.querySelectorAll('#bible-track [data-bs-event]').forEach(node => {
+      if (node.getAttribute('data-bs-event') === 'Crucifixion & Resurrection') el = node;
+    });
+    if (!el) return;
+    const cx = contentX(el);
+    const cfrac = Math.max(0, Math.min(1, cx / contentW));
+    const cross = document.createElement('div');
+    cross.className = 'tl-scrubber-cross';
+    cross.style.left = (cfrac * 100) + '%';
+    cross.title = 'The Crucifixion & Resurrection — c. 33 AD';
+    cross.innerHTML = '<svg viewBox="0 0 24 32" width="12" height="16"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg>';
+    cross.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sc.scrollTo({ left: Math.max(0, cx - sc.clientWidth / 2), behavior: 'smooth' });
+    });
+    track.appendChild(cross);
+  })();
+  // Floating "fullness of time" label centred over the bracketed life-of-Christ span
+  (function placeSpanLabel() {
+    const startCell = document.getElementById('bs-pleroma-col');
+    const bibleTrack = document.getElementById('bible-track');
+    let ascEl = null;
+    document.querySelectorAll('#bible-track [data-bs-event]').forEach(node => {
+      if (node.getAttribute('data-bs-event') === 'The Ascension') ascEl = node;
+    });
+    if (!startCell || !ascEl || !bibleTrack) return;
+    const old = document.getElementById('bs-span-label');
+    if (old) old.remove();
+    const tr = bibleTrack.getBoundingClientRect();
+    const sX = startCell.getBoundingClientRect().left - tr.left + bibleTrack.scrollLeft;
+    const aR = ascEl.getBoundingClientRect();
+    const aX = (aR.left + aR.width / 2) - tr.left + bibleTrack.scrollLeft;
+    const mid = (sX + aX) / 2;
+    const lbl = document.createElement('div');
+    lbl.id = 'bs-span-label';
+    lbl.style.cssText = `position:absolute;top:4px;left:${mid}px;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:4;white-space:nowrap;`;
+    lbl.innerHTML = `
+      <svg viewBox="0 0 24 24" width="13" height="13" style="display:block;margin:0 auto 1px;"><path d="M12 1L13.4 10.6 21 12 13.4 13.4 12 23 10.6 13.4 3 12 10.6 10.6Z" fill="#b8902a"/></svg>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:#8b0000;letter-spacing:0.04em;">the fullness of time <span style="font-family:'Cinzel',serif;font-style:normal;font-size:7px;letter-spacing:0.12em;opacity:0.7;">· GAL 4:4</span></div>`;
+    bibleTrack.appendChild(lbl);
+  })();
   bsScrubBuilt = true;
   syncBibleScrubber();
 }
@@ -5985,12 +6026,19 @@ function syncBibleScrubber() {
   if (readout) {
     const scRect = sc.getBoundingClientRect();
     const viewportCentre = scRect.left + sc.clientWidth / 2;
-    // Fullness of time?
-    const pcol = document.getElementById('bs-pleroma-col');
-    if (pcol) {
-      const pr = pcol.getBoundingClientRect();
-      if (pr.width > 0 && Math.abs((pr.left + pr.width / 2) - viewportCentre) < pr.width * 0.6 + 30) {
-        readout.innerHTML = `<svg viewBox="0 0 24 32" width="8" height="11" style="display:inline-block;vertical-align:-1px;"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg> <span class="yr" style="color:#8b0000;">The Fullness of Time</span>`;
+    // The fullness of time = the whole span between the opening bracket (Nativity)
+    // and the Ascension. Show the star + label anywhere in that range.
+    const startCell = document.getElementById('bs-pleroma-col');
+    let ascEl = null;
+    document.querySelectorAll('#bible-track [data-bs-event]').forEach(node => {
+      if (node.getAttribute('data-bs-event') === 'The Ascension') ascEl = node;
+    });
+    if (startCell && ascEl) {
+      const sX = startCell.getBoundingClientRect().left;
+      const aR = ascEl.getBoundingClientRect();
+      const aX = aR.left + aR.width / 2;
+      if (viewportCentre >= sX - 20 && viewportCentre <= aX + 20) {
+        readout.innerHTML = `<svg viewBox="0 0 24 24" width="11" height="11" style="display:inline-block;vertical-align:-1px;"><path d="M12 1L13.4 10.6 21 12 13.4 13.4 12 23 10.6 13.4 3 12 10.6 10.6Z" fill="#b8902a"/></svg> <span class="yr" style="color:#8b0000;">The Fullness of Time</span> <svg viewBox="0 0 24 32" width="8" height="11" style="display:inline-block;vertical-align:-1px;"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg>`;
         return;
       }
     }
@@ -6097,7 +6145,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v31.3 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v31.8 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
