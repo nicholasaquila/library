@@ -2781,6 +2781,14 @@
     }
   }
 
+
+  /* Doctrine detail: fade + slide in when a doctrine is opened */
+  @keyframes dd-enter {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .doctrine-detail.dd-animate { animation: dd-enter 0.4s ease both; }
+
 </style>
 </head>
 <body>
@@ -2929,7 +2937,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.9 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v25.1 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3777,8 +3785,21 @@ function renderDoctrine() {
       <div class="doctrine-card-count">${d.witnesses.length} witnesses</div>
     `;
     card.addEventListener('click', () => {
-      activeDoctrine = (activeDoctrine === d.id) ? null : d.id;
+      const opening = activeDoctrine !== d.id;
+      activeDoctrine = opening ? d.id : null;
       renderDoctrine();
+      // Scroll the witnesses into view + animate them in (clear feedback on mobile)
+      if (opening) {
+        setTimeout(() => {
+          const det = document.getElementById('doctrine-detail');
+          if (det) {
+            det.classList.remove('dd-animate');
+            void det.offsetWidth;           // restart the animation
+            det.classList.add('dd-animate');
+            det.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 60);
+      }
     });
     listEl.appendChild(card);
   });
@@ -4152,9 +4173,11 @@ let mapMarkers = [];
 function initMap() {
   if (mapInstance) return;
 
+  // Slightly wider initial view on narrow portrait screens
+  const portraitNarrow = window.matchMedia('(max-width: 768px) and (orientation: portrait)').matches;
   mapInstance = L.map('map-container', {
-    center: [36, 28],
-    zoom: 4,
+    center: [34, 26],
+    zoom: portraitNarrow ? 3 : 4,
     zoomControl: true,
     attributionControl: true,
   });
@@ -5189,7 +5212,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.9 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v25.1 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
