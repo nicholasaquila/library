@@ -3149,12 +3149,18 @@
 </div>
 
 <div id="bible-view">
-  <div class="mobile-timeline-hint">← swipe to explore the scripture timeline →</div>
   <div class="scripture-note">
     <span class="scripture-note-title">The Scripture Timeline</span>
     <span class="scripture-note-text">Provided for context and reference — tracing the narrative arc of the Bible from Abraham to the Apostolic Age. These are not library volumes but the historical and theological backdrop against which the collection is read.</span>
   </div>
-  <div class="bible-legend-bar" id="bible-legend-bar"></div>
+  <div class="tl-scrubber" id="bs-scrubber">
+    <div class="tl-scrubber-readout" id="bs-scrubber-readout"></div>
+    <div class="tl-scrubber-track" id="bs-scrubber-track">
+      <div class="tl-scrubber-line"></div>
+      <div class="tl-scrubber-progress" id="bs-scrubber-progress"></div>
+      <div class="tl-scrubber-marker" id="bs-scrubber-marker"></div>
+    </div>
+  </div>
   <div class="bible-scroll" id="bible-scroll">
     <div class="bible-track" id="bible-track"></div>
   </div>
@@ -3164,7 +3170,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v31.2 · 10 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v31.3 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5291,15 +5297,7 @@ function renderBiblical() {
   const track = document.getElementById('bible-track');
   track.innerHTML = '';
 
-  // Build legend
-  const legendBar = document.getElementById('bible-legend-bar');
-  legendBar.innerHTML = '';
-  BIBLICAL_ERAS.forEach(era => {
-    const item = document.createElement('div');
-    item.className = 'bl-item';
-    item.innerHTML = `<span class="bl-dot" style="background:${BIBLE_ERA_COLORS[era.label]}"></span>${era.label}`;
-    legendBar.appendChild(item);
-  });
+  // (Scripture scrubber is built after render, see buildBibleScrubber)
 
   // Group events by era
   const groups = {};
@@ -5390,6 +5388,9 @@ function renderBiblical() {
       // spine dot
       const spineDotWrap = document.createElement('div');
       spineDotWrap.style.cssText = 'width:var(--col-w);display:flex;justify-content:center;flex-shrink:0;';
+      spineDotWrap.setAttribute('data-bs-year', ev.yr);
+      spineDotWrap.setAttribute('data-bs-event', ev.event);
+      spineDotWrap.setAttribute('data-bs-color', color);
       const sd = dot.cloneNode();
       spineDotWrap.appendChild(sd);
       spineRow.appendChild(spineDotWrap);
@@ -5427,8 +5428,43 @@ function renderBiblical() {
     div.style.cssText = 'position:absolute;left:0;top:0;bottom:0;width:1px;background:rgba(140,110,55,0.2);';
     eraEl.appendChild(div);
 
+    // Fullness of Time marker — before the Gospel Era, tying to the main timeline's pleroma
+    if (era.label === 'Gospel Era & Apostolic Age') {
+      const pcol = document.createElement('div');
+      pcol.id = 'bs-pleroma-col';
+      pcol.style.cssText = 'display:flex;flex-direction:column;flex-shrink:0;width:140px;position:relative;';
+      const pLabelSpacer = document.createElement('div');
+      pLabelSpacer.style.cssText = 'flex-shrink:0;height:32px;';
+      pcol.appendChild(pLabelSpacer);
+      const pLayout = document.createElement('div');
+      pLayout.style.cssText = 'display:flex;flex-direction:column;padding:0 20px;flex:1;';
+      const pAbove = document.createElement('div');
+      pAbove.style.cssText = 'min-height:160px;flex-shrink:0;';
+      pLayout.appendChild(pAbove);
+      const pSpine = document.createElement('div');
+      pSpine.style.cssText = 'height:24px;position:relative;display:flex;align-items:center;justify-content:center;';
+      const ll = document.createElement('div');
+      ll.style.cssText = 'position:absolute;left:0;top:-9999px;bottom:-9999px;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 15%,#8b0000 85%,transparent 100%);';
+      pSpine.appendChild(ll);
+      const rl = document.createElement('div');
+      rl.style.cssText = 'position:absolute;right:0;top:-9999px;bottom:-9999px;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 15%,#8b0000 85%,transparent 100%);';
+      pSpine.appendChild(rl);
+      const ptxt = document.createElement('div');
+      ptxt.className = 'pleroma-text';
+      ptxt.innerHTML = '<svg class="pleroma-cross" viewBox="0 0 24 32" width="14" height="19" aria-hidden="true"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg><span class="pleroma-greek">πλήρωμα τοῦ χρόνου</span><span class="pleroma-latin">the fullness of time</span><span class="pleroma-ref">Galatians 4:4</span>';
+      pSpine.appendChild(ptxt);
+      pLayout.appendChild(pSpine);
+      const pBelow = document.createElement('div');
+      pBelow.style.cssText = 'min-height:160px;flex-shrink:0;';
+      pLayout.appendChild(pBelow);
+      pcol.appendChild(pLayout);
+      track.appendChild(pcol);
+    }
+
     track.appendChild(eraEl);
   });
+  // Build the scripture scrubber after layout settles
+  if (typeof buildBibleScrubber === 'function') setTimeout(buildBibleScrubber, 30);
 }
 
 function setView(view) {
@@ -5450,6 +5486,7 @@ function setView(view) {
   document.getElementById('doctrine-view').style.display = view==='doctrine' ? 'block' : 'none';
   if (view === 'map') { setTimeout(() => { initMap(); if (mapInstance) mapInstance.invalidateSize(); }, 100); }
   if (view === 'timeline') { setTimeout(() => { if (typeof buildScrubber === 'function') buildScrubber(); }, 80); }
+  if (view === 'bible') { setTimeout(() => { if (typeof buildBibleScrubber === 'function') buildBibleScrubber(); }, 80); }
   render();
 }
 
@@ -5873,6 +5910,138 @@ bscroll.addEventListener('mouseleave', () => { bDown=false; bscroll.style.cursor
 bscroll.addEventListener('mouseup',   () => { bDown=false; bscroll.style.cursor='grab'; });
 bscroll.addEventListener('mousemove', e => { if(!bDown) return; e.preventDefault(); bscroll.scrollLeft=bScrollLeft-(e.pageX-bscroll.offsetLeft-bStartX)*1.2; });
 
+// ── SCRIPTURE TIMELINE SCRUBBER ───────────────────────────────────────────────
+let bsScrubBuilt = false;
+function bsEraName(yr) {
+  const e = BIBLICAL_ERAS.find(e => yr >= e.from && yr < e.to);
+  return e ? e.label : '';
+}
+function buildBibleScrubber() {
+  const track = document.getElementById('bs-scrubber-track');
+  const sc = document.getElementById('bible-scroll');
+  if (!track || !sc) return;
+  track.querySelectorAll('.tl-scrubber-dot, .tl-scrubber-cross').forEach(d => d.remove());
+  const contentW = sc.scrollWidth;
+  if (contentW <= 0) { bsScrubBuilt = true; return; }
+  const scRect = sc.getBoundingClientRect();
+  const contentX = (el) => {
+    const r = el.getBoundingClientRect();
+    return (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
+  };
+  // Dots from each event's spine dot
+  document.querySelectorAll('#bible-track [data-bs-year]').forEach(el => {
+    const cx = contentX(el);
+    const frac = Math.max(0, Math.min(1, cx / contentW));
+    const dot = document.createElement('div');
+    dot.className = 'tl-scrubber-dot';
+    dot.style.left = (frac * 100) + '%';
+    dot.style.background = el.getAttribute('data-bs-color') || '#6b1a2a';
+    const yr = +el.getAttribute('data-bs-year');
+    dot.title = el.getAttribute('data-bs-event') + ' · ' + (yr < 0 ? Math.abs(yr) + ' BC' : yr + ' AD');
+    dot.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const target = cx - sc.clientWidth / 2;
+      sc.scrollTo({ left: Math.max(0, target), behavior: 'smooth' });
+    });
+    track.appendChild(dot);
+  });
+  // Fullness-of-time cross at the bible pleroma column
+  const pcol = document.getElementById('bs-pleroma-col');
+  if (pcol) {
+    const r = pcol.getBoundingClientRect();
+    if (r.width > 0) {
+      const px = (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
+      const pfrac = Math.max(0, Math.min(1, px / contentW));
+      const cross = document.createElement('div');
+      cross.className = 'tl-scrubber-cross';
+      cross.style.left = (pfrac * 100) + '%';
+      cross.title = 'The fullness of time — Galatians 4:4';
+      cross.innerHTML = '<svg viewBox="0 0 24 32" width="12" height="16"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg>';
+      cross.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sc.scrollTo({ left: Math.max(0, px - sc.clientWidth / 2), behavior: 'smooth' });
+      });
+      track.appendChild(cross);
+    }
+  }
+  bsScrubBuilt = true;
+  syncBibleScrubber();
+}
+function syncBibleScrubber() {
+  if (!bsScrubBuilt) return;
+  const sc = document.getElementById('bible-scroll');
+  const marker = document.getElementById('bs-scrubber-marker');
+  const prog = document.getElementById('bs-scrubber-progress');
+  const readout = document.getElementById('bs-scrubber-readout');
+  if (!sc || !marker) return;
+  const contentW = sc.scrollWidth;
+  const maxScroll = sc.scrollWidth - sc.clientWidth;
+  let frac = contentW > 0 ? (sc.scrollLeft + sc.clientWidth / 2) / contentW : 0;
+  if (sc.scrollLeft <= 1) frac = 0;
+  else if (maxScroll > 0 && sc.scrollLeft >= maxScroll - 1) frac = 1;
+  frac = Math.max(0, Math.min(1, frac));
+  marker.style.left = (frac * 100) + '%';
+  if (prog) prog.style.width = (frac * 100) + '%';
+  if (readout) {
+    const scRect = sc.getBoundingClientRect();
+    const viewportCentre = scRect.left + sc.clientWidth / 2;
+    // Fullness of time?
+    const pcol = document.getElementById('bs-pleroma-col');
+    if (pcol) {
+      const pr = pcol.getBoundingClientRect();
+      if (pr.width > 0 && Math.abs((pr.left + pr.width / 2) - viewportCentre) < pr.width * 0.6 + 30) {
+        readout.innerHTML = `<svg viewBox="0 0 24 32" width="8" height="11" style="display:inline-block;vertical-align:-1px;"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg> <span class="yr" style="color:#8b0000;">The Fullness of Time</span>`;
+        return;
+      }
+    }
+    let bestYr = null, bestDiff = Infinity;
+    document.querySelectorAll('#bible-track [data-bs-year]').forEach(el => {
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const diff = Math.abs(cx - viewportCentre);
+      if (diff < bestDiff) { bestDiff = diff; bestYr = +el.getAttribute('data-bs-year'); }
+    });
+    if (bestYr !== null) {
+      const era = bsEraName(bestYr);
+      const ytxt = bestYr < 0 ? Math.abs(bestYr) + ' BC' : bestYr + ' AD';
+      readout.innerHTML = `<span class="yr">${ytxt}</span>${era ? ' &nbsp;·&nbsp; ' + era : ''}`;
+    }
+  }
+}
+function bibleScrubberSeek(clientX, smooth) {
+  const track = document.getElementById('bs-scrubber-track');
+  const sc = document.getElementById('bible-scroll');
+  if (!track || !sc) return;
+  const rect = track.getBoundingClientRect();
+  const frac = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+  const targetContentX = frac * sc.scrollWidth;
+  let left = targetContentX - sc.clientWidth / 2;
+  left = Math.max(0, Math.min(sc.scrollWidth - sc.clientWidth, left));
+  sc.scrollTo({ left: left, behavior: smooth ? 'smooth' : 'auto' });
+}
+(function wireBibleScrubber() {
+  const track = document.getElementById('bs-scrubber-track');
+  const sc = document.getElementById('bible-scroll');
+  if (!track || !sc) return;
+  let scrubbing = false, moved = false, downX = 0;
+  sc.addEventListener('scroll', () => { if (scrubbing) return; window.requestAnimationFrame(syncBibleScrubber); }, { passive: true });
+  track.addEventListener('mousedown', e => { scrubbing = true; moved = false; downX = e.clientX; e.preventDefault(); });
+  window.addEventListener('mousemove', e => {
+    if (!scrubbing) return;
+    if (Math.abs(e.clientX - downX) > 2) moved = true;
+    bibleScrubberSeek(e.clientX, false);
+    syncBibleScrubber();
+  });
+  window.addEventListener('mouseup', e => {
+    if (scrubbing && !moved) bibleScrubberSeek(e.clientX, true);
+    scrubbing = false;
+  });
+  track.addEventListener('touchstart', e => { scrubbing = true; bibleScrubberSeek(e.touches[0].clientX, false); syncBibleScrubber(); }, { passive: true });
+  track.addEventListener('touchmove', e => { bibleScrubberSeek(e.touches[0].clientX, false); syncBibleScrubber(); }, { passive: true });
+  track.addEventListener('touchend', () => { scrubbing = false; });
+})();
+
+
 
 // ── Mouse wheel → horizontal scroll ──────────────────────────────────────────
 function addWheelScroll(el) {
@@ -5928,7 +6097,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v31.2 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v31.3 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -6866,6 +7035,7 @@ function handleOrientationChange() {
     }
     // Scrubber dot fractions depend on scrollWidth — rebuild after layout settles
     if (currentView === 'timeline' && typeof buildScrubber === 'function') buildScrubber();
+    if (currentView === 'bible' && typeof buildBibleScrubber === 'function') buildBibleScrubber();
   };
   refit();
   setTimeout(refit, 250);
