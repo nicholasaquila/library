@@ -1683,11 +1683,18 @@
   /* ── MOBILE COMPACT OVERRIDES ── */
   @media (max-width: 768px) {
     /* Header: single line, left-aligned, minimal */
-    header { padding: 5px 12px 4px !important; text-align: left !important; display: flex !important; align-items: center !important; }
+    header { padding: 6px 12px 5px !important; text-align: left !important; display: flex !important; align-items: center !important; }
     header::after { display: none !important; }
-    .header-title { font-size: 13px !important; letter-spacing: 0.03em !important; white-space: nowrap !important; }
+    .header-title { font-size: 13px !important; letter-spacing: 0.03em !important; white-space: nowrap !important; margin-right: auto !important; }
     .header-sub, .header-eyebrow { display: none !important; }
-    .dark-toggle { top: 5px !important; right: 8px !important; width: 24px !important; height: 24px !important; font-size: 11px !important; }
+    /* Dark toggle sits neatly at the end of the header row (not a cramped float) */
+    .dark-toggle {
+      position: static !important;
+      width: 28px !important; height: 28px !important;
+      font-size: 11px !important;
+      flex-shrink: 0 !important;
+      margin-left: 10px !important;
+    }
 
     /* Controls: tight single scrollable row */
     .controls-bar { padding: 3px 8px !important; gap: 4px !important; flex-wrap: nowrap !important; overflow-x: auto !important; scrollbar-width: none !important; }
@@ -2752,9 +2759,9 @@
 </noscript>
 
 
-<button class="dark-toggle" id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()"><svg viewBox="0 0 16 16" width="13" height="13" style="display:block;"><circle cx="8" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M13 3l-1.4 1.4M4.4 11.6L3 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
 <header>
   <h1 class="header-title">Bibliotheca Fidei</h1>
+  <button class="dark-toggle" id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()"><svg viewBox="0 0 16 16" width="13" height="13" style="display:block;"><circle cx="8" cy="8" r="3.2" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6L13 13M13 3l-1.4 1.4M4.4 11.6L3 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
 </header>
 
 <div class="controls-bar">
@@ -2878,7 +2885,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.3 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.4 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5139,7 +5146,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.3 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.4 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
