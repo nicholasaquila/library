@@ -2334,6 +2334,9 @@
     margin-top: 2px;
   }
   .witness-author { font-family: 'EB Garamond', serif; font-size: 12px; font-style: italic; color: var(--brown-light); }
+  .witness-quote-block { margin-bottom: 14px; }
+  .witness-quote-block:last-child { margin-bottom: 0; }
+  .witness-quote-block + .witness-quote-block { padding-top: 14px; border-top: 1px solid rgba(140,110,55,0.15); }
   .witness-quote {
     font-family: 'EB Garamond', serif;
     font-size: 15px;
@@ -2779,7 +2782,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v23.7 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v24.0 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3537,28 +3540,40 @@ const DOCTRINES = [
         title: 'The Didache',
         cite: 'Didache 9',
         note: 'The Eucharist named a holy thing, guarded from the unbaptised.',
-        quote: '[work in progress]',
+        quote: 'Allow no one to eat or drink of your Eucharist, unless they have been baptized in the name of the Lord. For concerning this, the Lord has said, \u201cDo not give what is holy to dogs.\u201d',
         section: 'chapter_2',
         searchphrase: 'eat or drink of your Eucharist',
         passages: ['eat or drink of your Eucharist', 'holy to dogs']
       },
       {
         title: 'The Letters of St. Ignatius of Antioch',
-        cite: 'To the Smyrnaeans 7',
-        note: 'Against those who deny the Eucharist is Christ\'s flesh.',
-        quote: '[work in progress]',
-        section: 'ch_smyrnaeans',
-        searchphrase: 'confess not the Eucharist',
-        passages: ['confess not the Eucharist', 'flesh of our']
+        quotes: [
+          {
+            cite: 'To the Smyrnaeans 7',
+            note: 'Against those who deny the Eucharist is Christ\'s flesh.',
+            quote: 'They abstain from the Eucharist and from prayer, because they confess not the Eucharist to be the flesh of our Saviour Jesus Christ, which suffered for our sins, and which the Father, of His goodness, raised up again.',
+            section: 'ch_smyrnaeans',
+            searchphrase: 'confess not the Eucharist',
+            passages: ['confess not the Eucharist', 'flesh of our']
+          },
+          {
+            cite: 'To the Ephesians 20',
+            note: 'The Eucharist called the medicine of immortality.',
+            quote: '...breaking one and the same bread, which is the medicine of immortality, and the antidote to prevent us from dying, but [which causes] that we should live for ever in Jesus Christ.',
+            section: 'ch_ephesians',
+            searchphrase: 'medicine of immortality',
+            passages: ['medicine of immortality', 'breaking one and the same bread']
+          }
+        ]
       },
       {
         title: 'The First and Second Apologies',
         cite: 'First Apology 66',
         note: 'Justin tells the emperor the bread is not common bread.',
-        quote: '[work in progress]',
-        section: '',
+        quote: 'Not as common bread and common drink do we receive these; but ... the food which is blessed by the prayer of His word, and from which our blood and flesh by transmutation are nourished, is the flesh and blood of that Jesus who was made flesh.',
+        section: 'fa_chaps_56_68',
         searchphrase: 'not as common bread',
-        passages: ['not as common bread', 'made flesh']
+        passages: ['not as common bread', 'is the flesh and blood']
       }
     ]
   },
@@ -3591,9 +3606,7 @@ const DOCTRINES = [
         quote: 'It is within the power of all, therefore, in every Church, who may wish to see the truth, to contemplate clearly the tradition of the apostles manifested throughout the whole world; and we are in a position to reckon up those who were by the apostles instituted bishops in the Churches, and to demonstrate the succession of these men to our own times ... the very great, the very ancient, and universally known Church founded and organized at Rome by the two most glorious apostles, Peter and Paul ... For it is a matter of necessity that every Church should agree with this Church, on account of its preeminent authority.',
         cite: 'Against Heresies III.3.1-2',
         section: 'bk3_ch03',
-        searchphrase: 'A refutation of the heretics',
-        blanketFrom: 'A refutation of the heretics',
-        blanketTo: 'committed into the hands of Linus'
+        searchphrase: 'succession of these men'
       }
     ]
   }
@@ -3650,23 +3663,36 @@ function renderDoctrine() {
     const item = document.createElement('div');
     item.className = 'witness';
     const canRead = w.vol.filename && w.vol.status === 'complete';
+    // Support multiple quotes from the same source via a `quotes` array.
+    const quoteList = Array.isArray(w.quotes) && w.quotes.length ? w.quotes : [w];
+    const quotesHtml = quoteList.map((q, qi) => {
+      const qt = q.quote
+        ? (q.quote === '[work in progress]'
+            ? `<div class="witness-quote wip">[work in progress]</div>`
+            : `<div class="witness-quote">\u201c${q.quote}\u201d</div>`)
+        : '';
+      const ct = q.cite ? `<div class="witness-cite">${q.cite}</div>` : '';
+      const nt = q.note ? `<div class="witness-note">${q.note}</div>` : '';
+      const btn = canRead ? `<button class="witness-goto" data-qi="${qi}">Go to source &rarr;</button>` : '';
+      return `<div class="witness-quote-block">${qt}${ct}${nt}${btn}</div>`;
+    }).join('');
+
     item.innerHTML = `
       <div class="witness-spine"><span class="witness-dot" style="background:${volumeColor(w.vol)}"></span></div>
       <div class="witness-body">
         <div class="witness-date">${w.vol.date_label}</div>
         <div class="witness-title">${w.vol.title}</div>
         <div class="witness-author">${w.vol.author || ''}</div>
-        ${w.quote ? (w.quote === '[work in progress]'
-            ? `<div class="witness-quote wip">[work in progress]</div>`
-            : `<div class="witness-quote">\u201c${w.quote}\u201d</div>`) : ''}
-        ${w.cite ? `<div class="witness-cite">${w.cite}</div>` : ''}
-        ${w.note ? `<div class="witness-note">${w.note}</div>` : ''}
-        ${canRead ? `<button class="witness-goto">Go to source &rarr;</button>` : `<span class="witness-pending">Edition not yet in library</span>`}
+        ${quotesHtml}
+        ${!canRead ? `<span class="witness-pending">Edition not yet in library</span>` : ''}
       </div>
     `;
     if (canRead) {
-      item.querySelector('.witness-goto').addEventListener('click', () => {
-        openReaderAtSource(w.vol, w);
+      item.querySelectorAll('.witness-goto').forEach(b => {
+        b.addEventListener('click', () => {
+          const qi = parseInt(b.getAttribute('data-qi') || '0', 10);
+          openReaderAtSource(w.vol, quoteList[qi]);
+        });
       });
     }
     stream.appendChild(item);
@@ -5012,7 +5038,7 @@ function showLegendSheet() {
   });
   html += '<div class="ms-heading" style="margin-top:16px;">Status</div>';
   html += '<div class="ms-row"><span class="ms-label">✓ Complete &nbsp; ◦ Pending</span></div>';
-  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v23.7 · 10 June 2026</div>';
+  html += '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin-top:16px;opacity:0.6;">Compiled by Nicholas · v24.0 · 10 June 2026</div>';
   content.innerHTML = html;
   document.getElementById('ancient-sheet').classList.add('open');
   document.getElementById('ancient-sheet-overlay').classList.add('open');
@@ -5311,15 +5337,15 @@ function openReader(vol, jumpSpec) {
                 const txt = doc.body.textContent || '';
                 if (txt.indexOf(jumpSpec.blanketFrom) < 0) return;
                 // Walk all elements in order; turn highlighting on at 'from', off at 'to'
-                const all = Array.from(doc.body.querySelectorAll('h1, h2, h3, h4, h5, h6, p, li, blockquote, div'));
+                const all = Array.from(doc.body.querySelectorAll('p, li, blockquote, div'));
                 let on = false, count = 0;
                 all.forEach(elm => {
                   const t = elm.textContent || '';
                   if (!on && t.indexOf(jumpSpec.blanketFrom) >= 0) on = true;
                   if (on && jumpSpec.blanketTo && t.indexOf(jumpSpec.blanketTo) >= 0) { on = false; return; }
                   if (on) {
-                    // leaf-ish blocks only (avoid double-coating big containers)
-                    if (/^(H[1-6]|P|LI|BLOCKQUOTE)$/.test(elm.tagName)) {
+                    // only leaf-ish paragraphs (avoid double-coating big containers)
+                    if (/^(P|LI|BLOCKQUOTE)$/.test(elm.tagName)) {
                       elm.style.backgroundColor = 'rgba(200,40,40,0.18)';
                       elm.style.borderRadius = '3px';
                       elm.setAttribute('data-doctrine-blanket','1');
