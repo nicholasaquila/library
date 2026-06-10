@@ -255,9 +255,8 @@
     padding: 20px 80px 20px 0;
     height: 100%;
     position: relative;
-    /* Column width scales with the card (which is clamp(15px,1.05vw,18px));
-       card max width ~178px, plus gutter. Keeps cards from clipping when they grow. */
-    --col-w: clamp(160px, 11.6vw, 196px);
+    /* Fixed column width */
+    --col-w: 160px;
   }
 
   /* Era group */
@@ -325,12 +324,8 @@
   }
 
   .tl-card {
-    /* The card's font-size is the master scale: width, padding and all inner
-       text are in em, so the whole card + its text grow together. clamp() lets
-       it scale up on wide screens up to a tasteful cap, never below the base. */
-    font-size: clamp(15px, 1.05vw, 18px);
-    width: 9.87em;            /* 148px / 15px base */
-    padding: 0.8em 0.8em 0.67em;
+    width: 148px;
+    padding: 12px 12px 10px;
     background: linear-gradient(160deg, #faf6ea, #f0e9d4);
     border: 1px solid rgba(140,110,55,0.25);
     position: relative;
@@ -357,46 +352,46 @@
 
   .tl-card-date {
     font-family: 'Cinzel', serif;
-    font-size: 0.73em;        /* ~11px */
+    font-size: 11px;
     letter-spacing: 0.12em;
     color: var(--gold);
-    margin-bottom: 0.45em;
+    margin-bottom: 5px;
   }
   .tl-card-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 1em;           /* 15px master */
+    font-size: 15px;
     font-weight: 600;
     color: var(--ink);
     line-height: 1.3;
-    margin-bottom: 0.13em;
+    margin-bottom: 2px;
   }
   .tl-card-subtitle {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 0.87em;        /* ~13px */
+    font-size: 13px;
     color: var(--brown-light);
-    margin-bottom: 0.2em;
+    margin-bottom: 3px;
     line-height: 1.2;
   }
   .tl-card-author {
     font-family: 'EB Garamond', serif;
-    font-size: 0.73em;        /* ~11px */
+    font-size: 11px;
     color: var(--brown);
-    margin-bottom: 0.5em;
+    margin-bottom: 6px;
   }
   .tl-card-badge {
     font-family: 'Cinzel', serif;
-    font-size: 0.53em;        /* ~8px */
+    font-size: 8px;
     letter-spacing: 0.1em;
-    padding: 0.25em 0.75em;
+    padding: 2px 6px;
     border: 1px solid var(--sc);
     color: var(--sc);
     display: inline-block;
   }
   .tl-card-status {
     position: absolute;
-    top: 0.47em; right: 0.47em;
-    font-size: 0.67em;        /* ~10px */
+    top: 7px; right: 7px;
+    font-size: 10px;
     opacity: 0.65;
   }
 
@@ -699,8 +694,7 @@
     .lg-item { font-size: 10px; }
 
     /* On mobile, grid is the default visible view — timeline still accessible */
-    .tl-card { width: 120px; font-size: 12px; }
-    .timeline-track { --col-w: 132px; }
+    .tl-card { width: 120px; }
     .tl-card-title { font-size: 11px; }
     .tl-card-date  { font-size: 8px; }
     .tl-card-author { font-size: 10px; }
@@ -749,6 +743,19 @@
 
   @media (min-width: 769px) {
     .mobile-timeline-hint { display: none !important; }
+    /* On desktop the motto lives in the version stamp, not the header */
+    .header-sub { display: none !important; }
+  }
+  /* In the version stamp, the motto shows on desktop; hidden on mobile (it's
+     next to the title there instead) */
+  .vs-motto {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
+  }
+  @media (max-width: 768px) {
+    .vs-motto, .vs-sep { display: none !important; }
   }
 
   /* Mobile swipe hint banner */
@@ -1881,8 +1888,7 @@
     .status-legend-bar { display: none !important; }
 
     /* Timeline cards */
-    .tl-card { width: 108px !important; padding: 5px 6px 4px !important; font-size: 11px !important; }
-    .timeline-track { --col-w: 120px !important; }
+    .tl-card { width: 108px !important; padding: 5px 6px 4px !important; }
     .tl-card-title { font-size: 10px !important; }
     .tl-card-date { font-size: 7px !important; }
     .tl-card-author { font-size: 9px !important; }
@@ -2073,9 +2079,9 @@
     background-repeat: no-repeat;
     background-position: 9px center;
     background-size: 13px;
-    width: 190px; transition: width 0.25s ease, border-color 0.2s; outline: none;
+    width: 140px; transition: width 0.25s ease, border-color 0.2s; outline: none;
   }
-  .search-input:focus { border-color: var(--gold); width: 230px; }
+  .search-input:focus { border-color: var(--gold); width: 190px; }
   .search-input::placeholder { color: var(--brown-light); opacity: 0.7; font-style: italic; }
   .search-clear { position: absolute; right: 6px; background: none; border: none; color: var(--brown-light); cursor: pointer; font-size: 11px; display: none; padding: 2px; }
   .search-clear.show { display: block; }
@@ -2640,8 +2646,7 @@
     .timeline-track { padding: 8px 60px 8px 0 !important; }
 
     /* Slightly smaller cards so more fits and the spine sits centred */
-    .tl-card { width: 104px !important; padding: 4px 6px 3px !important; font-size: 10.5px !important; }
-    .timeline-track { --col-w: 116px !important; }
+    .tl-card { width: 104px !important; padding: 4px 6px 3px !important; }
     .tl-card-title { font-size: 9px !important; }
     .tl-card-date { font-size: 6px !important; }
     .tl-card-author { font-size: 8px !important; }
@@ -3148,7 +3153,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v28.9 · 10 June 2026</div>
+<div class="version-stamp"><span class="vs-motto">fides quaerens intellectum &middot; faith seeking understanding</span><span class="vs-sep"> &nbsp;·&nbsp; </span>Compiled by Nicholas &nbsp;·&nbsp; v29.3 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5742,6 +5747,91 @@ function scrubberSeek(clientX, smooth) {
   track.addEventListener('touchend', () => { scrubbing = false; });
 })();
 
+// ── SNAP TO CARD CENTRE ───────────────────────────────────────────────────────
+// After the timeline finishes scrolling/swiping, glide so the nearest card sits
+// centred — so a swipe never settles in a random gap between cards.
+(function wireSnap() {
+  const sc = document.getElementById('timeline-scroll');
+  if (!sc) return;
+  let snapTimer = null;
+  let snapping = false;
+  let touching = false;
+  let snapEnabled = false;   // stays off through the intro; turns on once the user moves the timeline
+
+  // Enable snapping only after a genuine user interaction with the timeline
+  const enableSnap = () => { snapEnabled = true; };
+  sc.addEventListener('touchstart', () => { touching = true; enableSnap(); }, { passive: true });
+  sc.addEventListener('touchend',   () => { touching = false; scheduleSnap(); }, { passive: true });
+  sc.addEventListener('wheel',     enableSnap, { passive: true });
+  sc.addEventListener('mousedown', enableSnap);
+
+  function nearestCardScrollLeft() {
+    const scRect = sc.getBoundingClientRect();
+    const viewportCentre = scRect.left + sc.clientWidth / 2;
+    const cols = Array.from(document.querySelectorAll('#timeline-track .tl-col[data-title]'));
+    let best = null, bestDiff = Infinity;
+    const consider = (el) => {
+      const r = el.getBoundingClientRect();
+      if (r.width < 3) return;
+      const cx = r.left + r.width / 2;
+      const diff = Math.abs(cx - viewportCentre);
+      if (diff < bestDiff) { bestDiff = diff; best = el; }
+    };
+    cols.forEach(col => { if (col.querySelector('.tl-card')) consider(col); });
+    // The fullness-of-time column is also a snap point
+    const pcol = document.getElementById('pleroma-col');
+    if (pcol) consider(pcol);
+    if (!best) return null;
+    const r = best.getBoundingClientRect();
+    const contentX = (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
+    let target = contentX - sc.clientWidth / 2;
+    return Math.max(0, Math.min(sc.scrollWidth - sc.clientWidth, target));
+  }
+
+  function gentleScrollTo(target) {
+    const start = sc.scrollLeft;
+    const dist = target - start;
+    if (Math.abs(dist) < 2) return;
+    // Duration scales with distance but stays in a soft, unhurried band.
+    const dur = Math.min(700, Math.max(320, Math.abs(dist) * 1.4));
+    const t0 = performance.now();
+    // easeInOutSine — gentle on both ends, no abrupt yank
+    const ease = (p) => -(Math.cos(Math.PI * p) - 1) / 2;
+    snapping = true;
+    function step(now) {
+      const p = Math.min(1, (now - t0) / dur);
+      sc.scrollLeft = start + dist * ease(p);
+      if (p < 1) {
+        requestAnimationFrame(step);
+      } else {
+        // small settle before re-allowing snap so the end is calm
+        setTimeout(() => { snapping = false; }, 60);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function doSnap() {
+    if (!snapEnabled) return;                             // suppressed through the intro
+    if (isDown || touching || snapping) return;           // not while dragging/touching
+    if (window.__scrubBusy) return;                       // not while scrubber-seeking
+    const target = nearestCardScrollLeft();
+    if (target === null) return;
+    if (Math.abs(target - sc.scrollLeft) < 3) return;     // already centred
+    gentleScrollTo(target);                               // always centre, but glide softly
+  }
+
+  function scheduleSnap() {
+    clearTimeout(snapTimer);
+    snapTimer = setTimeout(doSnap, 180);   // gentler: wait a touch longer after motion stops
+  }
+
+  sc.addEventListener('scroll', () => {
+    if (snapping) return;          // don't reschedule during our own smooth snap
+    scheduleSnap();
+  }, { passive: true });
+})();
+
 // Bible scroll drag
 const bscroll = document.getElementById('bible-scroll');
 let bDown = false, bStartX, bScrollLeft;
@@ -5805,7 +5895,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v28.9 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v29.3 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -6686,19 +6776,18 @@ function introShowcase() {
   setTimeout(() => {
     tlScroll.style.scrollBehavior = 'smooth';
     const pleromaCol = document.getElementById('pleroma-col');
-      if (pleromaCol) {
-        // Show full pleroma column with a glimpse of ancient world on the left
-        tlScroll.scrollLeft = Math.max(0, pleromaCol.offsetLeft - 60);
-      } else {
-        // Fallback to Apostolic era
-        const eraEls = document.querySelectorAll('#timeline-track .tl-era');
-        let targetX = 0;
-        eraEls.forEach(el => {
-          const ld = el.querySelector('div div');
-          if (ld && ld.textContent.includes('Apostolic')) targetX = Math.max(0, el.offsetLeft - 60);
-        });
-        tlScroll.scrollLeft = targetX;
-      }
+    if (pleromaCol) {
+      // Show full pleroma column with a glimpse of ancient world on the left
+      tlScroll.scrollLeft = Math.max(0, pleromaCol.offsetLeft - 60);
+    } else {
+      const eraEls = document.querySelectorAll('#timeline-track .tl-era');
+      let targetX = 0;
+      eraEls.forEach(el => {
+        const ld = el.querySelector('div div');
+        if (ld && ld.textContent.includes('Apostolic')) targetX = Math.max(0, el.offsetLeft - 60);
+      });
+      tlScroll.scrollLeft = targetX;
+    }
   }, 300);
 
   // Step 3: after scroll settles, pulse tabs sequentially
