@@ -3122,7 +3122,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v27.8 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v27.9 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4297,10 +4297,10 @@ const SIGNIFICANCE = {
   "Instructions of Shuruppak":                "Ancient Sumerian wisdom literature; ethical proverbs from father to son; reflects themes in biblical Proverbs",
   "The Epic of Gilgamesh":                     "Ancient Mesopotamian epic; flood and creation themes; mortality and the search for eternal life",
   "The Tale of Sinuhe":                        "Masterpiece of Egyptian literature; exile, identity and return",
-  "The Tale of the Shipwrecked Sailor":        "Oldest known surviving written account of a talking snake; paradise island; divine encounter",
-  "The Code of Hammurabi":                     "Oldest known surviving comprehensive law code; lex talionis (eye for an eye); reflects themes in Mosaic law",
-  "Atrahasis":                                 "Oldest known surviving flood and creation narrative; human creation from clay; reflects themes in Genesis",
-  "Enuma Elish":                               "Oldest known surviving Babylonian creation account; cosmos from chaos; reflects themes in Genesis 1",
+  "The Tale of the Shipwrecked Sailor":        "Among the oldest surviving manuscripts of a written story; a talking snake; paradise island; divine encounter",
+  "The Code of Hammurabi":                     "One of the oldest law codes surviving in a substantially complete copy; lex talionis (eye for an eye); reflects themes in Mosaic law",
+  "Atrahasis":                                 "Preserves one of the oldest surviving flood and creation narratives; human creation from clay; reflects themes in Genesis",
+  "Enuma Elish":                               "Preserves one of the oldest surviving Babylonian creation accounts; cosmos from chaos; reflects themes in Genesis 1",
 
   // Ante-Nicene Fathers: verified milestones
   "The First Epistle of Clement of Rome":      "Apostolic succession affirmed; Rome's authority beyond its own church attested",
@@ -4615,7 +4615,7 @@ const ANCIENT_WORLD_INFO = {
     biblical: "Sinuhe\'s exile and return echoes the Joseph narrative: flight, life among foreign peoples and restoration. His return to die in his homeland mirrors Jacob\'s final journey. Divine providence guiding an exile is a shared theme.",
   },
   "The Tale of the Shipwrecked Sailor": {
-    summary: "An Egyptian sailor is shipwrecked on a magical island ruled by a great serpent who speaks, prophesies and sends him home with gifts. One of the oldest known surviving short stories.",
+    summary: "An Egyptian sailor is shipwrecked on a magical island ruled by a great serpent who speaks, prophesies and sends him home with gifts. Preserved in one of the oldest surviving story manuscripts.",
     biblical: "The speaking serpent on a paradise island is widely compared to Genesis 3. The island is described with Edenic abundance: fruit trees, fish, birds. The serpent here is wise rather than evil, but the pairing of man, paradise and a talking serpent is a striking structural echo.",
   },
   "The Code of Hammurabi": {
@@ -5714,7 +5714,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v27.8 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v27.9 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
