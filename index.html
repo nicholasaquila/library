@@ -3122,7 +3122,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v28.3 · 10 June 2026</div>
+<div class="version-stamp">Compiled by Nicholas &nbsp;·&nbsp; v28.5 · 10 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -3809,8 +3809,8 @@ function volumeColor(v) {
 
 const ERAS = [
   { label: 'Ancient World',                 from: -9999, to: 0    },
-  { label: 'Apostolic & Sub-Apostolic',     from: 0,     to: 150  },
-  { label: 'Early Ante-Nicene',             from: 150,   to: 325  },
+  { label: 'The Apostolic Fathers',         from: 0,     to: 150  },
+  { label: 'Ante-Nicene',                   from: 150,   to: 325  },
   { label: 'Nicene & Post-Nicene',          from: 325,   to: 500  },
   { label: 'Late Antique & Early Medieval', from: 500,   to: 800  },
   { label: 'Medieval',                      from: 800,   to: 1400 },
@@ -4491,8 +4491,8 @@ function initMap() {
 function getMapEra(yr) {
   const eras = [
     { label: 'Ancient World',                 from: -9999, to: 0    },
-    { label: 'Apostolic & Sub-Apostolic',     from: 0,     to: 150  },
-    { label: 'Early Ante-Nicene',             from: 150,   to: 325  },
+    { label: 'The Apostolic Fathers',         from: 0,     to: 150  },
+    { label: 'Ante-Nicene',                   from: 150,   to: 325  },
     { label: 'Nicene & Post-Nicene',          from: 325,   to: 500  },
     { label: 'Late Antique & Early Medieval', from: 500,   to: 800  },
     { label: 'Medieval',                      from: 800,   to: 1400 },
@@ -5026,7 +5026,7 @@ function renderTimeline() {
     eraEl.appendChild(div);
 
     // Fullness of Time — insert dedicated column BEFORE Apostolic era
-    if (era.label === 'Apostolic & Sub-Apostolic' || era.label === 'Apostolic Fathers') {
+    if (era.label === 'The Apostolic Fathers' || era.label === 'Apostolic Fathers' || era.label === 'Apostolic & Sub-Apostolic') {
       // Pleroma column — mirrors era layout so spine aligns perfectly
       const pcol = document.createElement('div');
       pcol.style.cssText = 'display:flex;flex-direction:column;flex-shrink:0;width:140px;position:relative;';
@@ -5779,7 +5779,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v28.3 · 10 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v28.5 · 10 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
