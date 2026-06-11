@@ -3178,7 +3178,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v32.7 · 11 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v32.9 · 11 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5930,10 +5930,37 @@ function scrubberSeek(clientX, smooth) {
     const near = nearestCard();
     if (!near) return;
     const dist = Math.abs(near.target - sc.scrollLeft);
-    if (dist < 3) return;                                 // dead zone — already centred
+    const maxScroll = sc.scrollWidth - sc.clientWidth;
+    const atExtreme = sc.scrollLeft <= 1 || (maxScroll > 0 && sc.scrollLeft >= maxScroll - 1);
+    if (dist < 3) {
+      // Already at the snap target. Normally nothing to do — but end cards can't
+      // be centred (their centring target is clamped to the scroll edge), so the
+      // snap never moves and they'd never glow. At a scroll extreme, glow the
+      // edge-most card directly so the first/last cards still light up.
+      if (atExtreme) {
+        const cards = Array.from(document.querySelectorAll('#timeline-track .tl-col[data-title]'))
+          .filter(c => c.querySelector('.tl-card') && c.getBoundingClientRect().width >= 3);
+        if (cards.length) {
+          cards.sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left);
+          const edge = (sc.scrollLeft <= 1) ? cards[0] : cards[cards.length - 1];
+          glowCard(edge);
+        }
+      }
+      return;
+    }
     // Soft cap: if the nearest card centre is more than ~one card-width away,
     // you're mid-browse / flicked hard — don't hijack it, let it rest.
     if (dist > 170) return;
+    // If this card physically can't be centred (its true centring target lies
+    // beyond the scroll range, as happens for the first/last cards), don't tug
+    // toward the hard edge — that just offsets the view. Leave it where it rests.
+    const scRect2 = sc.getBoundingClientRect();
+    const r2 = near.el.getBoundingClientRect();
+    const trueTarget = (r2.left - scRect2.left) + sc.scrollLeft + r2.width / 2 - sc.clientWidth / 2;
+    if (trueTarget < 0 || trueTarget > maxScroll) {
+      if (atExtreme) glowCard(near.el);
+      return;
+    }
     gentleScrollTo(near.target, near.el);
   }
 
@@ -6231,7 +6258,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v32.7 · 11 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v32.9 · 11 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
