@@ -3178,7 +3178,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v32.6 · 11 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v32.7 · 11 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5585,9 +5585,13 @@ function buildScrubber() {
     } else {
       centreX = colContentX(col);
     }
-    // Fraction of the whole content width (so the first/last texts sit at the
-    // true ends of the bar, not pulled inward by viewport-centring).
-    const frac = Math.max(0, Math.min(1, centreX / contentW));
+    // Position dots in the same rescaled space as the marker so the two align
+    // exactly and the ends are reached smoothly (see syncScrubberFromScroll).
+    const _max = sc.scrollWidth - sc.clientWidth;
+    const _minC = sc.clientWidth / 2;
+    const _maxC = _max + sc.clientWidth / 2;
+    let frac = (_maxC > _minC) ? (centreX - _minC) / (_maxC - _minC) : (centreX / contentW);
+    frac = Math.max(0, Math.min(1, frac));
 
     const dot = document.createElement('div');
     dot.className = 'tl-scrubber-dot' + (v.series === 'Voices of the Ancient World' ? ' diamond' : '');
@@ -5604,7 +5608,10 @@ function buildScrubber() {
     const pr = pcol.getBoundingClientRect();
     if (pr.width > 0) {
       const px = (pr.left - scRect.left) + sc.scrollLeft + pr.width / 2;
-      const pfrac = Math.max(0, Math.min(1, px / contentW));
+      const _minC = sc.clientWidth / 2;
+      const _maxC = maxScroll + sc.clientWidth / 2;
+      let pfrac = (_maxC > _minC) ? (px - _minC) / (_maxC - _minC) : (px / contentW);
+      pfrac = Math.max(0, Math.min(1, pfrac));
       const cross = document.createElement('div');
       cross.className = 'tl-scrubber-cross';
       cross.style.left = (pfrac * 100) + '%';
@@ -5650,13 +5657,21 @@ function syncScrubberFromScroll() {
   if (!sc || !marker) return;
 
   const contentW = sc.scrollWidth;
-  // Marker = the viewport CENTRE as a fraction of the whole content width, so it
-  // aligns with the dots (also content-fraction). At the extremes the centre
-  // can't reach the very edges, so nudge to 0/1 when scrolled fully.
-  let frac = contentW > 0 ? (sc.scrollLeft + sc.clientWidth / 2) / contentW : 0;
+  // Marker = the viewport CENTRE as a fraction of content width, so it aligns
+  // with the dots. The centre can only travel between (clientWidth/2) and
+  // (maxScroll + clientWidth/2), so rescale that real travel range onto a full
+  // 0→1 — the marker reaches the very ends smoothly instead of creeping then
+  // snapping to the edge at the last pixel.
   const maxScroll = sc.scrollWidth - sc.clientWidth;
-  if (sc.scrollLeft <= 1) frac = 0;
-  else if (maxScroll > 0 && sc.scrollLeft >= maxScroll - 1) frac = 1;
+  let frac;
+  if (contentW <= 0 || maxScroll <= 0) {
+    frac = 0;
+  } else {
+    const centre = sc.scrollLeft + sc.clientWidth / 2;
+    const minCentre = sc.clientWidth / 2;
+    const maxCentre = maxScroll + sc.clientWidth / 2;
+    frac = (centre - minCentre) / (maxCentre - minCentre);   // 0 at start, 1 at end, smooth throughout
+  }
   frac = Math.max(0, Math.min(1, frac));
   marker.style.left = (frac * 100) + '%';
   if (prog) prog.style.width = (frac * 100) + '%';
@@ -5956,6 +5971,15 @@ function buildBibleScrubber() {
   const contentW = sc.scrollWidth;
   if (contentW <= 0) { bsScrubBuilt = true; return; }
   const scRect = sc.getBoundingClientRect();
+  const _max = sc.scrollWidth - sc.clientWidth;
+  const _minC = sc.clientWidth / 2;
+  const _maxC = _max + sc.clientWidth / 2;
+  // Rescale a content-x into marker space so dots/markers align and reach the
+  // ends smoothly (mirrors syncBibleScrubber's marker mapping).
+  const fracOf = (cx) => {
+    let f = (_maxC > _minC) ? (cx - _minC) / (_maxC - _minC) : (cx / contentW);
+    return Math.max(0, Math.min(1, f));
+  };
   const contentX = (el) => {
     const r = el.getBoundingClientRect();
     return (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
@@ -5963,7 +5987,7 @@ function buildBibleScrubber() {
   // Dots from each event's spine dot
   document.querySelectorAll('#bible-track [data-bs-year]').forEach(el => {
     const cx = contentX(el);
-    const frac = Math.max(0, Math.min(1, cx / contentW));
+    const frac = fracOf(cx);
     const dot = document.createElement('div');
     dot.className = 'tl-scrubber-dot';
     dot.style.left = (frac * 100) + '%';
@@ -5983,7 +6007,7 @@ function buildBibleScrubber() {
     const r = pcol.getBoundingClientRect();
     if (r.left || r.right) {
       const px = (r.left - scRect.left) + sc.scrollLeft + r.width / 2;
-      const pfrac = Math.max(0, Math.min(1, px / contentW));
+      const pfrac = fracOf(px);
       const star = document.createElement('div');
       star.className = 'tl-scrubber-cross';
       star.style.left = (pfrac * 100) + '%';
@@ -6005,7 +6029,7 @@ function buildBibleScrubber() {
     });
     if (!el) return;
     const cx = contentX(el);
-    const cfrac = Math.max(0, Math.min(1, cx / contentW));
+    const cfrac = fracOf(cx);
     const cross = document.createElement('div');
     cross.className = 'tl-scrubber-cross';
     cross.style.left = (cfrac * 100) + '%';
@@ -6053,9 +6077,17 @@ function syncBibleScrubber() {
   if (!sc || !marker) return;
   const contentW = sc.scrollWidth;
   const maxScroll = sc.scrollWidth - sc.clientWidth;
-  let frac = contentW > 0 ? (sc.scrollLeft + sc.clientWidth / 2) / contentW : 0;
-  if (sc.scrollLeft <= 1) frac = 0;
-  else if (maxScroll > 0 && sc.scrollLeft >= maxScroll - 1) frac = 1;
+  // Rescale the viewport-centre's real travel range onto a full 0→1 so the
+  // marker reaches the ends smoothly rather than snapping at the last pixel.
+  let frac;
+  if (contentW <= 0 || maxScroll <= 0) {
+    frac = 0;
+  } else {
+    const centre = sc.scrollLeft + sc.clientWidth / 2;
+    const minCentre = sc.clientWidth / 2;
+    const maxCentre = maxScroll + sc.clientWidth / 2;
+    frac = (centre - minCentre) / (maxCentre - minCentre);
+  }
   frac = Math.max(0, Math.min(1, frac));
   marker.style.left = (frac * 100) + '%';
   if (prog) prog.style.width = (frac * 100) + '%';
@@ -6199,7 +6231,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v32.6 · 11 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v32.7 · 11 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
