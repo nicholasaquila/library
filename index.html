@@ -3072,6 +3072,7 @@
   }
   .sr-words { display: flex; justify-content: space-around; gap: 14px; }
   .sr-word { opacity: 0; transform: translateY(8px); }
+  .sr-greek-letter { font-family: 'Cinzel', serif; font-size: 24px; line-height: 1; margin-bottom: 3px; }
   .sr-heb { font-family: serif; font-size: 30px; color: #8b0000; line-height: 1.1; }
   .sr-heb .sr-lit { transition: color 0.5s ease, text-shadow 0.5s ease; }
   .sr-rom { font-family: 'EB Garamond', serif; font-style: italic; font-size: 13px; color: var(--gold); margin-top: 2px; }
@@ -3273,7 +3274,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v34.1 · 15 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v34.3 · 15 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5458,6 +5459,16 @@ function renderBiblical() {
   const makeWordCard = (opts) => {
     const col = document.createElement('div');
     col.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;width:150px;padding:0 12px;position:relative;align-self:center;';
+
+    // Matching timeline dot + stem above the card
+    const dot = document.createElement('div');
+    dot.className = 'bs-bookend-dot';
+    dot.style.cssText = 'width:8px;height:8px;border-radius:50%;background:#8b0000;border:1.5px solid var(--cream);box-shadow:0 0 0 1px #8b0000;flex-shrink:0;z-index:2;';
+    const stem = document.createElement('div');
+    stem.style.cssText = 'width:1px;height:20px;background:rgba(140,110,55,0.28);flex-shrink:0;';
+    col.appendChild(dot);
+    col.appendChild(stem);
+
     const card = document.createElement('div');
     card.className = 'bible-card word-card';
     card.id = opts.id;
@@ -5465,6 +5476,7 @@ function renderBiblical() {
     card.style.cssText += 'text-align:center;cursor:pointer;';
     card.innerHTML = `
       <div class="bc-badge" style="position:static;display:inline-block;margin-bottom:4px;">${opts.tag}</div>
+      <div style="font-family:'Cinzel',serif;font-size:26px;color:${opts.greekColor};line-height:1;margin-bottom:4px;">${opts.greekLetter}</div>
       <div style="font-family:serif;font-size:22px;color:#8b0000;line-height:1.1;margin-bottom:2px;" dir="rtl">${opts.hebrewHtml}</div>
       <div style="font-family:'EB Garamond',serif;font-size:11px;color:#6b1a2a;opacity:0.75;margin-bottom:3px;">${opts.translit}</div>
       <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:13px;color:var(--gold);margin-bottom:2px;">${opts.greek}</div>
@@ -5477,6 +5489,8 @@ function renderBiblical() {
   track.appendChild(makeWordCard({
     id: 'bs-alpha-card',
     tag: 'The First Word',
+    greekLetter: 'Α',
+    greekColor: '#b8902a',
     hebrewHtml: '<span class="son-letter">בְּ</span>רֵאשִׁית',
     translit: 'bereshit',
     greek: 'Ἐν ἀρχῇ',
@@ -5661,6 +5675,8 @@ function renderBiblical() {
   track.appendChild(makeWordCard({
     id: 'bs-omega-card',
     tag: 'The Last Word',
+    greekLetter: 'Ω',
+    greekColor: '#8b0000',
     hebrewHtml: 'אָמֵ<span class="son-letter">ן</span>',
     translit: 'amen',
     greek: 'ἀμήν',
@@ -6249,12 +6265,15 @@ function wireSymmetryArc() {
 
   const show = () => {
     const tr = track.getBoundingClientRect();
-    const a = alpha.getBoundingClientRect();
-    const o = omega.getBoundingClientRect();
+    // Anchor to the bookend dots (fall back to the card if not found)
+    const aDot = (alpha.parentElement && alpha.parentElement.querySelector('.bs-bookend-dot')) || alpha;
+    const oDot = (omega.parentElement && omega.parentElement.querySelector('.bs-bookend-dot')) || omega;
+    const a = aDot.getBoundingClientRect();
+    const o = oDot.getBoundingClientRect();
     const ax = (a.left + a.width / 2 - tr.left) + track.scrollLeft;
-    const ay = (a.top - tr.top);
+    const ay = (a.top + a.height / 2 - tr.top);
     const ox = (o.left + o.width / 2 - tr.left) + track.scrollLeft;
-    const oy = (o.top - tr.top);
+    const oy = (o.top + o.height / 2 - tr.top);
     const midX = (ax + ox) / 2;
     let peakY = Math.min(ay, oy) - 80;
     if (peakY < 44) peakY = 44;
@@ -6593,7 +6612,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v34.1 · 15 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v34.3 · 15 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -7608,11 +7627,13 @@ window.addEventListener('resize', () => {
     <div class="sr-stage">
       <div class="sr-words">
         <div class="sr-word sr-first">
+          <div class="sr-greek-letter" style="color:#b8902a;">Α</div>
           <div class="sr-heb" dir="rtl"><span class="sr-lit">בְּ</span>רֵאשִׁית</div>
           <div class="sr-rom">bereshit</div>
           <div class="sr-en">“In the beginning” · Genesis 1:1</div>
         </div>
         <div class="sr-word sr-last">
+          <div class="sr-greek-letter" style="color:#8b0000;">Ω</div>
           <div class="sr-heb" dir="rtl">אָמֵ<span class="sr-lit">ן</span></div>
           <div class="sr-rom">amen</div>
           <div class="sr-en">“Amen” · Revelation 22:21</div>
