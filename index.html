@@ -3048,6 +3048,8 @@
   .sr-panel {
     position: relative;
     width: min(86vw, 340px);
+    box-sizing: border-box;
+    overflow: hidden;
     pointer-events: auto;                 /* the panel itself is interactive */
     background: linear-gradient(160deg, #faf6ea, #efe6cd);
     border: 1px solid rgba(184,144,42,0.5);
@@ -3091,6 +3093,12 @@
   .sr-coda {
     font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.5;
     color: var(--ink); margin-top: 14px; opacity: 0;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    word-break: normal;
+    hyphens: none;
+    text-wrap: balance;
+    padding: 0 2px;
   }
   .sr-coda em { color: #8b0000; font-style: italic; }
 
@@ -3274,7 +3282,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v34.3 · 15 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v34.5 · 15 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -6612,7 +6620,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v34.3 · 15 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v34.5 · 15 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -7651,7 +7659,7 @@ window.addEventListener('resize', () => {
         <div class="sr-ben-rom">ben</div>
         <div class="sr-ben-en">the Son</div>
       </div>
-      <div class="sr-coda">The first letter of Scripture and the last together spell <em>the Son</em> — He is the beginning and the end.</div>
+      <div class="sr-coda">The first letter of Scripture and the last together spell <em>the Son</em>. He is the beginning and the end.</div>
     </div>
   </div>
 </div>
