@@ -3178,7 +3178,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v33.1 · 11 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v33.4 · 11 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4279,9 +4279,53 @@ function applySearch() {
 }
 document.addEventListener('keydown', e => {
   const readerOpen = document.getElementById('reader-modal').classList.contains('open');
-  if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && !readerOpen) {
+  const inField = ['INPUT','TEXTAREA'].includes(document.activeElement.tagName);
+
+  // "/" focuses the search box
+  if (e.key === '/' && !inField && !readerOpen) {
     e.preventDefault();
     document.getElementById('search-input').focus();
+    return;
+  }
+
+  // Esc closes the topmost open overlay, in priority order
+  if (e.key === 'Escape') {
+    const searchBar = document.getElementById('reader-search-bar');
+    const sheet = document.getElementById('ancient-sheet');
+    if (searchBar && searchBar.classList.contains('open')) {
+      closeReaderSearch();
+    } else if (readerOpen) {
+      closeReader();
+    } else if (sheet && sheet.classList.contains('open')) {
+      hideBottomSheet();
+    } else if (inField && document.activeElement.id === 'search-input') {
+      document.activeElement.blur();
+    }
+    return;
+  }
+
+  // Arrow keys nudge the active timeline horizontally (desktop convenience).
+  // Skip while typing, while the reader is open, or with modifier keys.
+  if (!inField && !readerOpen && !e.metaKey && !e.ctrlKey && !e.altKey) {
+    let sc = null;
+    if (currentView === 'timeline') sc = document.getElementById('timeline-scroll');
+    else if (currentView === 'bible') sc = document.getElementById('bible-scroll');
+    if (sc) {
+      const page = Math.max(160, sc.clientWidth * 0.8);   // a near-full view
+      const step = 220;                                   // about one card
+      let delta = 0;
+      if (e.key === 'ArrowRight') delta = step;
+      else if (e.key === 'ArrowLeft') delta = -step;
+      else if (e.key === 'PageDown') delta = page;
+      else if (e.key === 'PageUp') delta = -page;
+      else if (e.key === 'Home') { e.preventDefault(); sc.scrollTo({ left: 0, behavior: 'smooth' }); return; }
+      else if (e.key === 'End') { e.preventDefault(); sc.scrollTo({ left: sc.scrollWidth, behavior: 'smooth' }); return; }
+      if (delta !== 0) {
+        e.preventDefault();
+        if (window.__enableTimelineSnap) window.__enableTimelineSnap();
+        sc.scrollBy({ left: delta, behavior: 'smooth' });
+      }
+    }
   }
 });
 
@@ -5381,23 +5425,39 @@ function renderBiblical() {
       // framing the life of Christ as the fullness of time (the expanded form of
       // the main timeline's single pleroma marker).
       const insertBracket = (which) => {
-        const mkLine = () => {
+        const STAR = '<svg viewBox="0 0 24 24" width="15" height="15"><path d="M12 1L13.4 10.6 21 12 13.4 13.4 12 23 10.6 13.4 3 12 10.6 10.6Z" fill="#b8902a"/></svg>';
+        const CROSS = '<svg viewBox="0 0 24 32" width="12" height="16"><path d="M10 2h4v8h8v4h-8v16h-4V14H2v-4h8z" fill="#8b0000"/></svg>';
+        // The above-row line gets its top trimmed and a marker (star for the
+        // opening / Nativity line, cross for the closing / Ascension line) sat
+        // above it. The below-row line is a plain crimson line.
+        const mkLine = (top) => {
           const w = document.createElement('div');
           w.style.cssText = 'width:0;flex-shrink:0;position:relative;align-self:stretch;display:flex;justify-content:center;';
           const line = document.createElement('div');
-          line.style.cssText = 'position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 12%,#8b0000 88%,transparent 100%);';
+          if (top) {
+            // Marker sits at the very top; the line begins well below it and
+            // fades IN from transparent, so it tapers off beneath the marker
+            // rather than running up into it.
+            line.style.cssText = 'position:absolute;top:24px;bottom:0;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 45%,#8b0000 100%);';
+            const mk = document.createElement('div');
+            mk.style.cssText = 'position:absolute;top:2px;left:50%;transform:translateX(-50%);line-height:0;z-index:5;';
+            mk.innerHTML = (which === 'start') ? STAR : CROSS;
+            w.appendChild(mk);
+          } else {
+            line.style.cssText = 'position:absolute;top:0;bottom:0;width:2px;background:linear-gradient(180deg,transparent 0%,#8b0000 12%,#8b0000 88%,transparent 100%);';
+          }
           w.appendChild(line);
           return w;
         };
-        aboveRow.appendChild(mkLine());
+        aboveRow.appendChild(mkLine(true));
         const sCell = document.createElement('div');
         sCell.style.cssText = 'width:0;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;';
         if (which === 'start') sCell.id = 'bs-pleroma-col';
         const sLine = document.createElement('div');
-        sLine.style.cssText = 'position:absolute;top:-9999px;bottom:-9999px;width:2px;background:#8b0000;';
+        sLine.style.cssText = 'position:absolute;top:0;bottom:0;width:2px;background:#8b0000;';
         sCell.appendChild(sLine);
         spineRow.appendChild(sCell);
-        belowRow.appendChild(mkLine());
+        belowRow.appendChild(mkLine(false));
       };
       if (ev.event === 'The Nativity') insertBracket('start');
 
@@ -5832,6 +5892,7 @@ function scrubberSeek(clientX, smooth) {
 
   // Enable snapping only after a genuine user interaction with the timeline
   const enableSnap = () => { snapEnabled = true; };
+  window.__enableTimelineSnap = enableSnap;   // so keyboard navigation can engage snap too
   sc.addEventListener('touchstart', () => { touching = true; enableSnap(); }, { passive: true });
   sc.addEventListener('touchend',   () => { touching = false; }, { passive: true });
   sc.addEventListener('wheel',     enableSnap, { passive: true });
@@ -6107,7 +6168,6 @@ function buildBibleScrubber() {
     lbl.id = 'bs-span-label';
     lbl.style.cssText = `position:absolute;top:4px;left:${mid}px;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:4;white-space:nowrap;`;
     lbl.innerHTML = `
-      <svg viewBox="0 0 24 24" width="13" height="13" style="display:block;margin:0 auto 1px;"><path d="M12 1L13.4 10.6 21 12 13.4 13.4 12 23 10.6 13.4 3 12 10.6 10.6Z" fill="#b8902a"/></svg>
       <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:12px;color:#8b0000;letter-spacing:0.04em;">the fullness of time <span style="font-family:'Cinzel',serif;font-style:normal;font-size:7px;letter-spacing:0.12em;opacity:0.7;">· GAL 4:4</span></div>`;
     bibleTrack.appendChild(lbl);
   })();
@@ -6277,7 +6337,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v33.1 · 11 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v33.4 · 11 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
