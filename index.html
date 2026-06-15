@@ -657,15 +657,15 @@
     flex-shrink: 0;
     display: flex;
     align-items: baseline;
-    gap: 14px;
-    padding: 8px 24px;
+    gap: 10px;
+    padding: 4px 24px;
     background: rgba(107,26,42,0.04);
     border-bottom: 1px solid rgba(107,26,42,0.12);
   }
   .scripture-note-title {
     font-family: 'Cinzel', serif;
-    font-size: 9px;
-    letter-spacing: 0.22em;
+    font-size: 8px;
+    letter-spacing: 0.2em;
     color: #6b1a2a;
     text-transform: uppercase;
     white-space: nowrap;
@@ -674,9 +674,9 @@
   .scripture-note-text {
     font-family: 'Cormorant Garamond', serif;
     font-style: italic;
-    font-size: 12px;
+    font-size: 10.5px;
     color: var(--brown-light);
-    line-height: 1.4;
+    line-height: 1.3;
   }
 
 
@@ -3010,6 +3010,101 @@
   }
   .snap-glow { animation: snap-glow-fade 1.4s ease-out 1; position: relative; z-index: 11; }
 
+  /* Cards lit while the Alpha-Omega symmetry arc is shown */
+  .bible-card.bs-symmetry-lit {
+    box-shadow: 0 0 14px 2px rgba(184,144,42,0.5), 0 0 0 1px rgba(139,0,0,0.4);
+    transition: box-shadow 0.4s ease;
+  }
+  /* The first/last letter that together spell בן ("Son") */
+  .son-letter { transition: color 0.35s ease, text-shadow 0.35s ease; }
+  .bible-card.bs-symmetry-lit .son-letter {
+    color: #b8902a;
+    text-shadow: 0 0 10px rgba(184,144,42,0.8);
+  }
+
+  /* "✦ reveal the symmetry" hint on the bookend word-cards */
+  .bs-reveal-hint {
+    margin-top: 6px;
+    font-family: 'Cinzel', serif;
+    font-size: 7.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #b8902a;
+    opacity: 0.85;
+    animation: bs-hint-pulse 3s ease-in-out infinite;
+  }
+  @keyframes bs-hint-pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 0.95; } }
+
+  /* ── SON REVEAL MODAL ── */
+  #son-reveal {
+    position: fixed; right: 16px; bottom: 16px; z-index: 4000;
+    display: block;
+    pointer-events: none;                /* never blocks the timeline behind it */
+    transform: translateY(120%);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease;
+  }
+  #son-reveal.open { transform: translateY(0); opacity: 1; }
+  .sr-panel {
+    position: relative;
+    width: min(86vw, 340px);
+    pointer-events: auto;                 /* the panel itself is interactive */
+    background: linear-gradient(160deg, #faf6ea, #efe6cd);
+    border: 1px solid rgba(184,144,42,0.5);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border-radius: 4px;
+    padding: 22px 20px 20px;
+    text-align: center;
+  }
+  @media (max-width: 768px) {
+    #son-reveal { right: 10px; left: 10px; bottom: 70px; }
+    .sr-panel { width: auto; }
+  }
+  [data-theme="dark"] .sr-panel { background: linear-gradient(160deg, #221f15, #181610); border-color: rgba(184,144,42,0.35); }
+  .sr-close {
+    position: absolute; top: 8px; right: 10px;
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; color: var(--brown-light); opacity: 0.7;
+  }
+  .sr-eyebrow {
+    font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #8b0000; margin-bottom: 20px;
+  }
+  .sr-words { display: flex; justify-content: space-around; gap: 14px; }
+  .sr-word { opacity: 0; transform: translateY(8px); }
+  .sr-heb { font-family: serif; font-size: 30px; color: #8b0000; line-height: 1.1; }
+  .sr-heb .sr-lit { transition: color 0.5s ease, text-shadow 0.5s ease; }
+  .sr-rom { font-family: 'EB Garamond', serif; font-style: italic; font-size: 13px; color: var(--gold); margin-top: 2px; }
+  .sr-en { font-family: 'EB Garamond', serif; font-size: 10px; color: var(--brown-light); margin-top: 3px; }
+  .sr-derive {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin: 16px 0 6px; opacity: 0; min-height: 30px;
+  }
+  .sr-d-label { font-family: 'EB Garamond', serif; font-size: 10px; color: var(--brown-light); opacity: 0.8; }
+  .sr-fly { font-family: serif; font-size: 26px; color: #b8902a; text-shadow: 0 0 10px rgba(184,144,42,0.7); }
+  .sr-plus { font-family: serif; font-size: 18px; color: var(--brown-light); }
+  .sr-result { opacity: 0; transform: scale(0.7); margin-top: 8px; }
+  .sr-ben { font-family: serif; font-size: 44px; color: #b8902a; line-height: 1; text-shadow: 0 0 22px rgba(184,144,42,0.55); }
+  .sr-ben-rom { font-family: 'EB Garamond', serif; font-style: italic; font-size: 14px; color: var(--gold); margin-top: 4px; }
+  .sr-ben-en { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 20px; color: #8b0000; margin-top: 1px; }
+  .sr-coda {
+    font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.5;
+    color: var(--ink); margin-top: 14px; opacity: 0;
+  }
+  .sr-coda em { color: #8b0000; font-style: italic; }
+
+  /* Staged choreography (plays on .sr-run) */
+  .sr-run .sr-first   { animation: sr-appear 0.6s ease-out 0.1s forwards; }
+  .sr-run .sr-last    { animation: sr-appear 0.6s ease-out 0.6s forwards; }
+  .sr-run .sr-heb .sr-lit { animation: sr-litup 0.6s ease-out 1.4s forwards; }
+  .sr-run .sr-derive  { animation: sr-fade 0.6s ease-out 2.0s forwards; }
+  .sr-run .sr-result  { animation: sr-pop 0.7s cubic-bezier(0.2,1.3,0.4,1) 2.8s forwards; }
+  .sr-run .sr-coda    { animation: sr-fade 0.8s ease-out 3.6s forwards; }
+  @keyframes sr-appear { to { opacity: 1; transform: translateY(0); } }
+  @keyframes sr-litup { to { color: #b8902a; text-shadow: 0 0 14px rgba(184,144,42,0.9); } }
+  @keyframes sr-fade { to { opacity: 1; } }
+  @keyframes sr-pop { to { opacity: 1; transform: scale(1); } }
+
 </style>
 </head>
 <body>
@@ -3178,7 +3273,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v33.4 · 11 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v34.1 · 15 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4292,7 +4387,10 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     const searchBar = document.getElementById('reader-search-bar');
     const sheet = document.getElementById('ancient-sheet');
-    if (searchBar && searchBar.classList.contains('open')) {
+    const sonReveal = document.getElementById('son-reveal');
+    if (sonReveal && sonReveal.classList.contains('open')) {
+      closeSonReveal();
+    } else if (searchBar && searchBar.classList.contains('open')) {
       closeReaderSearch();
     } else if (readerOpen) {
       closeReader();
@@ -5355,6 +5453,36 @@ function renderBiblical() {
 
   // (Scripture scrubber is built after render, see buildBibleScrubber)
 
+  // Bookend word-cards: the first and last WORDS of the Bible, trilingual,
+  // connected by the Alpha-Omega symmetry arc.
+  const makeWordCard = (opts) => {
+    const col = document.createElement('div');
+    col.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;width:150px;padding:0 12px;position:relative;align-self:center;';
+    const card = document.createElement('div');
+    card.className = 'bible-card word-card';
+    card.id = opts.id;
+    card.style.setProperty('--bc', '#8b0000');
+    card.style.cssText += 'text-align:center;cursor:pointer;';
+    card.innerHTML = `
+      <div class="bc-badge" style="position:static;display:inline-block;margin-bottom:4px;">${opts.tag}</div>
+      <div style="font-family:serif;font-size:22px;color:#8b0000;line-height:1.1;margin-bottom:2px;" dir="rtl">${opts.hebrewHtml}</div>
+      <div style="font-family:'EB Garamond',serif;font-size:11px;color:#6b1a2a;opacity:0.75;margin-bottom:3px;">${opts.translit}</div>
+      <div style="font-family:'EB Garamond',serif;font-style:italic;font-size:13px;color:var(--gold);margin-bottom:2px;">${opts.greek}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:var(--ink);">${opts.english}</div>`;
+    col.appendChild(card);
+    return col;
+  };
+
+  // First word — Genesis 1:1
+  track.appendChild(makeWordCard({
+    id: 'bs-alpha-card',
+    tag: 'The First Word',
+    hebrewHtml: '<span class="son-letter">בְּ</span>רֵאשִׁית',
+    translit: 'bereshit',
+    greek: 'Ἐν ἀρχῇ',
+    english: '“In the beginning”'
+  }));
+
   // Group events by era
   const groups = {};
   BIBLICAL_ERAS.forEach(e => { groups[e.label] = []; });
@@ -5529,7 +5657,18 @@ function renderBiblical() {
     track.appendChild(eraEl);
   });
   // Build the scripture scrubber after layout settles
+  // Last word — Revelation 22:21
+  track.appendChild(makeWordCard({
+    id: 'bs-omega-card',
+    tag: 'The Last Word',
+    hebrewHtml: 'אָמֵ<span class="son-letter">ן</span>',
+    translit: 'amen',
+    greek: 'ἀμήν',
+    english: '“Amen”'
+  }));
+
   if (typeof buildBibleScrubber === 'function') setTimeout(buildBibleScrubber, 30);
+  if (typeof wireSymmetryArc === 'function') setTimeout(wireSymmetryArc, 40);
 }
 
 function setView(view) {
@@ -6070,6 +6209,123 @@ function bsEraName(yr) {
   const e = BIBLICAL_ERAS.find(e => yr >= e.from && yr < e.to);
   return e ? e.label : '';
 }
+// ── ALPHA & OMEGA SYMMETRY ARC ────────────────────────────────────────────────
+// Hovering the first Scripture card ("In the beginning" / Genesis) shoots an arc
+// across to the last card (Revelation / the end), revealing the symmetry:
+// Alpha & Omega · the beginning and the end · בן the Son.
+function wireSymmetryArc() {
+  const track = document.getElementById('bible-track');
+  const alpha = document.getElementById('bs-alpha-card');
+  const omega = document.getElementById('bs-omega-card');
+  if (!track || !alpha || !omega) return;
+
+  // Reveal hint on each bookend card
+  [alpha, omega].forEach(c => {
+    if (!c.querySelector('.bs-reveal-hint')) {
+      const hint = document.createElement('div');
+      hint.className = 'bs-reveal-hint';
+      hint.innerHTML = '✦ reveal the symmetry';
+      c.appendChild(hint);
+    }
+    c.style.cursor = 'pointer';
+  });
+
+  // Build (once) the SVG arc overlay + floating label inside the track
+  let svg = document.getElementById('bs-arc-svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'bs-arc-svg';
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:30;opacity:0;transition:opacity 0.5s ease;overflow:visible;';
+    track.appendChild(svg);
+  }
+  let label = document.getElementById('bs-arc-label');
+  if (!label) {
+    label = document.createElement('div');
+    label.id = 'bs-arc-label';
+    label.style.cssText = 'position:absolute;z-index:31;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s ease;white-space:nowrap;';
+    track.appendChild(label);
+  }
+
+  const show = () => {
+    const tr = track.getBoundingClientRect();
+    const a = alpha.getBoundingClientRect();
+    const o = omega.getBoundingClientRect();
+    const ax = (a.left + a.width / 2 - tr.left) + track.scrollLeft;
+    const ay = (a.top - tr.top);
+    const ox = (o.left + o.width / 2 - tr.left) + track.scrollLeft;
+    const oy = (o.top - tr.top);
+    const midX = (ax + ox) / 2;
+    let peakY = Math.min(ay, oy) - 80;
+    if (peakY < 44) peakY = 44;
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="bs-arc-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#b8902a"/>
+          <stop offset="50%" stop-color="#8b0000"/>
+          <stop offset="100%" stop-color="#b8902a"/>
+        </linearGradient>
+      </defs>
+      <path d="M ${ax} ${ay} Q ${midX} ${peakY} ${ox} ${oy}"
+            fill="none" stroke="url(#bs-arc-grad)" stroke-width="2"
+            stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
+      <circle cx="${ax}" cy="${ay}" r="4" fill="#b8902a"/>
+      <circle cx="${ox}" cy="${oy}" r="4" fill="#8b0000"/>
+      <text x="${ax}" y="${ay - 12}" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="#b8902a">&#913;</text>
+      <text x="${ox}" y="${oy - 12}" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="#8b0000">&#937;</text>
+    `;
+    label.style.left = midX + 'px';
+    label.style.top = (peakY + 10) + 'px';
+    label.style.transform = 'translate(-50%, 0)';
+    label.innerHTML = `
+      <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.22em;color:#8b0000;text-transform:uppercase;">Alpha &amp; Omega</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:#6b1a2a;margin-top:2px;">the beginning and the end</div>
+      <div style="font-family:'EB Garamond',serif;font-size:10px;color:#6b1a2a;opacity:0.85;margin-top:6px;letter-spacing:0.02em;">first letter <span style="font-family:serif;font-size:15px;color:#b8902a;">בְּ</span> &nbsp;+&nbsp; last letter <span style="font-family:serif;font-size:15px;color:#b8902a;">ן</span></div>
+      <div style="font-family:serif;font-size:24px;color:#b8902a;margin-top:2px;letter-spacing:0.08em;">בֵּן <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:#6b1a2a;">— ben — the Son</span></div>`;
+    svg.style.opacity = '1';
+    label.style.opacity = '1';
+    alpha.classList.add('bs-symmetry-lit');
+    omega.classList.add('bs-symmetry-lit');
+  };
+  const hide = () => {
+    svg.style.opacity = '0';
+    label.style.opacity = '0';
+    alpha.classList.remove('bs-symmetry-lit');
+    omega.classList.remove('bs-symmetry-lit');
+  };
+
+  let pinned = false;
+  [alpha, omega].forEach(c => {
+    // Hover previews the arc (only when not pinned)
+    c.onmouseenter = () => { if (!pinned) show(); };
+    c.onmouseleave = () => { if (!pinned) hide(); };
+    // Click pins the arc + letters ON and opens the slide reveal. They stay lit
+    // after the box is closed; clicking a lit card again unpins/clears.
+    c.onclick = () => {
+      if (pinned) { pinned = false; hide(); closeSonReveal(); }
+      else { pinned = true; show(); openSonReveal(); }
+    };
+  });
+  // expose so closing the box doesn't clear the pinned arc
+  window.__symmetryPinned = () => pinned;
+}
+
+// Staged "aha" reveal: first word + last word → their first/last letters
+// fly together to spell בן (Son), with Alpha & Omega framing.
+function openSonReveal() {
+  const modal = document.getElementById('son-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  const stage = modal.querySelector('.sr-stage');
+  stage.classList.remove('sr-run');
+  void stage.offsetWidth;
+  stage.classList.add('sr-run');
+}
+function closeSonReveal() {
+  const modal = document.getElementById('son-reveal');
+  if (modal) modal.classList.remove('open');
+}
+
 function buildBibleScrubber() {
   const track = document.getElementById('bs-scrubber-track');
   const sc = document.getElementById('bible-scroll');
@@ -6337,7 +6593,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v33.4 · 11 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v34.1 · 15 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -7344,6 +7600,40 @@ window.addEventListener('resize', () => {
   <div id="ancient-sheet-content"></div>
 </div>
 <div id="ancient-sheet-overlay" onclick="hideBottomSheet()" class="ancient-sheet-overlay"></div>
+
+<div id="son-reveal" onclick="if(event.target===this)closeSonReveal()">
+  <div class="sr-panel">
+    <button class="sr-close" onclick="closeSonReveal()" aria-label="Close">✕</button>
+    <div class="sr-eyebrow">Alpha &amp; Omega · the beginning and the end</div>
+    <div class="sr-stage">
+      <div class="sr-words">
+        <div class="sr-word sr-first">
+          <div class="sr-heb" dir="rtl"><span class="sr-lit">בְּ</span>רֵאשִׁית</div>
+          <div class="sr-rom">bereshit</div>
+          <div class="sr-en">“In the beginning” · Genesis 1:1</div>
+        </div>
+        <div class="sr-word sr-last">
+          <div class="sr-heb" dir="rtl">אָמֵ<span class="sr-lit">ן</span></div>
+          <div class="sr-rom">amen</div>
+          <div class="sr-en">“Amen” · Revelation 22:21</div>
+        </div>
+      </div>
+      <div class="sr-derive">
+        <span class="sr-d-label">first letter</span>
+        <span class="sr-fly sr-fly-b">בְּ</span>
+        <span class="sr-plus">+</span>
+        <span class="sr-d-label">last letter</span>
+        <span class="sr-fly sr-fly-n">ן</span>
+      </div>
+      <div class="sr-result">
+        <div class="sr-ben" dir="rtl">בֵּן</div>
+        <div class="sr-ben-rom">ben</div>
+        <div class="sr-ben-en">the Son</div>
+      </div>
+      <div class="sr-coda">The first letter of Scripture and the last together spell <em>the Son</em> — He is the beginning and the end.</div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
