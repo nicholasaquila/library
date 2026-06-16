@@ -3017,6 +3017,45 @@
     box-shadow: 0 0 14px 2px rgba(184,144,42,0.5), 0 0 0 1px rgba(139,0,0,0.4);
     transition: box-shadow 0.4s ease;
   }
+
+  /* Alpha-Omega arc phases in like a transmission from outside the timeline:
+     a flicker, a positional jitter, and an RGB split that converges to one line.
+     Then a faint ongoing shimmer keeps it from sitting quite still in our space. */
+  .bs-arc-glitch {
+    transform-box: fill-box; transform-origin: center;
+    animation: bs-arc-flicker 1.15s steps(1, jump-end) 1 both,
+               bs-arc-jitter 1.05s steps(1, jump-end) 1 both,
+               bs-arc-shimmer 5.5s ease-in-out 1.3s infinite;
+  }
+  .bs-arc-ghost-r { animation: bs-arc-ghostR 1.15s steps(1, jump-end) 1 forwards; }
+  .bs-arc-ghost-b { animation: bs-arc-ghostB 1.15s steps(1, jump-end) 1 forwards; }
+  @keyframes bs-arc-flicker {
+    0%{opacity:0} 5%{opacity:.85} 8%{opacity:.05} 13%{opacity:1} 17%{opacity:.2}
+    23%{opacity:.92} 29%{opacity:.35} 37%{opacity:1} 45%{opacity:.55} 53%{opacity:1}
+    63%{opacity:.78} 74%{opacity:1} 88%{opacity:.9} 100%{opacity:1}
+  }
+  @keyframes bs-arc-jitter {
+    0%,100%{transform:translate(0,0) skewX(0)}
+    6%{transform:translate(-3px,1px) skewX(-5deg)}
+    13%{transform:translate(4px,-2px) skewX(3deg)}
+    20%{transform:translate(-2px,2px) skewX(-2deg)}
+    29%{transform:translate(3px,-1px) skewX(4deg)}
+    40%{transform:translate(-2px,1px) skewX(-1deg)}
+    53%{transform:translate(1px,-1px)}
+    68%{transform:translate(-1px,0)}
+    84%{transform:translate(0.5px,0)}
+  }
+  @keyframes bs-arc-ghostR {
+    0%{transform:translate(-4px,1px);opacity:.75} 20%{transform:translate(-7px,-1px);opacity:.7}
+    45%{transform:translate(-3px,2px);opacity:.5} 70%{transform:translate(-2px,0);opacity:.28}
+    100%{transform:translate(0,0);opacity:0}
+  }
+  @keyframes bs-arc-ghostB {
+    0%{transform:translate(4px,-1px);opacity:.75} 20%{transform:translate(7px,1px);opacity:.7}
+    45%{transform:translate(3px,-2px);opacity:.5} 70%{transform:translate(2px,0);opacity:.28}
+    100%{transform:translate(0,0);opacity:0}
+  }
+  @keyframes bs-arc-shimmer { 0%,100%{opacity:1} 40%{opacity:.88} 55%{opacity:.96} 70%{opacity:.85} }
   /* The first/last letter that together spell בן ("Son") */
   .son-letter { transition: color 0.35s ease, text-shadow 0.35s ease; }
   .bible-card.bs-symmetry-lit .son-letter {
@@ -3396,7 +3435,55 @@
   .ev-run .ev-lead  { animation: sr-fade 0.6s ease-out 3.3s forwards; }
   .ev-run .ev-beat  { animation: sr-fade 0.6s ease-out var(--d,0s) forwards; }
   .ev-run .ev-coda  { animation: sr-fade 0.8s ease-out 6.0s forwards; }
-  @keyframes ev-turn { from { transform: rotateY(0deg); } to { transform: rotateY(180deg); } }</style>
+  @keyframes ev-turn { from { transform: rotateY(0deg); } to { transform: rotateY(180deg); } }
+
+  /* ── THE SCAPEGOAT / TRIAL reveal ── */
+  #trial-reveal {
+    position: fixed; right: 16px; bottom: 16px; z-index: 4000;
+    display: block; pointer-events: none;
+    transform: translateY(120%); opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease, right 0.35s ease, bottom 0.35s ease;
+  }
+  #trial-reveal.open { transform: translateY(0); opacity: 1; }
+  .tg-panel {
+    position: relative; width: min(90vw, 372px); box-sizing: border-box;
+    max-height: 82vh; overflow-y: auto; pointer-events: auto;
+    background: linear-gradient(165deg, #faf6ea, #ece3d8);
+    border: 1px solid rgba(110,85,119,0.5);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.42);
+    border-radius: 4px; padding: 22px 20px 18px;
+  }
+  @media (max-width: 768px) { #trial-reveal { right: 10px; left: 10px; bottom: 70px; } .tg-panel { width: auto; } }
+  [data-theme="dark"] .tg-panel { background: linear-gradient(165deg, #1d1722, #16121b); border-color: rgba(168,146,176,0.4); }
+  .tg-close { position: absolute; top: 8px; right: 10px; background: none; border: none; cursor: pointer; font-size: 16px; color: var(--brown-light); opacity: 0.7; }
+  .tg-eyebrow { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.22em; text-transform: uppercase; color: #6e5577; text-align: center; }
+  .tg-intro { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; line-height: 1.5; color: var(--ink); text-align: center; margin: 10px 4px 4px; opacity: 0; }
+  .tg-intro b { font-style: normal; color: #6e5577; }
+  /* the lottery: two goats, two men named Jesus */
+  .tg-lots { display: flex; gap: 8px; margin: 14px 0 6px; }
+  .tg-lot { flex: 1; border: 1px solid rgba(110,85,119,0.35); border-radius: 3px; padding: 9px 7px; text-align: center; opacity: 0; }
+  .tg-lot .nm { font-family: 'Cinzel', serif; font-size: 11px; color: #6e5577; letter-spacing: 0.04em; }
+  .tg-lot .ro { font-family: 'EB Garamond', serif; font-style: italic; font-size: 10px; color: var(--brown-light); margin-top: 2px; }
+  .tg-lot .fate { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 5px; }
+  .tg-lot.freed .fate { color: #7a8a52; }
+  .tg-lot.slain .fate { color: #8b0000; }
+  .tg-beat { font-family: 'EB Garamond', serif; font-size: 11.5px; line-height: 1.4; color: var(--ink); opacity: 0; padding: 3px 0 3px 14px; position: relative; }
+  .tg-beat::before { content: '✦'; position: absolute; left: 0; top: 4px; font-size: 7px; color: #6e5577; }
+  .tg-beat em { color: #6e5577; font-style: italic; }
+  .tg-beat .r { color: var(--brown-light); font-size: 9.5px; }
+  .tg-tier { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: #9a7b46; margin: 12px 0 4px; opacity: 0; border-bottom: 1px solid rgba(140,110,55,0.2); padding-bottom: 3px; }
+  .tg-devo { font-family: 'EB Garamond', serif; font-style: italic; font-size: 11px; line-height: 1.4; color: var(--brown-light); opacity: 0; padding: 2px 0; }
+  .tg-devo b { font-style: normal; color: var(--ink); font-weight: 600; }
+  .tg-coda { font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.55; color: var(--ink); margin-top: 12px; text-wrap: balance; opacity: 0; }
+  .tg-coda em { color: #6e5577; font-style: italic; }
+  /* choreography (reuses sr-appear / sr-fade) */
+  .tg-run .tg-intro          { animation: sr-appear 0.6s ease-out 0.1s forwards; }
+  .tg-run .tg-lot.freed      { animation: sr-fade 0.6s ease-out 0.8s forwards; }
+  .tg-run .tg-lot.slain      { animation: sr-fade 0.6s ease-out 1.2s forwards; }
+  .tg-run .tg-beat           { animation: sr-fade 0.55s ease-out var(--d,1.8s) forwards; }
+  .tg-run .tg-tier           { animation: sr-fade 0.5s ease-out 3.4s forwards; }
+  .tg-run .tg-devo           { animation: sr-fade 0.55s ease-out var(--d,3.6s) forwards; }
+  .tg-run .tg-coda           { animation: sr-fade 0.8s ease-out 4.6s forwards; }</style>
 </head>
 <body>
 <noscript>
@@ -3564,7 +3651,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v36.3 · 16 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v36.8 · 16 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4683,6 +4770,7 @@ document.addEventListener('keydown', e => {
     const donkeyReveal = document.getElementById('donkey-reveal');
     const breadReveal = document.getElementById('bread-reveal');
     const eveReveal = document.getElementById('eve-reveal');
+    const trialReveal = document.getElementById('trial-reveal');
     if (sonReveal && sonReveal.classList.contains('open')) {
       closeSonReveal();
     } else if (psalmReveal && psalmReveal.classList.contains('open')) {
@@ -4693,6 +4781,8 @@ document.addEventListener('keydown', e => {
       closeBreadReveal();
     } else if (eveReveal && eveReveal.classList.contains('open')) {
       closeEveReveal();
+    } else if (trialReveal && trialReveal.classList.contains('open')) {
+      closeTrialReveal();
     } else if (searchBar && searchBar.classList.contains('open')) {
       closeReaderSearch();
     } else if (readerOpen) {
@@ -5687,7 +5777,7 @@ const BIBLICAL_ERAS = [
 ];
 
 // accent colour per era
-const LIFE_OF_CHRIST = new Set(['The Nativity','Baptism of Jesus','The Sermon on the Mount','The Triumphal Entry','The Last Supper','Crucifixion & Resurrection','The Ascension']);
+const LIFE_OF_CHRIST = new Set(['The Nativity','Baptism of Jesus','The Sermon on the Mount','The Triumphal Entry','The Last Supper','The Trial','Crucifixion & Resurrection','The Ascension']);
 const BIBLE_ERA_COLORS = {
   'Patriarchal Age':                 '#5c3d1e',
   'Exodus & Conquest':               '#4a3000',
@@ -5748,6 +5838,7 @@ const BIBLICAL_EVENTS = [
   { event:'The Sermon on the Mount',  book:'Matthew',                        greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ',                note:null,              yr:28    },
   { event:'The Triumphal Entry',      book:'Matthew · John',                 greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ · ΙΩΑΝΝΗΝ',      note:'Palm Sunday',     yr:33    },
   { event:'The Last Supper',          book:'Matthew · Mark · Luke · John',   greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:33    },
+  { event:'The Trial',                book:'Matthew 27 · Mark 15',           greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ ΚΖ΄',            note:'Barabbas released', yr:33    },
   { event:'Crucifixion & Resurrection',book:'Matthew · Mark · Luke · John',  greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:33    },
   { event:'The Ascension',            book:'Luke · Acts',                    greek:'ΚΑΤΑ ΛΟΥΚΑΝ · ΠΡΑΞΕΙΣ',        note:null,              yr:33    },
   { event:'Pentecost',                book:'Acts',                           greek:'ΠΡΑΞΕΙΣ ΑΠΟΣΤΟΛΩΝ',            note:null,              yr:33    },
@@ -5770,10 +5861,12 @@ function renderBiblical() {
   const EUCHARIST_SVG = `<svg viewBox="0 0 28 30" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g stroke="#c79a33" stroke-width="1" stroke-linecap="round"><line x1="14" y1="0.5" x2="14" y2="3"/><line x1="9.2" y1="2.2" x2="10.6" y2="4.3"/><line x1="18.8" y1="2.2" x2="17.4" y2="4.3"/><line x1="6" y1="6.4" x2="8.3" y2="7"/><line x1="22" y1="6.4" x2="19.7" y2="7"/></g><circle cx="14" cy="8" r="4.6" fill="#f3e4a8" stroke="#9a7414" stroke-width="0.9"/><path d="M14 5.4 L14 10.6 M11.4 8 L16.6 8" stroke="#9a7414" stroke-width="0.9" stroke-linecap="round"/><path d="M8 15 L20 15 Q19 21.5 14 22.5 Q9 21.5 8 15 Z" fill="#c79a33" stroke="#9a7414" stroke-width="0.8"/><rect x="13.1" y="22.3" width="1.8" height="3.6" fill="#b8902a"/><path d="M9.5 29 Q14 25.8 18.5 29 Z" fill="#c79a33" stroke="#9a7414" stroke-width="0.8"/></svg>`;
   const DONKEY_SVG = `<svg viewBox="0 0 32 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g transform="translate(2,3)"><g fill="#9a7414" stroke="#6f5410" stroke-width="0.6"><rect x="9" y="16" width="1.8" height="7" rx="0.9"/><rect x="14" y="17" width="1.8" height="6" rx="0.9"/><rect x="20" y="17" width="1.8" height="6" rx="0.9"/><rect x="23.5" y="16" width="1.8" height="7" rx="0.9"/><ellipse cx="18" cy="13" rx="9.5" ry="4.6"/><path d="M9 15 Q5.5 12 5.2 8 Q5.2 6.4 6.8 6.2 Q8.8 6.8 10 10.4 L11.5 14 Z"/><path d="M6.5 8.6 Q2.6 8 1 4.8 Q0 2.8 2 2 Q4.6 2.4 6 5 Q7 6.6 7 8 Z"/><path d="M3.4 4 Q2 0 3.6 -0.6 Q5 0.6 4.6 4 Z"/><path d="M5.6 4 Q5.8 0.2 7.6 -0.4 Q8.6 1.4 6.4 4.2 Z"/><path d="M27 11 Q30 14 28.6 18 Q28 20 27 20.4 Q28 18 26.4 15 Z"/></g><g stroke="#3a2a08" stroke-width="1.4" stroke-linecap="round"><path d="M11 9 Q18 7 25 10" fill="none"/><line x1="14" y1="6.5" x2="14" y2="15"/></g></g></svg>`;
   const CROSS_SVG = `<svg viewBox="0 0 24 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M9 2 h4 v6 h6 v4 h-6 v13 h-4 v-13 h-6 v-4 h6 z" fill="#8b0000" stroke="#5c0000" stroke-width="0.6"/></svg>`;
+  const GAVEL_SVG = `<svg viewBox="0 0 34 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g fill="#6e5577" stroke="#4f3c57" stroke-width="0.7" stroke-linejoin="round"><g transform="rotate(-37 16 13)"><rect x="5.5" y="8.5" width="21" height="9" rx="4.5"/><rect x="10" y="9.2" width="1.4" height="7.6" fill="#4f3c57" stroke="none"/><rect x="20.6" y="9.2" width="1.4" height="7.6" fill="#4f3c57" stroke="none"/><rect x="13.4" y="13" width="5.2" height="18" rx="2.6"/></g><rect x="4" y="32" width="22" height="4.4" rx="2.2"/></g></svg>`;
   const THREAD_MARKERS = {
     'bs-bread-card':   { svg: EUCHARIST_SVG, glow: 'rgba(203,162,62,0.9)' },
     'bs-donkey-card':  { svg: DONKEY_SVG,    glow: 'rgba(203,162,62,0.9)' },
     'bs-passion-card': { svg: CROSS_SVG,     glow: 'rgba(176,32,32,0.9)' },
+    'bs-trial-card':   { svg: GAVEL_SVG,    glow: 'rgba(140,108,150,0.95)' },
   };
   const addThreadMarker = (card) => {
     for (const cls in THREAD_MARKERS) {
@@ -5967,6 +6060,10 @@ function renderBiblical() {
       // accent; wireEveArc() links the fall to the Ave that reverses it.
       if (ev.event === 'Adam & Eve')        { card.id = 'bs-eve-fall'; card.classList.add('bs-eve-card'); card.style.setProperty('--bc', '#5b7aa6'); }
       if (ev.event === 'The Annunciation')  { card.id = 'bs-eve-mary'; card.classList.add('bs-eve-card'); card.style.setProperty('--bc', '#5b7aa6'); }
+      // The scapegoat thread: the Trial (Barabbas, "son of the father," released)
+      // arced back to the scapegoat law given at Sinai (Leviticus 16).
+      if (ev.event === 'The Trial')         { card.id = 'bs-trial-card';   card.classList.add('bs-trial-card'); card.style.setProperty('--bc', '#6e5577'); }
+      if (ev.event === 'The Law at Sinai')  { card.id = 'bs-trial-anchor'; card.classList.add('bs-trial-card'); card.style.setProperty('--bc', '#6e5577'); }
       card.innerHTML = `
         ${ev.yr < -2000 ? '' : `<div class="bc-date">${ev.yr < 0 ? 'c. ' + Math.abs(ev.yr) + ' BC' : 'c. ' + ev.yr + ' AD'}</div>`}
         <div class="bc-event">${ev.event}</div>
@@ -6076,6 +6173,7 @@ function renderBiblical() {
   if (typeof wireDonkeyArc === 'function') setTimeout(wireDonkeyArc, 40);
   if (typeof wireBreadArc === 'function') setTimeout(wireBreadArc, 40);
   if (typeof wireEveArc === 'function') setTimeout(wireEveArc, 40);
+  if (typeof wireTrialArc === 'function') setTimeout(wireTrialArc, 40);
 }
 
 function setView(view) {
@@ -6665,37 +6763,57 @@ function wireSymmetryArc() {
     const ay = (a.top + a.height / 2 - tr.top);
     const ox = (o.left + o.width / 2 - tr.left) + track.scrollLeft;
     const oy = (o.top + o.height / 2 - tr.top);
-    const midX = (ax + ox) / 2;
-    // One smooth parabola (quadratic Bezier) arching from the Alpha dot up over
-    // the timeline and back down to the Omega dot -- no square risers/canopy.
-    // The apex is pinned to a line measured just above the era-title row (live,
-    // not hardcoded), so the arch skims the titles instead of floating in empty
-    // sky (and stays correct if padding/fonts change).
+    // "Lift + run off the edge + connect": one continuous line enters from the left
+    // screen edge, dips into Alpha, bows across to Omega, and runs off the right edge,
+    // fading at both edges so the ring closes beyond the frame. It is lifted off the
+    // timeline (soft drop-shadow beneath) and phases in with a flicker / RGB-split
+    // glitch, as if briefly caught sight of from outside our reality.
     const eraLabelEl = track.querySelector('.tl-era');
     const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
-    const canopyY = Math.max(14, titleTop - 12); // apex ~12px above the titles
-    const peakY = canopyY;
-    // Control-point Y so the quadratic's apex (at t=0.5) lands exactly on canopyY:
-    //   y(0.5) = ay/4 + ctrlY/2 + oy/4  =>  ctrlY = 2*canopyY - (ay+oy)/2
-    const ctrlY = 2 * canopyY - (ay + oy) / 2;
+    const canopyY = Math.max(14, titleTop - 12);
+    const scroller = document.getElementById('bible-scroll');
+    const xL = scroller ? scroller.scrollLeft : 0;
+    const xR = scroller ? (scroller.scrollLeft + scroller.clientWidth) : (track.scrollLeft + track.clientWidth);
+    const edgeY = Math.max(6, canopyY - 6);
+    const midX = (ax + ox) / 2;
+    const ctrlY = 2 * canopyY - (ay + oy) / 2;          // bow apex skims the era titles
+    const dFull = `M ${xL} ${edgeY}`
+      + ` C ${ax - (ax - xL) * 0.6} ${edgeY}, ${ax - (ax - xL) * 0.45} ${ay}, ${ax} ${ay}`
+      + ` Q ${midX} ${ctrlY} ${ox} ${oy}`
+      + ` C ${ox + (xR - ox) * 0.45} ${oy}, ${ox + (xR - ox) * 0.6} ${edgeY}, ${xR} ${edgeY}`;
+    const span = Math.max(1, xR - xL);
+    const aOff = (ax - xL) / span, oOff = (ox - xL) / span;
+    const mkStops = (col, op) => {
+      let s = '';
+      if (aOff > 0.02) s += `<stop offset="0%" stop-color="${col}" stop-opacity="0"/><stop offset="${Math.min(48, Math.max(1, aOff * 100)).toFixed(1)}%" stop-color="${col}" stop-opacity="${op}"/>`;
+      else s += `<stop offset="0%" stop-color="${col}" stop-opacity="${op}"/>`;
+      if (oOff < 0.98) s += `<stop offset="${Math.max(52, Math.min(99, oOff * 100)).toFixed(1)}%" stop-color="${col}" stop-opacity="${op}"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/>`;
+      else s += `<stop offset="100%" stop-color="${col}" stop-opacity="${op}"/>`;
+      return s;
+    };
     svg.innerHTML = `
       <defs>
-        <linearGradient id="bs-arc-grad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#b8902a"/>
-          <stop offset="50%" stop-color="#8b0000"/>
-          <stop offset="100%" stop-color="#b8902a"/>
-        </linearGradient>
+        <linearGradient id="bs-arc-gFull" gradientUnits="userSpaceOnUse" x1="${xL}" y1="0" x2="${xR}" y2="0">${mkStops('#b8902a', '0.95')}</linearGradient>
+        <linearGradient id="bs-arc-gFullC" gradientUnits="userSpaceOnUse" x1="${xL}" y1="0" x2="${xR}" y2="0">${mkStops('#f5e3a8', '0.6')}</linearGradient>
+        <filter id="bs-arc-lift" x="-10%" y="-60%" width="120%" height="240%">
+          <feDropShadow dx="0" dy="6" stdDeviation="3.4" flood-color="#140d04" flood-opacity="0.32"/>
+        </filter>
       </defs>
-      <path d="M ${ax} ${ay} Q ${midX} ${ctrlY} ${ox} ${oy}"
-            fill="none" stroke="url(#bs-arc-grad)" stroke-width="2"
-            stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
-      <circle cx="${ax}" cy="${ay}" r="4" fill="#b8902a"/>
-      <circle cx="${ox}" cy="${oy}" r="4" fill="#8b0000"/>
-      <text x="${ax}" y="${ay - 12}" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="#b8902a">&#913;</text>
-      <text x="${ox}" y="${oy - 12}" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="#8b0000">&#937;</text>
+      <g class="bs-arc-glitch">
+        <path class="bs-arc-ghost-r" d="${dFull}" fill="none" stroke="#ff2d55" stroke-width="3" stroke-linecap="round" style="mix-blend-mode:screen"/>
+        <path class="bs-arc-ghost-b" d="${dFull}" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" style="mix-blend-mode:screen"/>
+        <g filter="url(#bs-arc-lift)">
+          <path d="${dFull}" fill="none" stroke="url(#bs-arc-gFull)" stroke-width="3.6" stroke-linecap="round"/>
+        </g>
+        <path d="${dFull}" fill="none" stroke="url(#bs-arc-gFullC)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="${ax}" cy="${ay}" r="4" fill="#b8902a"/>
+        <circle cx="${ox}" cy="${oy}" r="4" fill="#8b0000"/>
+        <text x="${ax}" y="${ay - 12}" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="#b8902a">&#913;</text>
+        <text x="${ox}" y="${oy - 12}" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="#8b0000">&#937;</text>
+      </g>
     `;
-    label.style.left = midX + 'px';
-    label.style.top = (peakY - 4) + 'px';
+    label.style.left = ((xL + xR) / 2) + 'px';
+    label.style.top = (edgeY - 4) + 'px';
     label.style.transform = 'translate(-50%, -100%)';
     label.innerHTML = `
       <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#8b0000;text-transform:uppercase;">Alpha &amp; Omega · the beginning and the end</div>`;
@@ -7176,6 +7294,103 @@ function closeEveReveal() {
   layoutReveals();
 }
 
+// ── THE SCAPEGOAT THREAD: THE TRIAL -> THE LAW AT SINAI (Leviticus 16) ─────────
+// Barabbas, "son of the father," is released while the true Son is condemned:
+// the two goats of the Day of Atonement, one let go, one slain in its place.
+function wireTrialArc() {
+  const track = document.getElementById('bible-track');
+  if (!track) return;
+  const tSpine = track.querySelector('[data-bs-event="The Trial"]');
+  const lSpine = track.querySelector('[data-bs-event="The Law at Sinai"]');
+  const tCard = document.getElementById('bs-trial-card');
+  const lCard = document.getElementById('bs-trial-anchor');
+  if (!tSpine || !lSpine || !tCard || !lCard) return;
+
+  let svg = document.getElementById('bs-trial-arc-svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'bs-trial-arc-svg';
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:26;opacity:0;transition:opacity 0.5s ease;overflow:visible;';
+    track.appendChild(svg);
+  }
+  let label = document.getElementById('bs-trial-arc-label');
+  if (!label) {
+    label = document.createElement('div');
+    label.id = 'bs-trial-arc-label';
+    label.style.cssText = 'position:absolute;z-index:31;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s ease;white-space:nowrap;';
+    track.appendChild(label);
+  }
+
+  const show = () => {
+    const tr = track.getBoundingClientRect();
+    const t = tSpine.getBoundingClientRect();
+    const l = lSpine.getBoundingClientRect();
+    const ax = (t.left + t.width / 2 - tr.left) + track.scrollLeft;
+    const ay = (t.top + t.height / 2 - tr.top);
+    const ox = (l.left + l.width / 2 - tr.left) + track.scrollLeft;
+    const oy = (l.top + l.height / 2 - tr.top);
+    const midX = (ax + ox) / 2;
+    const eraLabelEl = track.querySelector('.tl-era');
+    const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
+    const canopyY = Math.max(14, titleTop - 12);
+    const ctrlY = 2 * canopyY - (ay + oy) / 2;
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="bs-trial-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4f3c57"/>
+          <stop offset="50%" stop-color="#a892b0"/>
+          <stop offset="100%" stop-color="#4f3c57"/>
+        </linearGradient>
+      </defs>
+      <path d="M ${ax} ${ay} Q ${midX} ${ctrlY} ${ox} ${oy}"
+            fill="none" stroke="url(#bs-trial-grad)" stroke-width="2"
+            stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
+      <circle cx="${ax}" cy="${ay}" r="4" fill="#6e5577"/>
+      <circle cx="${ox}" cy="${oy}" r="4" fill="#6e5577"/>`;
+    label.style.left = midX + 'px';
+    label.style.top = (canopyY - 4) + 'px';
+    label.style.transform = 'translate(-50%, -100%)';
+    label.innerHTML = `
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#6e5577;text-transform:uppercase;">the two goats &middot; the son of the father set free</div>`;
+    svg.style.opacity = '1';
+    label.style.opacity = '1';
+    tCard.classList.add('bs-symmetry-lit');
+    lCard.classList.add('bs-symmetry-lit');
+  };
+  const hide = () => {
+    svg.style.opacity = '0';
+    label.style.opacity = '0';
+    tCard.classList.remove('bs-symmetry-lit');
+    lCard.classList.remove('bs-symmetry-lit');
+  };
+
+  let pinned = false;
+  [tCard, lCard].forEach(c => {
+    c.style.cursor = 'pointer';
+    c.onmouseenter = () => { if (!pinned) show(); };
+    c.onmouseleave = () => { if (!pinned) hide(); };
+    c.onclick = () => {
+      if (pinned) { pinned = false; hide(); closeTrialReveal(); }
+      else { pinned = true; show(); openTrialReveal(); }
+    };
+  });
+}
+
+function openTrialReveal() {
+  const modal = document.getElementById('trial-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  layoutReveals();
+  const stage = modal.querySelector('.tg-stage');
+  if (stage) { stage.classList.remove('tg-run'); void stage.offsetWidth; stage.classList.add('tg-run'); }
+}
+function closeTrialReveal() {
+  const modal = document.getElementById('trial-reveal');
+  if (modal) modal.classList.remove('open');
+  layoutReveals();
+}
+
 function buildBibleScrubber() {
   const track = document.getElementById('bs-scrubber-track');
   const sc = document.getElementById('bible-scroll');
@@ -7451,7 +7666,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v36.3 · 16 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v36.8 · 16 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -8652,6 +8867,37 @@ window.addEventListener('resize', () => {
         <div class="ev-beat ev-trad" style="--d:5.1s">Long before, Irenaeus said Mary&rsquo;s obedience untied the knot Eve&rsquo;s disobedience had bound: the new Eve.</div>
       </div>
       <div class="ev-coda">What was bound in <em>Eva</em>, the Latin ear heard loosed in <em>Ave</em>: her &ldquo;yes&rdquo; reversing the first &ldquo;no.&rdquo;</div>
+    </div>
+  </div>
+</div>
+
+<div id="trial-reveal" class="reveal-popup" onclick="if(event.target===this)closeTrialReveal()">
+  <div class="tg-panel">
+    <button class="tg-close" onclick="closeTrialReveal()" aria-label="Close">✕</button>
+    <div class="tg-eyebrow">The Two Goats &middot; bar-abba</div>
+    <div class="tg-stage">
+      <div class="tg-intro"><b>Bar-abba</b> is Aramaic for &ldquo;son of the father.&rdquo; At the trial the crowd is handed a choice between two men.</div>
+      <div class="tg-lots">
+        <div class="tg-lot freed">
+          <div class="nm">Jesus Barabbas</div>
+          <div class="ro">son of the father</div>
+          <div class="fate">set free</div>
+        </div>
+        <div class="tg-lot slain">
+          <div class="nm">Jesus the Christ</div>
+          <div class="ro">the Son of the Father</div>
+          <div class="fate">condemned</div>
+        </div>
+      </div>
+      <div class="tg-beat" style="--d:1.8s">The name is <em>bar-abba</em>: <em>bar</em>, son; <em>abba</em>, father. <span class="r">Aramaic</span></div>
+      <div class="tg-beat" style="--d:2.1s">Part of the tradition names him &ldquo;Jesus Barabbas,&rdquo; so two men called Jesus stood before the crowd; Origen knew the reading and the text critics judge it original, the name later dropped for reverence. <span class="r">Matthew 27:16&ndash;17</span></div>
+      <div class="tg-beat" style="--d:2.4s">The Day of Atonement set two goats by lot: one slain for the LORD, one released for Azazel, bearing the people&rsquo;s sin away. <span class="r">Leviticus 16</span></div>
+
+      <div class="tg-tier">The reading &middot; what the Fathers heard</div>
+      <div class="tg-devo" style="--d:3.6s">From <b>Barnabas</b> and <b>Justin</b> to <b>Origen</b>, the two goats were read together as Christ: the one slain, and the one that carries sin away.</div>
+      <div class="tg-devo" style="--d:3.9s">At the trial the lot falls the same way: the guilty <b>son of the father</b> walks free because the innocent <b>Son of the Father</b> is condemned in his place.</div>
+
+      <div class="tg-coda">The wrong man went free, and that is the gospel in miniature: the guilty released, the innocent bound, the true Son standing in the place of the son of the father.</div>
     </div>
   </div>
 </div>
