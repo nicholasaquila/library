@@ -583,6 +583,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 180px;
+    box-sizing: border-box;
     padding: 0 24px 0 0;
     flex-shrink: 0;
     align-self: center;
@@ -3042,7 +3044,7 @@
     pointer-events: none;                /* never blocks the timeline behind it */
     transform: translateY(120%);
     opacity: 0;
-    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease, right 0.35s ease, bottom 0.35s ease;
   }
   #son-reveal.open { transform: translateY(0); opacity: 1; }
   .sr-panel {
@@ -3119,7 +3121,7 @@
     position: fixed; right: 16px; bottom: 16px; z-index: 4000;
     display: block; pointer-events: none;
     transform: translateY(120%); opacity: 0;
-    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease, right 0.35s ease, bottom 0.35s ease;
   }
   #psalm-reveal.open { transform: translateY(0); opacity: 1; }
   .pr-panel {
@@ -3149,24 +3151,28 @@
   .pw-gloss { font-family: 'EB Garamond', serif; font-size: 11px; color: var(--brown-light); margin-top: 1px; }
   .pw-scene { display: block; margin: 12px auto 2px; width: 240px; max-width: 100%; }
   .pw-dye, .pw-stain { transform-box: fill-box; transform-origin: center; }
-  .pw-cycle { font-family: 'EB Garamond', serif; font-size: 11.5px; line-height: 1.5; color: var(--brown-light); margin-top: 10px; opacity: 0; }
-  .pw-cycle em { color: #8b0000; font-style: italic; }
+  .pw-cycle { margin: 12px 0 2px; text-align: left; }
+  .pw-lead { font-family: 'EB Garamond', serif; font-style: italic; font-size: 10px; letter-spacing: 0.04em; color: var(--brown-light); opacity: 0; margin-bottom: 5px; }
+  .pw-beat { font-family: 'EB Garamond', serif; font-size: 11.5px; line-height: 1.4; color: var(--ink); opacity: 0; padding: 3px 0 3px 13px; position: relative; }
+  .pw-beat::before { content: '✦'; position: absolute; left: 0; top: 4px; font-size: 7px; color: #8b0000; }
+  .pw-beat em { color: #8b0000; font-style: italic; }
   .pr-coda {
     font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.55;
-    color: var(--ink); margin-top: 10px; overflow-wrap: break-word; text-wrap: balance;
+    color: var(--ink); margin-top: 12px; overflow-wrap: break-word; text-wrap: balance; text-align: center;
   }
   .pr-coda em { color: #8b0000; font-style: italic; }
   /* choreography (reuses son-reveal keyframes sr-appear / sr-pop / sr-fade) */
   .pr-run .pw-verse { animation: sr-appear 0.6s ease-out 0.1s forwards; }
   .pr-run .pw-word  { animation: sr-pop 0.7s cubic-bezier(0.2,1.3,0.4,1) 0.9s forwards; }
   .pr-run .pw-scene { animation: sr-fade 0.6s ease-out 1.7s forwards; }
-  .pr-run .pw-cycle { animation: sr-fade 0.7s ease-out 2.9s forwards; }
-  .pr-run .pr-coda  { animation: sr-fade 0.8s ease-out 4.2s forwards; }
-  /* the worm settles on the wood, then its crimson spreads into the grain */
+  .pr-run .pw-lead  { animation: sr-fade 0.6s ease-out 2.7s forwards; }
+  .pr-run .pw-beat  { animation: sr-fade 0.6s ease-out var(--d,0s) forwards; }
+  .pr-run .pr-coda  { animation: sr-fade 0.8s ease-out 5.0s forwards; }
+  /* the worm settles on the wood, its crimson spreads, then pales (Isa 1:18) */
   .pr-run .pw-worm  { animation: pw-settle 0.7s ease-out 1.9s both; }
   .pr-run .pw-dye   { animation: pw-spread 1.7s ease-out 2.3s both; }
   .pr-run .pw-stain { animation: pw-stainspread 1.7s ease-out 2.3s both; }
-  .pr-run .pw-snow  { animation: pw-whiten 1.6s ease-out 3.6s both; }
+  .pr-run .pw-snow  { animation: pw-whiten 1.6s ease-out 4.2s both; }
   @keyframes pw-settle { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes pw-spread { from { opacity: 0; transform: scaleX(0); } to { opacity: 1; transform: scaleX(1); } }
   @keyframes pw-stainspread { from { opacity: 0; transform: scaleX(0); } to { opacity: 0.42; transform: scaleX(1); } }
@@ -3177,7 +3183,179 @@
     font-size: 16px; color: var(--brown-light); opacity: 0.7;
   }
 
-</style>
+  /* ── DONKEY THREAD "THE COLT FORETOLD" REVEAL ── */
+  #donkey-reveal {
+    position: fixed; right: 16px; bottom: 16px; z-index: 4000;
+    display: block; pointer-events: none;
+    transform: translateY(120%); opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease, right 0.35s ease, bottom 0.35s ease;
+  }
+  #donkey-reveal.open { transform: translateY(0); opacity: 1; }
+  .dk-panel {
+    position: relative; width: min(86vw, 350px); box-sizing: border-box;
+    overflow: hidden; pointer-events: auto;
+    background: linear-gradient(160deg, #faf6ea, #efe6cd);
+    border: 1px solid rgba(184,144,42,0.55);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border-radius: 4px; padding: 22px 20px 20px; text-align: center;
+  }
+  @media (max-width: 768px) {
+    #donkey-reveal { right: 10px; left: 10px; bottom: 70px; }
+    .dk-panel { width: auto; }
+  }
+  [data-theme="dark"] .dk-panel { background: linear-gradient(160deg, #221f15, #181610); border-color: rgba(184,144,42,0.4); }
+  .dk-close {
+    position: absolute; top: 8px; right: 10px;
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; color: var(--brown-light); opacity: 0.7;
+  }
+  .dk-eyebrow {
+    font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #9a7414; margin-bottom: 14px;
+  }
+  .dk-verse, .dk-scene { opacity: 0; }
+  .dk-verse { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: var(--ink); transform: translateY(8px); }
+  .dk-ref { display: block; font-family: 'EB Garamond', serif; font-size: 10px; font-style: normal; color: var(--brown-light); opacity: 0.8; margin-top: 2px; }
+  .dk-scene { display: block; margin: 10px auto 2px; width: 230px; max-width: 100%; }
+  .dk-cross { opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .dk-cycle { margin: 10px 0 2px; text-align: left; }
+  .dk-lead { font-family: 'EB Garamond', serif; font-style: italic; font-size: 10px; letter-spacing: 0.04em; color: var(--brown-light); opacity: 0; margin-bottom: 5px; }
+  .dk-beat { font-family: 'EB Garamond', serif; font-size: 11.5px; line-height: 1.4; color: var(--ink); opacity: 0; padding: 3px 0 3px 14px; position: relative; }
+  .dk-beat::before { content: '✦'; position: absolute; left: 0; top: 4px; font-size: 7px; color: #b8902a; }
+  .dk-beat em { color: #9a7414; font-style: italic; }
+  .dk-beat.dk-trad { font-style: italic; color: var(--brown-light); }
+  .dk-coda {
+    font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.55;
+    color: var(--ink); margin-top: 12px; overflow-wrap: break-word; text-wrap: balance; opacity: 0;
+  }
+  .dk-coda em { color: #9a7414; font-style: italic; }
+  /* choreography (reuses son-reveal keyframes sr-appear / sr-fade) */
+  .dk-run .dk-verse { animation: sr-appear 0.6s ease-out 0.1s forwards; }
+  .dk-run .dk-scene { animation: sr-fade 0.6s ease-out 0.9s forwards; }
+  .dk-run .dk-cross { animation: dk-mark 0.9s cubic-bezier(0.2,1.3,0.4,1) 1.7s forwards; }
+  .dk-run .dk-lead  { animation: sr-fade 0.6s ease-out 2.6s forwards; }
+  .dk-run .dk-beat  { animation: sr-fade 0.6s ease-out var(--d,0s) forwards; }
+  .dk-run .dk-coda  { animation: sr-fade 0.8s ease-out 5.0s forwards; }
+  @keyframes dk-mark { from { opacity: 0; transform: scale(0.4); } to { opacity: 1; transform: scale(1); } }
+
+  /* ── BREAD THREAD "THE HOUSE OF BREAD" REVEAL ── */
+  #bread-reveal {
+    position: fixed; right: 16px; bottom: 16px; z-index: 4000;
+    display: block; pointer-events: none;
+    transform: translateY(120%); opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease, right 0.35s ease, bottom 0.35s ease;
+  }
+  #bread-reveal.open { transform: translateY(0); opacity: 1; }
+  .bd-panel {
+    position: relative; width: min(86vw, 350px); box-sizing: border-box;
+    overflow: hidden; pointer-events: auto;
+    background: linear-gradient(160deg, #faf6ea, #efe6cd);
+    border: 1px solid rgba(184,144,42,0.55);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border-radius: 4px; padding: 22px 20px 20px; text-align: center;
+  }
+  @media (max-width: 768px) {
+    #bread-reveal { right: 10px; left: 10px; bottom: 70px; }
+    .bd-panel { width: auto; }
+  }
+  [data-theme="dark"] .bd-panel { background: linear-gradient(160deg, #221f15, #181610); border-color: rgba(184,144,42,0.4); }
+  .bd-close {
+    position: absolute; top: 8px; right: 10px;
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; color: var(--brown-light); opacity: 0.7;
+  }
+  .bd-eyebrow {
+    font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #a8842a; margin-bottom: 14px;
+  }
+  .bd-verse, .bd-word, .bd-scene { opacity: 0; }
+  .bd-verse { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: var(--ink); transform: translateY(8px); }
+  .bd-ref { display: block; font-family: 'EB Garamond', serif; font-size: 10px; font-style: normal; color: var(--brown-light); opacity: 0.8; margin-top: 2px; }
+  .bd-word { margin: 12px 0 2px; transform: scale(0.7); }
+  .bd-heb { font-family: serif; font-size: 40px; color: #9a7414; line-height: 1; text-shadow: 0 0 22px rgba(184,144,42,0.35); }
+  .bd-rom { font-family: 'EB Garamond', serif; font-style: italic; font-size: 14px; color: var(--gold); margin-top: 4px; }
+  .bd-gloss { font-family: 'EB Garamond', serif; font-size: 11px; color: var(--brown-light); margin-top: 1px; }
+  .bd-scene { display: block; margin: 8px auto 2px; width: 220px; max-width: 100%; }
+  .bd-star { opacity: 0; transform-box: fill-box; transform-origin: center; }
+  .bd-cycle { margin: 8px 0 2px; text-align: left; }
+  .bd-lead { font-family: 'EB Garamond', serif; font-style: italic; font-size: 10px; letter-spacing: 0.04em; color: var(--brown-light); opacity: 0; margin-bottom: 5px; }
+  .bd-beat { font-family: 'EB Garamond', serif; font-size: 11.5px; line-height: 1.4; color: var(--ink); opacity: 0; padding: 3px 0 3px 14px; position: relative; }
+  .bd-beat::before { content: '✦'; position: absolute; left: 0; top: 4px; font-size: 7px; color: #cba23e; }
+  .bd-beat em { color: #9a7414; font-style: italic; }
+  .bd-beat.bd-trad { font-style: italic; color: var(--brown-light); }
+  .bd-coda {
+    font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.55;
+    color: var(--ink); margin-top: 12px; overflow-wrap: break-word; text-wrap: balance; opacity: 0;
+  }
+  .bd-coda em { color: #9a7414; font-style: italic; }
+  /* choreography (reuses son-reveal keyframes sr-appear / sr-pop / sr-fade) */
+  .bd-run .bd-verse { animation: sr-appear 0.6s ease-out 0.1s forwards; }
+  .bd-run .bd-word  { animation: sr-pop 0.7s cubic-bezier(0.2,1.3,0.4,1) 0.9s forwards; }
+  .bd-run .bd-scene { animation: sr-fade 0.6s ease-out 1.7s forwards; }
+  .bd-run .bd-star  { animation: dk-mark 0.9s cubic-bezier(0.2,1.3,0.4,1) 2.4s forwards; }
+  .bd-run .bd-lead  { animation: sr-fade 0.6s ease-out 3.1s forwards; }
+  .bd-run .bd-beat  { animation: sr-fade 0.6s ease-out var(--d,0s) forwards; }
+  .bd-run .bd-coda  { animation: sr-fade 0.8s ease-out 6.0s forwards; }
+
+  /* ── NEW-EVE THREAD "EVA / AVE" REVEAL ── */
+  #eve-reveal {
+    position: fixed; right: 16px; bottom: 16px; z-index: 4000;
+    display: block; pointer-events: none;
+    transform: translateY(120%); opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease, right 0.35s ease, bottom 0.35s ease;
+  }
+  #eve-reveal.open { transform: translateY(0); opacity: 1; }
+  .ev-panel {
+    position: relative; width: min(86vw, 350px); box-sizing: border-box;
+    overflow: hidden; pointer-events: auto;
+    background: linear-gradient(160deg, #faf6ea, #efe6cd);
+    border: 1px solid rgba(91,122,166,0.55);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border-radius: 4px; padding: 22px 20px 20px; text-align: center;
+  }
+  @media (max-width: 768px) {
+    #eve-reveal { right: 10px; left: 10px; bottom: 70px; }
+    .ev-panel { width: auto; }
+  }
+  [data-theme="dark"] .ev-panel { background: linear-gradient(160deg, #1a1d24, #15171c); border-color: rgba(143,168,216,0.4); }
+  .ev-close {
+    position: absolute; top: 8px; right: 10px;
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; color: var(--brown-light); opacity: 0.7;
+  }
+  .ev-eyebrow {
+    font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #3f5e8c; margin-bottom: 14px;
+  }
+  .ev-verse, .ev-flip { opacity: 0; }
+  .ev-verse { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 15px; color: var(--ink); transform: translateY(8px); }
+  .ev-ref { display: block; font-family: 'EB Garamond', serif; font-size: 10px; font-style: normal; color: var(--brown-light); opacity: 0.8; margin-top: 2px; }
+  /* the EVA -> AVE turn */
+  .ev-flip { perspective: 700px; height: 62px; margin: 16px 0 6px; }
+  .ev-flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transform: rotateY(0deg); }
+  .ev-face { position: absolute; inset: 0; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ev-back { transform: rotateY(180deg); }
+  .ev-word { font-family: 'Cinzel', serif; font-size: 38px; letter-spacing: 0.32em; line-height: 1; color: #5b7aa6; text-indent: 0.32em; }
+  .ev-sub { font-family: 'EB Garamond', serif; font-size: 10px; font-style: italic; color: var(--brown-light); margin-top: 4px; }
+  .ev-cycle { margin: 8px 0 2px; text-align: left; }
+  .ev-lead { font-family: 'EB Garamond', serif; font-style: italic; font-size: 10px; letter-spacing: 0.04em; color: var(--brown-light); opacity: 0; margin-bottom: 5px; }
+  .ev-beat { font-family: 'EB Garamond', serif; font-size: 11.5px; line-height: 1.4; color: var(--ink); opacity: 0; padding: 3px 0 3px 14px; position: relative; }
+  .ev-beat::before { content: '✦'; position: absolute; left: 0; top: 4px; font-size: 7px; color: #5b7aa6; }
+  .ev-beat em { color: #3f5e8c; font-style: italic; }
+  .ev-beat.ev-trad { font-style: italic; color: var(--brown-light); }
+  .ev-coda {
+    font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.55;
+    color: var(--ink); margin-top: 12px; overflow-wrap: break-word; text-wrap: balance; opacity: 0;
+  }
+  .ev-coda em { color: #3f5e8c; font-style: italic; }
+  /* choreography (reuses son-reveal keyframes sr-appear / sr-fade) */
+  .ev-run .ev-verse { animation: sr-appear 0.6s ease-out 0.1s forwards; }
+  .ev-run .ev-flip  { animation: sr-fade 0.6s ease-out 0.9s forwards; }
+  .ev-run .ev-flip-inner { animation: ev-turn 1.3s cubic-bezier(0.6,0,0.3,1) 1.9s forwards; }
+  .ev-run .ev-lead  { animation: sr-fade 0.6s ease-out 3.3s forwards; }
+  .ev-run .ev-beat  { animation: sr-fade 0.6s ease-out var(--d,0s) forwards; }
+  .ev-run .ev-coda  { animation: sr-fade 0.8s ease-out 6.0s forwards; }
+  @keyframes ev-turn { from { transform: rotateY(0deg); } to { transform: rotateY(180deg); } }</style>
 </head>
 <body>
 <noscript>
@@ -3345,7 +3523,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v35.2 · 16 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v35.9 · 16 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4461,10 +4639,19 @@ document.addEventListener('keydown', e => {
     const sheet = document.getElementById('ancient-sheet');
     const sonReveal = document.getElementById('son-reveal');
     const psalmReveal = document.getElementById('psalm-reveal');
+    const donkeyReveal = document.getElementById('donkey-reveal');
+    const breadReveal = document.getElementById('bread-reveal');
+    const eveReveal = document.getElementById('eve-reveal');
     if (sonReveal && sonReveal.classList.contains('open')) {
       closeSonReveal();
     } else if (psalmReveal && psalmReveal.classList.contains('open')) {
       closePsalmReveal();
+    } else if (donkeyReveal && donkeyReveal.classList.contains('open')) {
+      closeDonkeyReveal();
+    } else if (breadReveal && breadReveal.classList.contains('open')) {
+      closeBreadReveal();
+    } else if (eveReveal && eveReveal.classList.contains('open')) {
+      closeEveReveal();
     } else if (searchBar && searchBar.classList.contains('open')) {
       closeReaderSearch();
     } else if (readerOpen) {
@@ -5459,7 +5646,7 @@ const BIBLICAL_ERAS = [
 ];
 
 // accent colour per era
-const LIFE_OF_CHRIST = new Set(['The Nativity','Baptism of Jesus','The Sermon on the Mount','The Last Supper','Crucifixion & Resurrection','The Ascension']);
+const LIFE_OF_CHRIST = new Set(['The Nativity','Baptism of Jesus','The Sermon on the Mount','The Triumphal Entry','The Last Supper','Crucifixion & Resurrection','The Ascension']);
 const BIBLE_ERA_COLORS = {
   'Patriarchal Age':                 '#5c3d1e',
   'Exodus & Conquest':               '#4a3000',
@@ -5474,10 +5661,12 @@ const BIBLE_ERA_COLORS = {
 // narrative_yr from catalogue. Where two events share a year they get offset.
 const BIBLICAL_EVENTS = [
   // Patriarchal Age
+  { event:'Adam & Eve',               book:'Genesis 2\u20133',                greek:'ΓΕΝΕΣΙΣ',                      note:'the mother of all living', yr:-4000 },
   { event:'Abraham & the Covenant',   book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-2000 },
   { event:'Sodom & Gomorrah',         book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-1900 },
   { event:'Isaac & Jacob',            book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-1800 },
   { event:'Joseph in Egypt',          book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-1700 },
+  { event:"Judah's Blessing",         book:'Genesis 49',                     greek:'ΓΕΝΕΣΙΣ ΜΘ΄',                  note:'the sceptre & the colt', yr:-1690 },
   // Exodus & Conquest
   { event:'The Exodus',               book:'Exodus',                         greek:'ΕΞΟΔΟΣ',                       note:null,              yr:-1446 },
   { event:'The Law at Sinai',         book:'Exodus · Leviticus',             greek:'ΕΞΟΔΟΣ · ΛΕΥΙΤΙΚΟΝ',           note:null,              yr:-1445 },
@@ -5496,6 +5685,7 @@ const BIBLICAL_EVENTS = [
   { event:'Elijah & the Prophets',    book:'4 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Δ΄',                 note:null,              yr:-875  },
   { event:'Amos & Hosea',             book:'Amos · Hosea',                   greek:'ΑΜΩΣ · ΩΣΗΕ',                  note:null,              yr:-760  },
   { event:"Isaiah's Prophecy",        book:'Isaiah',                         greek:'ΗΣΑΙΑΣ',                       note:null,              yr:-740  },
+  { event:"Micah's Bethlehem",        book:'Micah 5',                        greek:'ΜΙΧΑΙΑΣ Ε΄',                  note:'Bethlehem foretold', yr:-725 },
   { event:'Fall of the North',        book:'4 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Δ΄',                 note:'Assyrian conquest', yr:-722 },
   { event:'Jeremiah & Zephaniah',     book:'Jeremiah · Zephaniah',           greek:'ΙΕΡΕΜΙΑΣ · ΣΟΦΟΝΙΑΣ',          note:null,              yr:-627  },
   { event:'Fall of Jerusalem',        book:'Jeremiah · Lamentations',        greek:'ΙΕΡΕΜΙΑΣ · ΘΡΗΝΟΙ',            note:'587 BC',          yr:-587  },
@@ -5503,6 +5693,7 @@ const BIBLICAL_EVENTS = [
   { event:'The Babylonian Exile',     book:'Daniel · Ezekiel',               greek:'ΔΑΝΙΗΛ · ΙΕΖΕΚΙΗΛ',            note:null,              yr:-586  },
   { event:'Return from Exile',        book:'Ezra / Nehemiah',                greek:'ΕΣΔΡΑΣ Β΄',                    note:'Cyrus decree',    yr:-538  },
   { event:'Rebuilding the Temple',    book:'Haggai · Zechariah',             greek:'ΑΓΓΑΙΟΣ · ΖΑΧΑΡΙΑΣ',           note:'Second Temple',   yr:-520  },
+  { event:"Zechariah's King",         book:'Zechariah 9',                    greek:'ΖΑΧΑΡΙΑΣ Θ΄',                  note:'meek, upon a colt', yr:-518 },
   { event:'Esther in Persia',         book:'Esther',                         greek:'ΕΣΘΗΡ',                        note:null,              yr:-483  },
   { event:'Malachi — Last Prophet',   book:'Malachi',                        greek:'ΜΑΛΑΧΙΑΣ',                     note:null,              yr:-450  },
   // Maccabean Age
@@ -5510,9 +5701,11 @@ const BIBLICAL_EVENTS = [
   { event:'Rededication of Temple',   book:'1 Maccabees',                    greek:'ΜΑΚΚΑΒΑΙΩΝ Α΄',                note:'Hanukkah',        yr:-164  },
   { event:'Wisdom of Solomon',        book:'Wisdom of Solomon',              greek:'ΣΟΦΙΑ ΣΑΛΟΜΩΝΤΟΣ',             note:null,              yr:-50   },
   // Gospel Era
+  { event:'The Annunciation',         book:'Luke 1',                         greek:'ΚΑΤΑ ΛΟΥΚΑΝ Α΄',              note:'the angel\u2019s Ave', yr:-7 },
   { event:'The Nativity',             book:'Matthew · Luke',                 greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ · ΛΟΥΚΑΝ',       note:null,              yr:-6    },
   { event:'Baptism of Jesus',         book:'Matthew · Mark · Luke · John',   greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:27    },
   { event:'The Sermon on the Mount',  book:'Matthew',                        greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ',                note:null,              yr:28    },
+  { event:'The Triumphal Entry',      book:'Matthew · John',                 greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ · ΙΩΑΝΝΗΝ',      note:'Palm Sunday',     yr:33    },
   { event:'The Last Supper',          book:'Matthew · Mark · Luke · John',   greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:33    },
   { event:'Crucifixion & Resurrection',book:'Matthew · Mark · Luke · John',  greek:'ΚΑΤΑ ΜΑΤΘΑΙΟΝ κ.α.',           note:null,              yr:33    },
   { event:'The Ascension',            book:'Luke · Acts',                    greek:'ΚΑΤΑ ΛΟΥΚΑΝ · ΠΡΑΞΕΙΣ',        note:null,              yr:33    },
@@ -5688,8 +5881,22 @@ function renderBiblical() {
       // crimson accent to signal it belongs to the Passion thread.
       if (ev.event === 'Psalm 22 (21)') { card.id = 'bs-psalm22-card'; card.classList.add('bs-prophecy-card'); card.style.setProperty('--bc', '#8b0000'); }
       if (ev.event === 'Crucifixion & Resurrection') card.id = 'bs-crucifixion-card';
+      // The donkey thread (Gen 49 -> Zech 9 -> Palm Sunday) takes a gold accent,
+      // distinct from the crimson Passion thread; wireDonkeyArc() links the three.
+      if (ev.event === "Judah's Blessing")   { card.id = 'bs-donkey-gen';    card.classList.add('bs-donkey-card'); card.style.setProperty('--bc', '#b8902a'); }
+      if (ev.event === "Zechariah's King")   { card.id = 'bs-donkey-zech';   card.classList.add('bs-donkey-card'); card.style.setProperty('--bc', '#b8902a'); }
+      if (ev.event === 'The Triumphal Entry'){ card.id = 'bs-donkey-gospel'; card.classList.add('bs-donkey-card'); card.style.setProperty('--bc', '#b8902a'); }
+      // The bread thread (Micah's Bethlehem prophecy -> the Nativity) takes a
+      // wheat accent; wireBreadArc() links the prophecy to its fulfilment.
+      if (ev.event === "Micah's Bethlehem") { card.id = 'bs-bread-micah';    card.classList.add('bs-bread-card'); card.style.setProperty('--bc', '#cba23e'); }
+      if (ev.event === 'The Nativity')      { card.id = 'bs-bread-nativity'; card.classList.add('bs-bread-card'); card.style.setProperty('--bc', '#cba23e'); }
+      if (ev.event === 'The Last Supper')   { card.id = 'bs-bread-supper';   card.classList.add('bs-bread-card'); card.style.setProperty('--bc', '#cba23e'); }
+      // The new-Eve thread (Adam & Eve -> the Annunciation) takes a Marian-blue
+      // accent; wireEveArc() links the fall to the Ave that reverses it.
+      if (ev.event === 'Adam & Eve')        { card.id = 'bs-eve-fall'; card.classList.add('bs-eve-card'); card.style.setProperty('--bc', '#5b7aa6'); }
+      if (ev.event === 'The Annunciation')  { card.id = 'bs-eve-mary'; card.classList.add('bs-eve-card'); card.style.setProperty('--bc', '#5b7aa6'); }
       card.innerHTML = `
-        <div class="bc-date">${ev.yr < 0 ? 'c. ' + Math.abs(ev.yr) + ' BC' : 'c. ' + ev.yr + ' AD'}</div>
+        ${ev.yr < -2000 ? '' : `<div class="bc-date">${ev.yr < 0 ? 'c. ' + Math.abs(ev.yr) + ' BC' : 'c. ' + ev.yr + ' AD'}</div>`}
         <div class="bc-event">${ev.event}</div>
         <div class="bc-book">${ev.book}</div>
         <div class="bc-greek">${ev.greek}</div>
@@ -5700,6 +5907,24 @@ function renderBiblical() {
         const hint = document.createElement('div');
         hint.className = 'bs-reveal-hint';
         hint.innerHTML = '✦ the Psalm of the Cross';
+        card.appendChild(hint);
+      }
+      if (ev.event === 'The Triumphal Entry') {
+        const hint = document.createElement('div');
+        hint.className = 'bs-reveal-hint';
+        hint.innerHTML = '✦ foretold of old';
+        card.appendChild(hint);
+      }
+      if (ev.event === 'The Nativity') {
+        const hint = document.createElement('div');
+        hint.className = 'bs-reveal-hint';
+        hint.innerHTML = '✦ the house of bread';
+        card.appendChild(hint);
+      }
+      if (ev.event === 'The Annunciation') {
+        const hint = document.createElement('div');
+        hint.className = 'bs-reveal-hint';
+        hint.innerHTML = '✦ the new Eve';
         card.appendChild(hint);
       }
 
@@ -5772,6 +5997,9 @@ function renderBiblical() {
   if (typeof buildBibleScrubber === 'function') setTimeout(buildBibleScrubber, 30);
   if (typeof wireSymmetryArc === 'function') setTimeout(wireSymmetryArc, 40);
   if (typeof wirePsalmArc === 'function') setTimeout(wirePsalmArc, 40);
+  if (typeof wireDonkeyArc === 'function') setTimeout(wireDonkeyArc, 40);
+  if (typeof wireBreadArc === 'function') setTimeout(wireBreadArc, 40);
+  if (typeof wireEveArc === 'function') setTimeout(wireEveArc, 40);
 }
 
 function setView(view) {
@@ -6425,10 +6653,29 @@ function wireSymmetryArc() {
 
 // Staged "aha" reveal: first word + last word → their first/last letters
 // fly together to spell בן (Son), with Alpha & Omega framing.
+// Keep every open reveal popup (.reveal-popup) from covering the others.
+// Tiles them along the bottom edge: leftward on desktop, stacked upward on
+// mobile (where they are full-width). Generic, so any future lexicon popup that
+// carries the .reveal-popup class is arranged automatically.
+function layoutReveals() {
+  const open = [...document.querySelectorAll('.reveal-popup.open')];
+  const mobile = window.matchMedia('(max-width: 768px)').matches;
+  const gap = 14;
+  if (mobile) {
+    let b = 70;
+    open.forEach(p => { p.style.right = ''; p.style.bottom = b + 'px'; b += p.offsetHeight + gap; });
+  } else {
+    let r = 16;
+    open.forEach(p => { p.style.bottom = '16px'; p.style.right = r + 'px'; r += p.offsetWidth + gap; });
+  }
+}
+window.addEventListener('resize', () => { if (typeof layoutReveals === 'function') layoutReveals(); });
+
 function openSonReveal() {
   const modal = document.getElementById('son-reveal');
   if (!modal) return;
   modal.classList.add('open');
+  layoutReveals();
   const stage = modal.querySelector('.sr-stage');
   stage.classList.remove('sr-run');
   void stage.offsetWidth;
@@ -6437,6 +6684,7 @@ function openSonReveal() {
 function closeSonReveal() {
   const modal = document.getElementById('son-reveal');
   if (modal) modal.classList.remove('open');
+  layoutReveals();
 }
 
 // ── PSALM 22 → CRUCIFIXION "PSALM OF THE CROSS" ARC ───────────────────────────
@@ -6532,12 +6780,324 @@ function openPsalmReveal() {
   const modal = document.getElementById('psalm-reveal');
   if (!modal) return;
   modal.classList.add('open');
+  layoutReveals();
   const stage = modal.querySelector('.pr-stage');
   if (stage) { stage.classList.remove('pr-run'); void stage.offsetWidth; stage.classList.add('pr-run'); }
 }
 function closePsalmReveal() {
   const modal = document.getElementById('psalm-reveal');
   if (modal) modal.classList.remove('open');
+  layoutReveals();
+}
+
+// ── DONKEY THREAD: GENESIS 49 -> ZECHARIAH 9 -> PALM SUNDAY ───────────────────
+// Same idiom as the Psalm arc, but chains THREE spine dots with a scalloped gold
+// arc (dips to touch each), lights all three cards, and opens the donkey reveal.
+function wireDonkeyArc() {
+  const track = document.getElementById('bible-track');
+  if (!track) return;
+  const dots = [
+    track.querySelector('[data-bs-event="Judah\'s Blessing"]'),
+    track.querySelector('[data-bs-event="Zechariah\'s King"]'),
+    track.querySelector('[data-bs-event="The Triumphal Entry"]'),
+  ];
+  const cards = [
+    document.getElementById('bs-donkey-gen'),
+    document.getElementById('bs-donkey-zech'),
+    document.getElementById('bs-donkey-gospel'),
+  ];
+  if (dots.some(d => !d) || cards.some(c => !c)) return;
+
+  let svg = document.getElementById('bs-donkey-arc-svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'bs-donkey-arc-svg';
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:28;opacity:0;transition:opacity 0.5s ease;overflow:visible;';
+    track.appendChild(svg);
+  }
+  let label = document.getElementById('bs-donkey-arc-label');
+  if (!label) {
+    label = document.createElement('div');
+    label.id = 'bs-donkey-arc-label';
+    label.style.cssText = 'position:absolute;z-index:31;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s ease;white-space:nowrap;';
+    track.appendChild(label);
+  }
+
+  const show = () => {
+    const tr = track.getBoundingClientRect();
+    const pts = dots.map(d => {
+      const r = d.getBoundingClientRect();
+      return { x: (r.left + r.width / 2 - tr.left) + track.scrollLeft, y: (r.top + r.height / 2 - tr.top) };
+    });
+    const eraLabelEl = track.querySelector('.tl-era');
+    const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
+    const canopyY = Math.max(14, titleTop - 12);
+    // Chain a parabola between each consecutive pair, each arching to canopyY.
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let k = 0; k < pts.length - 1; k++) {
+      const a = pts[k], b = pts[k + 1];
+      const midX = (a.x + b.x) / 2;
+      const ctrlY = 2 * canopyY - (a.y + b.y) / 2;
+      d += ` Q ${midX} ${ctrlY} ${b.x} ${b.y}`;
+    }
+    const circles = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#b8902a"/>`).join('');
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="bs-donkey-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#9a7414"/>
+          <stop offset="50%" stop-color="#d8b24a"/>
+          <stop offset="100%" stop-color="#9a7414"/>
+        </linearGradient>
+      </defs>
+      <path d="${d}" fill="none" stroke="url(#bs-donkey-grad)" stroke-width="2"
+            stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
+      ${circles}`;
+    const midPt = pts[1];
+    label.style.left = midPt.x + 'px';
+    label.style.top = (canopyY - 4) + 'px';
+    label.style.transform = 'translate(-50%, -100%)';
+    label.innerHTML = `
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#9a7414;text-transform:uppercase;">the colt foretold &middot; Genesis 49 &middot; Zechariah 9 &middot; Palm Sunday</div>`;
+    svg.style.opacity = '1';
+    label.style.opacity = '1';
+    cards.forEach(c => c.classList.add('bs-symmetry-lit'));
+  };
+  const hide = () => {
+    svg.style.opacity = '0';
+    label.style.opacity = '0';
+    cards.forEach(c => c.classList.remove('bs-symmetry-lit'));
+  };
+
+  let pinned = false;
+  cards.forEach(c => {
+    c.style.cursor = 'pointer';
+    c.onmouseenter = () => { if (!pinned) show(); };
+    c.onmouseleave = () => { if (!pinned) hide(); };
+    c.onclick = () => {
+      if (pinned) { pinned = false; hide(); closeDonkeyReveal(); }
+      else { pinned = true; show(); openDonkeyReveal(); }
+    };
+  });
+  window.__donkeyPinned = () => pinned;
+}
+
+function openDonkeyReveal() {
+  const modal = document.getElementById('donkey-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  layoutReveals();
+  const stage = modal.querySelector('.dk-stage');
+  if (stage) { stage.classList.remove('dk-run'); void stage.offsetWidth; stage.classList.add('dk-run'); }
+}
+function closeDonkeyReveal() {
+  const modal = document.getElementById('donkey-reveal');
+  if (modal) modal.classList.remove('open');
+  layoutReveals();
+}
+
+// ── BREAD THREAD: MICAH'S BETHLEHEM -> THE NATIVITY ───────────────────────────
+// Bethlehem = "house of bread"; the Bread of Life laid in a manger (feeding
+// trough). Links Micah 5:2 to the Nativity, same idiom as the Psalm arc.
+function wireBreadArc() {
+  const track = document.getElementById('bible-track');
+  if (!track) return;
+  const dots = [
+    track.querySelector('[data-bs-event="Micah\'s Bethlehem"]'),
+    track.querySelector('[data-bs-event="The Nativity"]'),
+    track.querySelector('[data-bs-event="The Last Supper"]'),
+  ];
+  const cards = [
+    document.getElementById('bs-bread-micah'),
+    document.getElementById('bs-bread-nativity'),
+    document.getElementById('bs-bread-supper'),
+  ];
+  if (dots.some(d => !d) || cards.some(c => !c)) return;
+
+  let svg = document.getElementById('bs-bread-arc-svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'bs-bread-arc-svg';
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:27;opacity:0;transition:opacity 0.5s ease;overflow:visible;';
+    track.appendChild(svg);
+  }
+  let label = document.getElementById('bs-bread-arc-label');
+  if (!label) {
+    label = document.createElement('div');
+    label.id = 'bs-bread-arc-label';
+    label.style.cssText = 'position:absolute;z-index:31;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s ease;white-space:nowrap;';
+    track.appendChild(label);
+  }
+
+  const show = () => {
+    const tr = track.getBoundingClientRect();
+    const pts = dots.map(d => {
+      const r = d.getBoundingClientRect();
+      return { x: (r.left + r.width / 2 - tr.left) + track.scrollLeft, y: (r.top + r.height / 2 - tr.top) };
+    });
+    const eraLabelEl = track.querySelector('.tl-era');
+    const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
+    const canopyY = Math.max(14, titleTop - 12);
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let k = 0; k < pts.length - 1; k++) {
+      const a = pts[k], b = pts[k + 1];
+      const midX = (a.x + b.x) / 2;
+      const ctrlY = 2 * canopyY - (a.y + b.y) / 2;
+      d += ` Q ${midX} ${ctrlY} ${b.x} ${b.y}`;
+    }
+    const circles = pts.map(p => `<circle cx="${p.x}" cy="${p.y}" r="4" fill="#cba23e"/>`).join('');
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="bs-bread-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#a8842a"/>
+          <stop offset="50%" stop-color="#ecd47a"/>
+          <stop offset="100%" stop-color="#a8842a"/>
+        </linearGradient>
+      </defs>
+      <path d="${d}" fill="none" stroke="url(#bs-bread-grad)" stroke-width="2"
+            stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
+      ${circles}`;
+    const midPt = pts[1];
+    label.style.left = midPt.x + 'px';
+    label.style.top = (canopyY - 4) + 'px';
+    label.style.transform = 'translate(-50%, -100%)';
+    label.innerHTML = `
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#a8842a;text-transform:uppercase;">the house of bread &middot; Micah &middot; the manger &middot; the table</div>`;
+    svg.style.opacity = '1';
+    label.style.opacity = '1';
+    cards.forEach(c => c.classList.add('bs-symmetry-lit'));
+  };
+  const hide = () => {
+    svg.style.opacity = '0';
+    label.style.opacity = '0';
+    cards.forEach(c => c.classList.remove('bs-symmetry-lit'));
+  };
+
+  let pinned = false;
+  cards.forEach(c => {
+    c.style.cursor = 'pointer';
+    c.onmouseenter = () => { if (!pinned) show(); };
+    c.onmouseleave = () => { if (!pinned) hide(); };
+    c.onclick = () => {
+      if (pinned) { pinned = false; hide(); closeBreadReveal(); }
+      else { pinned = true; show(); openBreadReveal(); }
+    };
+  });
+  window.__breadPinned = () => pinned;
+}
+
+function openBreadReveal() {
+  const modal = document.getElementById('bread-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  layoutReveals();
+  const stage = modal.querySelector('.bd-stage');
+  if (stage) { stage.classList.remove('bd-run'); void stage.offsetWidth; stage.classList.add('bd-run'); }
+}
+function closeBreadReveal() {
+  const modal = document.getElementById('bread-reveal');
+  if (modal) modal.classList.remove('open');
+  layoutReveals();
+}
+
+// ── NEW-EVE THREAD: ADAM & EVE -> THE ANNUNCIATION (EVA / AVE) ────────────────
+// A Latin devotional observation: in Latin the angel's "Ave" is "Eva" reversed.
+// The reversal lives only in Latin (the Greek is chaire); the New-Eve typology
+// is patristic. Links the fall to the Annunciation that answers it.
+function wireEveArc() {
+  const track = document.getElementById('bible-track');
+  if (!track) return;
+  const eSpine = track.querySelector('[data-bs-event="Adam & Eve"]');
+  const aSpine = track.querySelector('[data-bs-event="The Annunciation"]');
+  const eCard = document.getElementById('bs-eve-fall');
+  const aCard = document.getElementById('bs-eve-mary');
+  if (!eSpine || !aSpine || !eCard || !aCard) return;
+
+  let svg = document.getElementById('bs-eve-arc-svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'bs-eve-arc-svg';
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:26;opacity:0;transition:opacity 0.5s ease;overflow:visible;';
+    track.appendChild(svg);
+  }
+  let label = document.getElementById('bs-eve-arc-label');
+  if (!label) {
+    label = document.createElement('div');
+    label.id = 'bs-eve-arc-label';
+    label.style.cssText = 'position:absolute;z-index:31;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s ease;white-space:nowrap;';
+    track.appendChild(label);
+  }
+
+  const show = () => {
+    const tr = track.getBoundingClientRect();
+    const e = eSpine.getBoundingClientRect();
+    const a = aSpine.getBoundingClientRect();
+    const ax = (e.left + e.width / 2 - tr.left) + track.scrollLeft;
+    const ay = (e.top + e.height / 2 - tr.top);
+    const ox = (a.left + a.width / 2 - tr.left) + track.scrollLeft;
+    const oy = (a.top + a.height / 2 - tr.top);
+    const midX = (ax + ox) / 2;
+    const eraLabelEl = track.querySelector('.tl-era');
+    const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
+    const canopyY = Math.max(14, titleTop - 12);
+    const ctrlY = 2 * canopyY - (ay + oy) / 2;
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="bs-eve-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#3f5e8c"/>
+          <stop offset="50%" stop-color="#9fb6d8"/>
+          <stop offset="100%" stop-color="#3f5e8c"/>
+        </linearGradient>
+      </defs>
+      <path d="M ${ax} ${ay} Q ${midX} ${ctrlY} ${ox} ${oy}"
+            fill="none" stroke="url(#bs-eve-grad)" stroke-width="2"
+            stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
+      <circle cx="${ax}" cy="${ay}" r="4" fill="#5b7aa6"/>
+      <circle cx="${ox}" cy="${oy}" r="4" fill="#5b7aa6"/>`;
+    label.style.left = midX + 'px';
+    label.style.top = (canopyY - 4) + 'px';
+    label.style.transform = 'translate(-50%, -100%)';
+    label.innerHTML = `
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#3f5e8c;text-transform:uppercase;">the new Eve &middot; Eva turned to Ave &middot; a Latin reading</div>`;
+    svg.style.opacity = '1';
+    label.style.opacity = '1';
+    eCard.classList.add('bs-symmetry-lit');
+    aCard.classList.add('bs-symmetry-lit');
+  };
+  const hide = () => {
+    svg.style.opacity = '0';
+    label.style.opacity = '0';
+    eCard.classList.remove('bs-symmetry-lit');
+    aCard.classList.remove('bs-symmetry-lit');
+  };
+
+  let pinned = false;
+  [eCard, aCard].forEach(c => {
+    c.style.cursor = 'pointer';
+    c.onmouseenter = () => { if (!pinned) show(); };
+    c.onmouseleave = () => { if (!pinned) hide(); };
+    c.onclick = () => {
+      if (pinned) { pinned = false; hide(); closeEveReveal(); }
+      else { pinned = true; show(); openEveReveal(); }
+    };
+  });
+  window.__evePinned = () => pinned;
+}
+
+function openEveReveal() {
+  const modal = document.getElementById('eve-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  layoutReveals();
+  const stage = modal.querySelector('.ev-stage');
+  if (stage) { stage.classList.remove('ev-run'); void stage.offsetWidth; stage.classList.add('ev-run'); }
+}
+function closeEveReveal() {
+  const modal = document.getElementById('eve-reveal');
+  if (modal) modal.classList.remove('open');
+  layoutReveals();
 }
 
 function buildBibleScrubber() {
@@ -6682,8 +7242,12 @@ function syncBibleScrubber() {
         yrs.sort((a, b) => a - b);
         const yr = atStart ? yrs[0] : yrs[yrs.length - 1];
         const era = bsEraName(yr);
-        const ytxt = yr < 0 ? Math.abs(yr) + ' BC' : yr + ' AD';
-        readout.innerHTML = `<span class="yr">${ytxt}</span>${era ? ' &nbsp;·&nbsp; ' + era : ''}`;
+        if (yr < -2000) {                 // pre-Abraham primeval Genesis: no datestamp
+          readout.innerHTML = `<span class="yr">${era || 'In the Beginning'}</span>`;
+        } else {
+          const ytxt = yr < 0 ? Math.abs(yr) + ' BC' : yr + ' AD';
+          readout.innerHTML = `<span class="yr">${ytxt}</span>${era ? ' &nbsp;·&nbsp; ' + era : ''}`;
+        }
         return;
       }
     }
@@ -6713,8 +7277,12 @@ function syncBibleScrubber() {
     });
     if (bestYr !== null) {
       const era = bsEraName(bestYr);
-      const ytxt = bestYr < 0 ? Math.abs(bestYr) + ' BC' : bestYr + ' AD';
-      readout.innerHTML = `<span class="yr">${ytxt}</span>${era ? ' &nbsp;·&nbsp; ' + era : ''}`;
+      if (bestYr < -2000) {               // pre-Abraham primeval Genesis: no datestamp
+        readout.innerHTML = `<span class="yr">${era || 'In the Beginning'}</span>`;
+      } else {
+        const ytxt = bestYr < 0 ? Math.abs(bestYr) + ' BC' : bestYr + ' AD';
+        readout.innerHTML = `<span class="yr">${ytxt}</span>${era ? ' &nbsp;·&nbsp; ' + era : ''}`;
+      }
     }
   }
 }
@@ -6807,7 +7375,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v35.2 · 16 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v35.9 · 16 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -7815,7 +8383,7 @@ window.addEventListener('resize', () => {
 </div>
 <div id="ancient-sheet-overlay" onclick="hideBottomSheet()" class="ancient-sheet-overlay"></div>
 
-<div id="son-reveal" onclick="if(event.target===this)closeSonReveal()">
+<div id="son-reveal" class="reveal-popup" onclick="if(event.target===this)closeSonReveal()">
   <div class="sr-panel">
     <button class="sr-close" onclick="closeSonReveal()" aria-label="Close">✕</button>
     <div class="sr-eyebrow">Alpha &amp; Omega · the beginning and the end</div>
@@ -7851,7 +8419,7 @@ window.addEventListener('resize', () => {
   </div>
 </div>
 
-<div id="psalm-reveal" onclick="if(event.target===this)closePsalmReveal()">
+<div id="psalm-reveal" class="reveal-popup" onclick="if(event.target===this)closePsalmReveal()">
   <div class="pr-panel">
     <button class="pr-close" onclick="closePsalmReveal()" aria-label="Close">✕</button>
     <div class="pr-eyebrow">A lesser-known devotional &middot; the scarlet worm</div>
@@ -7860,7 +8428,7 @@ window.addEventListener('resize', () => {
       <div class="pw-word">
         <div class="pw-heb" dir="rtl">תּוֹלַעַת</div>
         <div class="pw-rom">tola&rsquo;ath</div>
-        <div class="pw-gloss">the crimson dye-worm &middot; <i>Kermes vermilio</i></div>
+        <div class="pw-gloss">the crimson dye-worm of the oak &middot; <i>Kermes vermilio</i></div>
       </div>
       <svg class="pw-scene" viewBox="0 0 240 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <defs>
@@ -7892,8 +8460,122 @@ window.addEventListener('resize', () => {
           <circle cx="140.5" cy="57" r="1.1" fill="#2e0000"/>
         </g>
       </svg>
-      <div class="pw-cycle">She fixes herself to the wood, gives up her life, and her crimson shelters the young beneath her.</div>
-      <div class="pr-coda">David took the lowliest word for himself, not a man but a worm. An old devotion reads the cross in it: <em>crushed upon the wood</em>, his crimson covering his own, the scarlet made <em>white as snow</em>.</div>
+      <div class="pw-cycle">
+        <div class="pw-lead">As tradition has long told it:</div>
+        <div class="pw-beat" style="--d:3.0s">She fastens herself to the wood and cannot come away without dying.</div>
+        <div class="pw-beat" style="--d:3.4s">Her young shelter beneath her, and for some three days they feed on her body.</div>
+        <div class="pw-beat" style="--d:3.8s">Dying, her <em>crimson</em> stains the wood and her children, marking them for life.</div>
+        <div class="pw-beat" style="--d:4.2s">Then her body pales, dry as wax, and flakes away <em>white as wool</em>.</div>
+      </div>
+      <div class="pr-coda">David took the lowliest word for himself, not a man but a worm. An old devotion reads the cross in it: the One <em>fixed to the wood</em>, his body given for his own, his blood their covering, the scarlet made <em>white as snow</em>.</div>
+    </div>
+  </div>
+</div>
+
+<div id="donkey-reveal" class="reveal-popup" onclick="if(event.target===this)closeDonkeyReveal()">
+  <div class="dk-panel">
+    <button class="dk-close" onclick="closeDonkeyReveal()" aria-label="Close">✕</button>
+    <div class="dk-eyebrow">Prophecy &amp; fulfilment &middot; the colt foretold</div>
+    <div class="dk-stage">
+      <div class="dk-verse">&ldquo;Behold, thy King will come to thee... riding upon an ass, and upon a colt&rdquo;<span class="dk-ref">Zechariah 9:9</span></div>
+      <svg class="dk-scene" viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <line x1="24" y1="118" x2="216" y2="118" stroke="#b8902a" stroke-width="1" opacity="0.4"/>
+        <g fill="#9a8f80" stroke="#6f665a" stroke-width="1.2">
+          <rect x="92" y="84" width="6" height="34" rx="3"/>
+          <rect x="108" y="86" width="6" height="32" rx="3"/>
+          <rect x="150" y="86" width="6" height="32" rx="3"/>
+          <rect x="166" y="84" width="6" height="34" rx="3"/>
+          <ellipse cx="130" cy="70" rx="46" ry="21"/>
+          <path d="M92 76 Q78 64 76 48 Q76 42 83 41 Q92 44 98 60 L104 72 Z"/>
+          <path d="M83 47 Q64 46 55 35 Q50 28 57 24 Q70 23 78 31 Q86 36 87 44 Z"/>
+          <path d="M73 30 Q68 11 75 7 Q81 12 79 31 Z"/>
+          <path d="M81 30 Q82 12 89 9 Q93 16 86 32 Z"/>
+          <path d="M176 58 Q187 66 185 82 Q184 90 180 92 Q184 82 179 72 Q176 65 173 63 Z"/>
+        </g>
+        <path d="M84 42 Q92 36 100 44 Q104 50 104 60 Q98 50 90 48 Q86 46 84 42 Z" fill="#6f665a"/>
+        <circle cx="66" cy="33" r="1.6" fill="#3a342c"/>
+        <g class="dk-cross" stroke="#473d33" stroke-width="3" stroke-linecap="round">
+          <path d="M100 50 Q132 43 162 53" fill="none"/>
+          <line x1="112" y1="44" x2="112" y2="80"/>
+        </g>
+      </svg>
+      <div class="dk-cycle">
+        <div class="dk-lead">One thread, told across a thousand years:</div>
+        <div class="dk-beat" style="--d:3.0s">Jacob blesses Judah, binding his foal to the vine, the sceptre that would not depart. <span class="dk-ref" style="opacity:.7">Genesis 49</span></div>
+        <div class="dk-beat" style="--d:3.5s">Zechariah sees the King come <em>meek, upon a colt</em>, the foal of an ass. <span class="dk-ref" style="opacity:.7">Zechariah 9</span></div>
+        <div class="dk-beat" style="--d:4.0s">On Palm Sunday He rides that colt into Jerusalem, &ldquo;that it might be fulfilled.&rdquo; <span class="dk-ref" style="opacity:.7">Matthew 21 &middot; John 12</span></div>
+        <div class="dk-beat dk-trad" style="--d:4.5s">And devotion sees the cross it bore marked ever since upon its back.</div>
+      </div>
+      <div class="dk-coda">From Judah&rsquo;s foal, to Zechariah&rsquo;s colt, to the gates of the city: the King came <em>lowly</em>, and the beast that carried Him wears the cross still.</div>
+    </div>
+  </div>
+</div>
+
+<div id="bread-reveal" class="reveal-popup" onclick="if(event.target===this)closeBreadReveal()">
+  <div class="bd-panel">
+    <button class="bd-close" onclick="closeBreadReveal()" aria-label="Close">✕</button>
+    <div class="bd-eyebrow">Prophecy &amp; fulfilment &middot; the house of bread</div>
+    <div class="bd-stage">
+      <div class="bd-verse">&ldquo;And thou, Bethlehem... out of thee shall come forth the ruler of Israel&rdquo;<span class="bd-ref">Micah 5:2</span></div>
+      <div class="bd-word">
+        <div class="bd-heb" dir="rtl">בֵּית לֶחֶם</div>
+        <div class="bd-rom">Beth-lechem</div>
+        <div class="bd-gloss">house of bread</div>
+      </div>
+      <svg class="bd-scene" viewBox="0 0 240 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g class="bd-star">
+          <circle cx="120" cy="30" r="26" fill="#d8b24a" opacity="0.22"/>
+          <path d="M120 12 L124 27 L139 30 L124 33 L120 48 L116 33 L101 30 L116 27 Z" fill="#d8b24a" stroke="#9a7414" stroke-width="0.6"/>
+        </g>
+        <g stroke="#5c3f1e" stroke-width="1.4">
+          <line x1="86" y1="74" x2="150" y2="120"/>
+          <line x1="154" y1="74" x2="90" y2="120"/>
+          <path d="M70 72 L170 72 L150 96 L90 96 Z" fill="#7a5526"/>
+          <path d="M70 72 L170 72 L166 78 L74 78 Z" fill="#8a6230"/>
+        </g>
+        <g stroke="#caa43e" stroke-width="1.3" stroke-linecap="round" opacity="0.9">
+          <path d="M96 73 l8 -7 M104 73 l-4 -8 M116 73 l3 -8 M128 73 l8 -6 M138 73 l-3 -8 M150 73 l6 -6"/>
+        </g>
+      </svg>
+      <div class="bd-cycle">
+        <div class="bd-lead">One thread, from the manger to the table:</div>
+        <div class="bd-beat" style="--d:3.5s">Micah named the town: from Bethlehem comes the ruler of Israel. <span class="bd-ref" style="opacity:.7">Micah 5:2 &middot; Matthew 2:6</span></div>
+        <div class="bd-beat" style="--d:4.0s">Its name, <em>Beth-lechem</em>, means &ldquo;house of bread.&rdquo;</div>
+        <div class="bd-beat" style="--d:4.5s">There the Child was laid in a manger (&phi;&alpha;&tau;&nu;&eta;), the trough where animals feed. <span class="bd-ref" style="opacity:.7">Luke 2:7</span></div>
+        <div class="bd-beat" style="--d:5.0s">At the table He took bread: &ldquo;This is my body, given for you.&rdquo; <span class="bd-ref" style="opacity:.7">Luke 22:19</span></div>
+        <div class="bd-beat bd-trad" style="--d:5.5s">And devotion sees one Bread: born in the house of bread, laid where creatures feed, given as food at the table.</div>
+      </div>
+      <div class="bd-coda">Born in the house of bread, laid where the beasts feed, given as bread at the table: He called Himself the <em>living bread come down from heaven</em>.</div>
+    </div>
+  </div>
+</div>
+
+<div id="eve-reveal" class="reveal-popup" onclick="if(event.target===this)closeEveReveal()">
+  <div class="ev-panel">
+    <button class="ev-close" onclick="closeEveReveal()" aria-label="Close">✕</button>
+    <div class="ev-eyebrow">A Latin devotional &middot; Eva reversed</div>
+    <div class="ev-stage">
+      <div class="ev-verse">&ldquo;The mother of all the living&rdquo;<span class="ev-ref">Genesis 3:20</span></div>
+      <div class="ev-flip">
+        <div class="ev-flip-inner">
+          <div class="ev-face ev-front">
+            <div class="ev-word">EVA</div>
+            <div class="ev-sub">Eve, in the Latin</div>
+          </div>
+          <div class="ev-face ev-back">
+            <div class="ev-word">AVE</div>
+            <div class="ev-sub">hail, full of grace</div>
+          </div>
+        </div>
+      </div>
+      <div class="ev-cycle">
+        <div class="ev-lead">A reversal the Latin tongue heard:</div>
+        <div class="ev-beat" style="--d:3.6s">Eve, Hebrew <em>Chavvah</em>, the mother of all the living, through whom came the fall. <span class="ev-ref" style="opacity:.7">Genesis 3:20</span></div>
+        <div class="ev-beat" style="--d:4.1s">To Mary the angel&rsquo;s word is &chi;&alpha;&iota;&rho;&epsilon; (chaire) in the Greek; the Latin dresses it as <em>Ave</em>. <span class="ev-ref" style="opacity:.7">Luke 1:28</span></div>
+        <div class="ev-beat" style="--d:4.6s">And in Latin, <em>Ave</em> is <em>Eva</em> turned around: the greeting reverses the name.</div>
+        <div class="ev-beat ev-trad" style="--d:5.1s">Long before, Irenaeus said Mary&rsquo;s obedience untied the knot Eve&rsquo;s disobedience had bound: the new Eve.</div>
+      </div>
+      <div class="ev-coda">What was bound in <em>Eva</em>, the Latin ear heard loosed in <em>Ave</em>: her &ldquo;yes&rdquo; reversing the first &ldquo;no.&rdquo;</div>
     </div>
   </div>
 </div>
