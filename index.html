@@ -548,7 +548,7 @@
   .bible-track {
     display: inline-flex;
     flex-direction: row;
-    padding: 44px 120px 28px 60px;
+    padding: 58px 120px 28px 60px;
     min-height: 100%;
     position: relative;
     --col-w: 160px;
@@ -3114,6 +3114,69 @@
   @keyframes sr-fade { to { opacity: 1; } }
   @keyframes sr-pop { to { opacity: 1; transform: scale(1); } }
 
+  /* ── PSALM 22 "THE SCARLET WORM" REVEAL ── */
+  #psalm-reveal {
+    position: fixed; right: 16px; bottom: 16px; z-index: 4000;
+    display: block; pointer-events: none;
+    transform: translateY(120%); opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease;
+  }
+  #psalm-reveal.open { transform: translateY(0); opacity: 1; }
+  .pr-panel {
+    position: relative; width: min(86vw, 340px); box-sizing: border-box;
+    overflow: hidden; pointer-events: auto;
+    background: linear-gradient(160deg, #faf6ea, #efe6cd);
+    border: 1px solid rgba(139,0,0,0.45);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border-radius: 4px; padding: 22px 20px 20px; text-align: center;
+  }
+  @media (max-width: 768px) {
+    #psalm-reveal { right: 10px; left: 10px; bottom: 70px; }
+    .pr-panel { width: auto; }
+  }
+  [data-theme="dark"] .pr-panel { background: linear-gradient(160deg, #221f15, #181610); border-color: rgba(139,0,0,0.5); }
+  .pr-eyebrow {
+    font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: #8b0000; margin-bottom: 16px;
+  }
+  /* staged elements (play on .pr-run) */
+  .pw-verse, .pw-word, .pw-scene, .pr-coda { opacity: 0; }
+  .pw-verse { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; color: var(--ink); transform: translateY(8px); }
+  .pw-ref { display: block; font-family: 'EB Garamond', serif; font-size: 10px; font-style: normal; color: var(--brown-light); opacity: 0.8; margin-top: 2px; }
+  .pw-word { margin: 14px 0 2px; transform: scale(0.7); }
+  .pw-heb { font-family: serif; font-size: 46px; color: #8b0000; line-height: 1; text-shadow: 0 0 22px rgba(139,0,0,0.35); }
+  .pw-rom { font-family: 'EB Garamond', serif; font-style: italic; font-size: 14px; color: var(--gold); margin-top: 4px; }
+  .pw-gloss { font-family: 'EB Garamond', serif; font-size: 11px; color: var(--brown-light); margin-top: 1px; }
+  .pw-scene { display: block; margin: 12px auto 2px; width: 240px; max-width: 100%; }
+  .pw-dye, .pw-stain { transform-box: fill-box; transform-origin: center; }
+  .pw-cycle { font-family: 'EB Garamond', serif; font-size: 11.5px; line-height: 1.5; color: var(--brown-light); margin-top: 10px; opacity: 0; }
+  .pw-cycle em { color: #8b0000; font-style: italic; }
+  .pr-coda {
+    font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.55;
+    color: var(--ink); margin-top: 10px; overflow-wrap: break-word; text-wrap: balance;
+  }
+  .pr-coda em { color: #8b0000; font-style: italic; }
+  /* choreography (reuses son-reveal keyframes sr-appear / sr-pop / sr-fade) */
+  .pr-run .pw-verse { animation: sr-appear 0.6s ease-out 0.1s forwards; }
+  .pr-run .pw-word  { animation: sr-pop 0.7s cubic-bezier(0.2,1.3,0.4,1) 0.9s forwards; }
+  .pr-run .pw-scene { animation: sr-fade 0.6s ease-out 1.7s forwards; }
+  .pr-run .pw-cycle { animation: sr-fade 0.7s ease-out 2.9s forwards; }
+  .pr-run .pr-coda  { animation: sr-fade 0.8s ease-out 4.2s forwards; }
+  /* the worm settles on the wood, then its crimson spreads into the grain */
+  .pr-run .pw-worm  { animation: pw-settle 0.7s ease-out 1.9s both; }
+  .pr-run .pw-dye   { animation: pw-spread 1.7s ease-out 2.3s both; }
+  .pr-run .pw-stain { animation: pw-stainspread 1.7s ease-out 2.3s both; }
+  .pr-run .pw-snow  { animation: pw-whiten 1.6s ease-out 3.6s both; }
+  @keyframes pw-settle { from { opacity: 0; transform: translateY(-7px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pw-spread { from { opacity: 0; transform: scaleX(0); } to { opacity: 1; transform: scaleX(1); } }
+  @keyframes pw-stainspread { from { opacity: 0; transform: scaleX(0); } to { opacity: 0.42; transform: scaleX(1); } }
+  @keyframes pw-whiten { from { opacity: 0; } to { opacity: 0.5; } }
+  .pr-close {
+    position: absolute; top: 8px; right: 10px;
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; color: var(--brown-light); opacity: 0.7;
+  }
+
 </style>
 </head>
 <body>
@@ -3282,7 +3345,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v34.5 · 15 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v35.2 · 16 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -4397,8 +4460,11 @@ document.addEventListener('keydown', e => {
     const searchBar = document.getElementById('reader-search-bar');
     const sheet = document.getElementById('ancient-sheet');
     const sonReveal = document.getElementById('son-reveal');
+    const psalmReveal = document.getElementById('psalm-reveal');
     if (sonReveal && sonReveal.classList.contains('open')) {
       closeSonReveal();
+    } else if (psalmReveal && psalmReveal.classList.contains('open')) {
+      closePsalmReveal();
     } else if (searchBar && searchBar.classList.contains('open')) {
       closeReaderSearch();
     } else if (readerOpen) {
@@ -5423,6 +5489,7 @@ const BIBLICAL_EVENTS = [
   { event:'Samuel & Saul',            book:'1 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Α΄',                 note:null,              yr:-1050 },
   { event:'David & Goliath',          book:'1 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Α΄',                 note:null,              yr:-1020 },
   { event:"David's Reign",            book:'2 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Β΄',                 note:null,              yr:-1010 },
+  { event:'Psalm 22 (21)',            book:'Psalms',                         greek:'ΨΑΛΜΟΙ',                      note:'the Psalm of the Cross', yr:-1000 },
   { event:'Solomon & First Temple',   book:'3 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Γ΄',                 note:null,              yr:-970  },
   // Divided Kingdom
   { event:'The Kingdom Divided',      book:'3–4 Kingdoms',                   greek:'ΒΑΣΙΛΕΙΩΝ Γ΄–Δ΄',              note:null,              yr:-931  },
@@ -5616,6 +5683,11 @@ function renderBiblical() {
       const card = document.createElement('div');
       card.className = 'bible-card';
       card.style.setProperty('--bc', color);
+      // The Psalm-of-the-Cross prophecy card and its Crucifixion fulfilment get
+      // ids so wirePsalmArc() can anchor + light them. The Psalm card takes a
+      // crimson accent to signal it belongs to the Passion thread.
+      if (ev.event === 'Psalm 22 (21)') { card.id = 'bs-psalm22-card'; card.classList.add('bs-prophecy-card'); card.style.setProperty('--bc', '#8b0000'); }
+      if (ev.event === 'Crucifixion & Resurrection') card.id = 'bs-crucifixion-card';
       card.innerHTML = `
         <div class="bc-date">${ev.yr < 0 ? 'c. ' + Math.abs(ev.yr) + ' BC' : 'c. ' + ev.yr + ' AD'}</div>
         <div class="bc-event">${ev.event}</div>
@@ -5624,6 +5696,12 @@ function renderBiblical() {
         ${ev.note ? `<div class="bc-note">${ev.note}</div>` : ''}
         <div class="bc-badge">${LIFE_OF_CHRIST.has(ev.event) ? 'The Fullness of Time' : era.label}</div>
       `;
+      if (ev.event === 'Psalm 22 (21)') {
+        const hint = document.createElement('div');
+        hint.className = 'bs-reveal-hint';
+        hint.innerHTML = '✦ the Psalm of the Cross';
+        card.appendChild(hint);
+      }
 
       const stem = document.createElement('div');
       stem.style.cssText = 'width:1px;height:20px;background:rgba(140,110,55,0.28);flex-shrink:0;';
@@ -5693,6 +5771,7 @@ function renderBiblical() {
 
   if (typeof buildBibleScrubber === 'function') setTimeout(buildBibleScrubber, 30);
   if (typeof wireSymmetryArc === 'function') setTimeout(wireSymmetryArc, 40);
+  if (typeof wirePsalmArc === 'function') setTimeout(wirePsalmArc, 40);
 }
 
 function setView(view) {
@@ -6283,8 +6362,18 @@ function wireSymmetryArc() {
     const ox = (o.left + o.width / 2 - tr.left) + track.scrollLeft;
     const oy = (o.top + o.height / 2 - tr.top);
     const midX = (ax + ox) / 2;
-    let peakY = Math.min(ay, oy) - 80;
-    if (peakY < 44) peakY = 44;
+    // One smooth parabola (quadratic Bezier) arching from the Alpha dot up over
+    // the timeline and back down to the Omega dot -- no square risers/canopy.
+    // The apex is pinned to a line measured just above the era-title row (live,
+    // not hardcoded), so the arch skims the titles instead of floating in empty
+    // sky (and stays correct if padding/fonts change).
+    const eraLabelEl = track.querySelector('.tl-era');
+    const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
+    const canopyY = Math.max(14, titleTop - 12); // apex ~12px above the titles
+    const peakY = canopyY;
+    // Control-point Y so the quadratic's apex (at t=0.5) lands exactly on canopyY:
+    //   y(0.5) = ay/4 + ctrlY/2 + oy/4  =>  ctrlY = 2*canopyY - (ay+oy)/2
+    const ctrlY = 2 * canopyY - (ay + oy) / 2;
     svg.innerHTML = `
       <defs>
         <linearGradient id="bs-arc-grad" x1="0" y1="0" x2="1" y2="0">
@@ -6293,7 +6382,7 @@ function wireSymmetryArc() {
           <stop offset="100%" stop-color="#b8902a"/>
         </linearGradient>
       </defs>
-      <path d="M ${ax} ${ay} Q ${midX} ${peakY} ${ox} ${oy}"
+      <path d="M ${ax} ${ay} Q ${midX} ${ctrlY} ${ox} ${oy}"
             fill="none" stroke="url(#bs-arc-grad)" stroke-width="2"
             stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
       <circle cx="${ax}" cy="${ay}" r="4" fill="#b8902a"/>
@@ -6302,13 +6391,10 @@ function wireSymmetryArc() {
       <text x="${ox}" y="${oy - 12}" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="#8b0000">&#937;</text>
     `;
     label.style.left = midX + 'px';
-    label.style.top = (peakY + 10) + 'px';
-    label.style.transform = 'translate(-50%, 0)';
+    label.style.top = (peakY - 4) + 'px';
+    label.style.transform = 'translate(-50%, -100%)';
     label.innerHTML = `
-      <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.22em;color:#8b0000;text-transform:uppercase;">Alpha &amp; Omega</div>
-      <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:#6b1a2a;margin-top:2px;">the beginning and the end</div>
-      <div style="font-family:'EB Garamond',serif;font-size:10px;color:#6b1a2a;opacity:0.85;margin-top:6px;letter-spacing:0.02em;">first letter <span style="font-family:serif;font-size:15px;color:#b8902a;">בְּ</span> &nbsp;+&nbsp; last letter <span style="font-family:serif;font-size:15px;color:#b8902a;">ן</span></div>
-      <div style="font-family:serif;font-size:24px;color:#b8902a;margin-top:2px;letter-spacing:0.08em;">בֵּן <span style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:#6b1a2a;">— ben — the Son</span></div>`;
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#8b0000;text-transform:uppercase;">Alpha &amp; Omega · the beginning and the end</div>`;
     svg.style.opacity = '1';
     label.style.opacity = '1';
     alpha.classList.add('bs-symmetry-lit');
@@ -6350,6 +6436,107 @@ function openSonReveal() {
 }
 function closeSonReveal() {
   const modal = document.getElementById('son-reveal');
+  if (modal) modal.classList.remove('open');
+}
+
+// ── PSALM 22 → CRUCIFIXION "PSALM OF THE CROSS" ARC ───────────────────────────
+// Same idiom as the Alpha-Omega arc: hover previews a dot-to-dot arc between the
+// Psalm 22 prophecy card and its Crucifixion & Resurrection fulfilment; click
+// pins it and opens the non-blocking slide reveal. Anchors to the spine dots so
+// the arc traces along the timeline spine like the symmetry arc does.
+function wirePsalmArc() {
+  const track = document.getElementById('bible-track');
+  if (!track) return;
+  const psSpine = track.querySelector('[data-bs-event="Psalm 22 (21)"]');
+  const cxSpine = track.querySelector('[data-bs-event="Crucifixion & Resurrection"]');
+  const psCard = document.getElementById('bs-psalm22-card');
+  const cxCard = document.getElementById('bs-crucifixion-card');
+  if (!psSpine || !cxSpine || !psCard || !cxCard) return;
+
+  let svg = document.getElementById('bs-psalm-arc-svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'bs-psalm-arc-svg';
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:29;opacity:0;transition:opacity 0.5s ease;overflow:visible;';
+    track.appendChild(svg);
+  }
+  let label = document.getElementById('bs-psalm-arc-label');
+  if (!label) {
+    label = document.createElement('div');
+    label.id = 'bs-psalm-arc-label';
+    label.style.cssText = 'position:absolute;z-index:31;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s ease;white-space:nowrap;';
+    track.appendChild(label);
+  }
+
+  const show = () => {
+    const tr = track.getBoundingClientRect();
+    const p = psSpine.getBoundingClientRect();
+    const c = cxSpine.getBoundingClientRect();
+    const ax = (p.left + p.width / 2 - tr.left) + track.scrollLeft;
+    const ay = (p.top + p.height / 2 - tr.top);
+    const ox = (c.left + c.width / 2 - tr.left) + track.scrollLeft;
+    const oy = (c.top + c.height / 2 - tr.top);
+    const midX = (ax + ox) / 2;
+    // Apex pinned just above the era titles (measured live), matching the
+    // symmetry arc, then a single parabola across to the cross.
+    const eraLabelEl = track.querySelector('.tl-era');
+    const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
+    const canopyY = Math.max(14, titleTop - 12);
+    const peakY = canopyY;
+    const ctrlY = 2 * canopyY - (ay + oy) / 2;
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="bs-psalm-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#8b0000"/>
+          <stop offset="50%" stop-color="#b8902a"/>
+          <stop offset="100%" stop-color="#8b0000"/>
+        </linearGradient>
+      </defs>
+      <path d="M ${ax} ${ay} Q ${midX} ${ctrlY} ${ox} ${oy}"
+            fill="none" stroke="url(#bs-psalm-grad)" stroke-width="2"
+            stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
+      <circle cx="${ax}" cy="${ay}" r="4" fill="#8b0000"/>
+      <circle cx="${ox}" cy="${oy}" r="4" fill="#8b0000"/>`;
+    label.style.left = midX + 'px';
+    label.style.top = (peakY - 4) + 'px';
+    label.style.transform = 'translate(-50%, -100%)';
+    label.innerHTML = `
+      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#8b0000;text-transform:uppercase;">Psalm 22 (21) &middot; the Psalm of the Cross &middot; sung c. 1000 years before</div>`;
+    svg.style.opacity = '1';
+    label.style.opacity = '1';
+    psCard.classList.add('bs-symmetry-lit');
+    cxCard.classList.add('bs-symmetry-lit');
+  };
+  const hide = () => {
+    svg.style.opacity = '0';
+    label.style.opacity = '0';
+    psCard.classList.remove('bs-symmetry-lit');
+    cxCard.classList.remove('bs-symmetry-lit');
+  };
+
+  let pinned = false;
+  [psCard, cxCard].forEach(c => {
+    c.style.cursor = 'pointer';
+    c.onmouseenter = () => { if (!pinned) show(); };
+    c.onmouseleave = () => { if (!pinned) hide(); };
+    c.onclick = () => {
+      if (pinned) { pinned = false; hide(); closePsalmReveal(); }
+      else { pinned = true; show(); openPsalmReveal(); }
+    };
+  });
+  window.__psalmPinned = () => pinned;
+}
+
+function openPsalmReveal() {
+  const modal = document.getElementById('psalm-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  const stage = modal.querySelector('.pr-stage');
+  if (stage) { stage.classList.remove('pr-run'); void stage.offsetWidth; stage.classList.add('pr-run'); }
+}
+function closePsalmReveal() {
+  const modal = document.getElementById('psalm-reveal');
   if (modal) modal.classList.remove('open');
 }
 
@@ -6620,7 +6807,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v34.5 · 15 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v35.2 · 16 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -7660,6 +7847,53 @@ window.addEventListener('resize', () => {
         <div class="sr-ben-en">the Son</div>
       </div>
       <div class="sr-coda">The first letter of Scripture and the last together spell <em>the Son</em>. He is the beginning and the end.</div>
+    </div>
+  </div>
+</div>
+
+<div id="psalm-reveal" onclick="if(event.target===this)closePsalmReveal()">
+  <div class="pr-panel">
+    <button class="pr-close" onclick="closePsalmReveal()" aria-label="Close">✕</button>
+    <div class="pr-eyebrow">A lesser-known devotional &middot; the scarlet worm</div>
+    <div class="pr-stage">
+      <div class="pw-verse">&ldquo;But I am a worm, and no man&rdquo;<span class="pw-ref">Psalm 22:6</span></div>
+      <div class="pw-word">
+        <div class="pw-heb" dir="rtl">תּוֹלַעַת</div>
+        <div class="pw-rom">tola&rsquo;ath</div>
+        <div class="pw-gloss">the crimson dye-worm &middot; <i>Kermes vermilio</i></div>
+      </div>
+      <svg class="pw-scene" viewBox="0 0 240 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="pw-wood" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6b4a24"/>
+            <stop offset="100%" stop-color="#46301a"/>
+          </linearGradient>
+          <radialGradient id="pw-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#8b0000" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#8b0000" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- the wood -->
+        <rect x="18" y="58" width="204" height="12" rx="6" fill="url(#pw-wood)"/>
+        <line x1="32" y1="62" x2="208" y2="62" stroke="#2e1f0d" stroke-width="0.6" opacity="0.5"/>
+        <line x1="44" y1="66" x2="196" y2="66" stroke="#2e1f0d" stroke-width="0.5" opacity="0.32"/>
+        <!-- crimson seeping into the grain (spreads from centre) -->
+        <rect class="pw-stain" x="18" y="58" width="204" height="12" rx="6" fill="#8b0000"/>
+        <!-- soft crimson dye glow beneath the worm -->
+        <ellipse class="pw-dye" cx="120" cy="64" rx="64" ry="22" fill="url(#pw-glow)"/>
+        <!-- the scarlet later made white (Isaiah 1:18); washes in last, no timing claimed -->
+        <rect class="pw-snow" x="18" y="58" width="204" height="12" rx="6" fill="#f4efe0"/>
+        <!-- the worm, curled on the wood -->
+        <g class="pw-worm">
+          <path d="M101 59 Q120 42 139 59" fill="none" stroke="#5c0000" stroke-width="10" stroke-linecap="round"/>
+          <path d="M101 59 Q120 42 139 59" fill="none" stroke="#a8101f" stroke-width="6.5" stroke-linecap="round"/>
+          <path d="M111 50 l0 7 M120 47 l0 8 M129 50 l0 7" stroke="#4a0000" stroke-width="1.2" opacity="0.4"/>
+          <circle cx="139" cy="58" r="5" fill="#a8101f" stroke="#5c0000" stroke-width="1"/>
+          <circle cx="140.5" cy="57" r="1.1" fill="#2e0000"/>
+        </g>
+      </svg>
+      <div class="pw-cycle">She fixes herself to the wood, gives up her life, and her crimson shelters the young beneath her.</div>
+      <div class="pr-coda">David took the lowliest word for himself, not a man but a worm. An old devotion reads the cross in it: <em>crushed upon the wood</em>, his crimson covering his own, the scarlet made <em>white as snow</em>.</div>
     </div>
   </div>
 </div>
