@@ -654,33 +654,6 @@
   .bl-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
 
-  /* ── SCRIPTURE CONTEXT NOTE ── */
-  .scripture-note {
-    flex-shrink: 0;
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    padding: 4px 24px;
-    background: rgba(107,26,42,0.04);
-    border-bottom: 1px solid rgba(107,26,42,0.12);
-  }
-  .scripture-note-title {
-    font-family: 'Cinzel', serif;
-    font-size: 8px;
-    letter-spacing: 0.2em;
-    color: #6b1a2a;
-    text-transform: uppercase;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .scripture-note-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: 10.5px;
-    color: var(--brown-light);
-    line-height: 1.3;
-  }
-
 
 
   /* ── MOBILE RESPONSIVE ── */
@@ -718,9 +691,6 @@
     .vol-date  { font-size: 8px; }
     .era-heading { font-size: 8px; letter-spacing: 0.2em; }
 
-    /* Scripture note wraps nicely */
-    .scripture-note { flex-direction: column; gap: 4px; padding: 8px 14px; }
-    .scripture-note-text { font-size: 11px; }
 
     .status-legend-bar { padding: 4px 14px; }
     .sl-item { font-size: 10px; }
@@ -1121,9 +1091,6 @@
   [data-theme="dark"] .pleroma-text {
     background: #1a1810;
   }
-  [data-theme="dark"] .scripture-note {
-    background: rgba(139,0,0,0.08);
-  }
   [data-theme="dark"] header {
     background: #1a1810;
   }
@@ -1132,8 +1099,7 @@
   [data-theme="dark"] .status-legend-bar,
   [data-theme="dark"] .bible-legend-bar,
   [data-theme="dark"] .controls-bar,
-  [data-theme="dark"] .controls,
-  [data-theme="dark"] .scripture-note {
+  [data-theme="dark"] .controls {
     background: var(--cream);
     border-color: rgba(200,160,64,0.15);
   }
@@ -3023,6 +2989,7 @@
      Then a faint ongoing shimmer keeps it from sitting quite still in our space. */
   .bs-arc-glitch {
     transform-box: fill-box; transform-origin: center;
+    will-change: transform, opacity;
     animation: bs-arc-flicker 1.15s steps(1, jump-end) 1 both,
                bs-arc-jitter 1.05s steps(1, jump-end) 1 both,
                bs-arc-shimmer 5.5s ease-in-out 1.3s infinite;
@@ -3630,10 +3597,6 @@
 </div>
 
 <div id="bible-view">
-  <div class="scripture-note">
-    <span class="scripture-note-title">The Scripture Timeline</span>
-    <span class="scripture-note-text">Provided for context and reference — tracing the narrative arc of the Bible from Abraham to the Apostolic Age. These are not library volumes but the historical and theological backdrop against which the collection is read.</span>
-  </div>
   <div class="tl-scrubber" id="bs-scrubber">
     <div class="tl-scrubber-readout" id="bs-scrubber-readout"></div>
     <div class="tl-scrubber-track" id="bs-scrubber-track">
@@ -3651,7 +3614,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v36.8 · 16 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v38.0 · 16 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -6718,6 +6681,23 @@ function bsEraName(yr) {
 // Hovering the first Scripture card ("In the beginning" / Genesis) shoots an arc
 // across to the last card (Revelation / the end), revealing the symmetry:
 // Alpha & Omega · the beginning and the end · בן the Son.
+// Reusable arc router. Builds a flat-topped "squared" arc from a start dot (ax,ay) up to
+// a clearance line topY, flat across, and down to an end dot (ox,oy), with rounded
+// corners. Because the flat run sits at topY (parked above every card) and the two risers
+// are at the endpoints themselves (nothing lies beyond Alpha on the left or Omega on the
+// right), the path clears all intervening cards by construction -- no per-card math and no
+// row/spine alignment. It is a pure function of its inputs, so a redraw is just a cheap
+// recompute. Any future over-the-timeline thread can route itself by calling this.
+function bsSquaredArc(ax, ay, ox, oy, topY) {
+  const cr = Math.max(10, Math.min(70, Math.abs(ox - ax) * 0.12, (Math.min(ay, oy) - topY) * 0.6));
+  return `M ${ax.toFixed(1)} ${ay.toFixed(1)}`
+    + ` L ${ax.toFixed(1)} ${(topY + cr).toFixed(1)}`
+    + ` Q ${ax.toFixed(1)} ${topY.toFixed(1)} ${(ax + cr).toFixed(1)} ${topY.toFixed(1)}`
+    + ` L ${(ox - cr).toFixed(1)} ${topY.toFixed(1)}`
+    + ` Q ${ox.toFixed(1)} ${topY.toFixed(1)} ${ox.toFixed(1)} ${(topY + cr).toFixed(1)}`
+    + ` L ${ox.toFixed(1)} ${oy.toFixed(1)}`;
+}
+
 function wireSymmetryArc() {
   const track = document.getElementById('bible-track');
   const alpha = document.getElementById('bs-alpha-card');
@@ -6763,49 +6743,45 @@ function wireSymmetryArc() {
     const ay = (a.top + a.height / 2 - tr.top);
     const ox = (o.left + o.width / 2 - tr.left) + track.scrollLeft;
     const oy = (o.top + o.height / 2 - tr.top);
-    // "Lift + run off the edge + connect": one continuous line enters from the left
-    // screen edge, dips into Alpha, bows across to Omega, and runs off the right edge,
-    // fading at both edges so the ring closes beyond the frame. It is lifted off the
-    // timeline (soft drop-shadow beneath) and phases in with a flicker / RGB-split
-    // glitch, as if briefly caught sight of from outside our reality.
+    // ONE clean arc that vaults ABOVE every card: it rises straight up out of the Alpha
+    // dot, runs flat across the top of the whole timeline, and drops straight down into
+    // the Omega dot. The flat run is parked on a clearance line measured from the highest
+    // card, so the arc never slices through a card however the rows lay out -- it routes
+    // itself to the dots. It is lifted off the timeline (soft drop-shadow) and phases in
+    // with the flicker / RGB-split glitch, as if briefly caught sight of from outside.
     const eraLabelEl = track.querySelector('.tl-era');
     const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
     const canopyY = Math.max(14, titleTop - 12);
     const scroller = document.getElementById('bible-scroll');
     const xL = scroller ? scroller.scrollLeft : 0;
     const xR = scroller ? (scroller.scrollLeft + scroller.clientWidth) : (track.scrollLeft + track.clientWidth);
-    const edgeY = Math.max(6, canopyY - 6);
-    const midX = (ax + ox) / 2;
-    const ctrlY = 2 * canopyY - (ay + oy) / 2;          // bow apex skims the era titles
-    const dFull = `M ${xL} ${edgeY}`
-      + ` C ${ax - (ax - xL) * 0.6} ${edgeY}, ${ax - (ax - xL) * 0.45} ${ay}, ${ax} ${ay}`
-      + ` Q ${midX} ${ctrlY} ${ox} ${oy}`
-      + ` C ${ox + (xR - ox) * 0.45} ${oy}, ${ox + (xR - ox) * 0.6} ${edgeY}, ${xR} ${edgeY}`;
-    const span = Math.max(1, xR - xL);
-    const aOff = (ax - xL) / span, oOff = (ox - xL) / span;
-    const mkStops = (col, op) => {
-      let s = '';
-      if (aOff > 0.02) s += `<stop offset="0%" stop-color="${col}" stop-opacity="0"/><stop offset="${Math.min(48, Math.max(1, aOff * 100)).toFixed(1)}%" stop-color="${col}" stop-opacity="${op}"/>`;
-      else s += `<stop offset="0%" stop-color="${col}" stop-opacity="${op}"/>`;
-      if (oOff < 0.98) s += `<stop offset="${Math.max(52, Math.min(99, oOff * 100)).toFixed(1)}%" stop-color="${col}" stop-opacity="${op}"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/>`;
-      else s += `<stop offset="100%" stop-color="${col}" stop-opacity="${op}"/>`;
-      return s;
-    };
+    // Clearance line: above the era titles AND above the highest card top in the track.
+    let topMost = canopyY;
+    track.querySelectorAll('.bible-card').forEach(c => {
+      const t = c.getBoundingClientRect().top - tr.top;
+      if (t < topMost) topMost = t;
+    });
+    const topY = Math.max(10, Math.min(canopyY, topMost - 14));
+    const dArc = bsSquaredArc(ax, ay, ox, oy, topY);
     svg.innerHTML = `
       <defs>
-        <linearGradient id="bs-arc-gFull" gradientUnits="userSpaceOnUse" x1="${xL}" y1="0" x2="${xR}" y2="0">${mkStops('#b8902a', '0.95')}</linearGradient>
-        <linearGradient id="bs-arc-gFullC" gradientUnits="userSpaceOnUse" x1="${xL}" y1="0" x2="${xR}" y2="0">${mkStops('#f5e3a8', '0.6')}</linearGradient>
+        <linearGradient id="bs-arc-gFull" gradientUnits="userSpaceOnUse" x1="${ax}" y1="0" x2="${ox}" y2="0">
+          <stop offset="0%" stop-color="#b8902a"/><stop offset="50%" stop-color="#8b0000"/><stop offset="100%" stop-color="#b8902a"/>
+        </linearGradient>
+        <linearGradient id="bs-arc-gFullC" gradientUnits="userSpaceOnUse" x1="${ax}" y1="0" x2="${ox}" y2="0">
+          <stop offset="0%" stop-color="#f5e3a8"/><stop offset="50%" stop-color="#f0c97a"/><stop offset="100%" stop-color="#f5e3a8"/>
+        </linearGradient>
         <filter id="bs-arc-lift" x="-10%" y="-60%" width="120%" height="240%">
           <feDropShadow dx="0" dy="6" stdDeviation="3.4" flood-color="#140d04" flood-opacity="0.32"/>
         </filter>
       </defs>
       <g class="bs-arc-glitch">
-        <path class="bs-arc-ghost-r" d="${dFull}" fill="none" stroke="#ff2d55" stroke-width="3" stroke-linecap="round" style="mix-blend-mode:screen"/>
-        <path class="bs-arc-ghost-b" d="${dFull}" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" style="mix-blend-mode:screen"/>
+        <path class="bs-arc-ghost-r" d="${dArc}" fill="none" stroke="#ff2d55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="mix-blend-mode:screen"/>
+        <path class="bs-arc-ghost-b" d="${dArc}" fill="none" stroke="#22d3ee" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="mix-blend-mode:screen"/>
         <g filter="url(#bs-arc-lift)">
-          <path d="${dFull}" fill="none" stroke="url(#bs-arc-gFull)" stroke-width="3.6" stroke-linecap="round"/>
+          <path d="${dArc}" fill="none" stroke="url(#bs-arc-gFull)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
         </g>
-        <path d="${dFull}" fill="none" stroke="url(#bs-arc-gFullC)" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="${dArc}" fill="none" stroke="url(#bs-arc-gFullC)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         <circle cx="${ax}" cy="${ay}" r="4" fill="#b8902a"/>
         <circle cx="${ox}" cy="${oy}" r="4" fill="#8b0000"/>
         <text x="${ax}" y="${ay - 12}" text-anchor="middle" font-family="'Cinzel',serif" font-size="20" fill="#b8902a">&#913;</text>
@@ -6813,7 +6789,7 @@ function wireSymmetryArc() {
       </g>
     `;
     label.style.left = ((xL + xR) / 2) + 'px';
-    label.style.top = (edgeY - 4) + 'px';
+    label.style.top = (topY - 4) + 'px';
     label.style.transform = 'translate(-50%, -100%)';
     label.innerHTML = `
       <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#8b0000;text-transform:uppercase;">Alpha &amp; Omega · the beginning and the end</div>`;
@@ -6838,7 +6814,7 @@ function wireSymmetryArc() {
     // after the box is closed; clicking a lit card again unpins/clears.
     c.onclick = () => {
       if (pinned) { pinned = false; hide(); closeSonReveal(); }
-      else { pinned = true; show(); openSonReveal(); }
+      else { pinned = true; show(); setTimeout(() => { if (pinned) openSonReveal(); }, 1100); }
     };
   });
   // expose so closing the box doesn't clear the pinned arc
@@ -7666,7 +7642,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v36.8 · 16 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v38.0 · 16 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
