@@ -3450,7 +3450,49 @@
   .tg-run .tg-beat           { animation: sr-fade 0.55s ease-out var(--d,1.8s) forwards; }
   .tg-run .tg-tier           { animation: sr-fade 0.5s ease-out 3.4s forwards; }
   .tg-run .tg-devo           { animation: sr-fade 0.55s ease-out var(--d,3.6s) forwards; }
-  .tg-run .tg-coda           { animation: sr-fade 0.8s ease-out 4.6s forwards; }</style>
+  .tg-run .tg-coda           { animation: sr-fade 0.8s ease-out 4.6s forwards; }
+
+  /* ── GENERIC THREAD REVEAL ── reusable panel for typological threads: each
+     instance sets --accent / --accent-border inline rather than needing a new
+     per-thread CSS block (reuses sr-appear / sr-fade, same as the others). */
+  .sg-reveal {
+    position: fixed; right: 16px; bottom: 16px; z-index: 4000;
+    display: block; pointer-events: none;
+    transform: translateY(120%); opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.2,1,0.3,1), opacity 0.4s ease, right 0.35s ease, bottom 0.35s ease;
+  }
+  .sg-reveal.open { transform: translateY(0); opacity: 1; }
+  .sg-panel {
+    position: relative; width: min(86vw, 340px); box-sizing: border-box;
+    overflow: hidden; pointer-events: auto;
+    background: linear-gradient(160deg, #faf6ea, #efe6cd);
+    border: 1px solid var(--accent-border, rgba(91,122,166,0.45));
+    box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+    border-radius: 4px; padding: 22px 20px 20px; text-align: center;
+  }
+  @media (max-width: 768px) {
+    .sg-reveal { right: 10px; left: 10px; bottom: 70px; }
+    .sg-panel { width: auto; }
+  }
+  [data-theme="dark"] .sg-panel { background: linear-gradient(160deg, #1c1a22, #15131a); border-color: var(--accent-border, rgba(91,122,166,0.5)); }
+  .sg-close { position: absolute; top: 8px; right: 10px; background: none; border: none; cursor: pointer; font-size: 16px; color: var(--brown-light); opacity: 0.7; }
+  .sg-eyebrow { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent, #5b7aa6); text-align: center; margin-bottom: 14px; }
+  .sg-intro { font-family: 'Cormorant Garamond', serif; font-size: 13.5px; font-style: italic; line-height: 1.5; color: var(--ink); text-align: center; margin: 2px 4px 12px; opacity: 0; }
+  .sg-intro b { font-style: normal; color: var(--accent, #5b7aa6); }
+  .sg-beat { font-family: 'EB Garamond', serif; font-size: 11.5px; line-height: 1.4; color: var(--ink); opacity: 0; padding: 3px 0 3px 14px; position: relative; text-align: left; }
+  .sg-beat::before { content: '✦'; position: absolute; left: 0; top: 4px; font-size: 7px; color: var(--accent, #5b7aa6); }
+  .sg-beat em { color: var(--accent, #5b7aa6); font-style: italic; }
+  .sg-beat .r { color: var(--brown-light); font-size: 9.5px; }
+  .sg-tier { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: #9a7b46; margin: 12px 0 4px; opacity: 0; border-bottom: 1px solid rgba(140,110,55,0.2); padding-bottom: 3px; text-align: left; }
+  .sg-devo { font-family: 'EB Garamond', serif; font-style: italic; font-size: 11px; line-height: 1.4; color: var(--brown-light); opacity: 0; padding: 2px 0; text-align: left; }
+  .sg-devo b { font-style: normal; color: var(--ink); font-weight: 600; }
+  .sg-coda { font-family: 'Cormorant Garamond', serif; font-size: 12.5px; line-height: 1.55; color: var(--ink); margin-top: 12px; text-wrap: balance; opacity: 0; text-align: center; overflow-wrap: break-word; }
+  .sg-coda em { color: var(--accent, #5b7aa6); font-style: italic; }
+  .sg-run .sg-intro { animation: sr-appear 0.6s ease-out 0.1s forwards; }
+  .sg-run .sg-beat  { animation: sr-fade 0.55s ease-out var(--d,1.2s) forwards; }
+  .sg-run .sg-tier  { animation: sr-fade 0.5s ease-out 3.0s forwards; }
+  .sg-run .sg-devo  { animation: sr-fade 0.55s ease-out var(--d,3.2s) forwards; }
+  .sg-run .sg-coda  { animation: sr-fade 0.8s ease-out 4.2s forwards; }</style>
 </head>
 <body>
 <noscript>
@@ -3614,7 +3656,7 @@
 <div class="legend-bar" id="series-legend-bar">
   <div id="series-legend" class="legend-items"></div>
 </div>
-<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v38.0 · 16 June 2026</div>
+<div class="version-stamp"><span class="vs-stats" id="stats-bar"></span><span class="vs-bar"> | </span><span class="vs-motto">fides quaerens intellectum · faith seeking understanding</span><span class="vs-bar"> | </span>Compiled by Nicholas Aquila<span class="vs-bar"> | </span>v38.3 · 16 June 2026</div>
 
 <script>
 const LIBRARY_DATA = {
@@ -5755,7 +5797,11 @@ const BIBLE_ERA_COLORS = {
 // narrative_yr from catalogue. Where two events share a year they get offset.
 const BIBLICAL_EVENTS = [
   // Patriarchal Age
+  { event:'The Firmament',            book:'Genesis 1:6\u20138',              greek:'ΓΕΝΕΣΙΣ Α΄',                   note:'the unfinished day', yr:-4001 },
   { event:'Adam & Eve',               book:'Genesis 2\u20133',                greek:'ΓΕΝΕΣΙΣ',                      note:'the mother of all living', yr:-4000 },
+  { event:'The Fig Leaves',           book:'Genesis 3:7',                    greek:'ΓΕΝΕΣΙΣ Γ΄',                   note:'they covered themselves', yr:-3999 },
+  { event:'Among the Trees',          book:'Genesis 3:8\u201310',             greek:'ΓΕΝΕΣΙΣ Γ΄',                   note:'they hid from the Creator', yr:-3998 },
+  { event:'The Flaming Sword',        book:'Genesis 3:24',                   greek:'ΓΕΝΕΣΙΣ Γ΄',                   note:'guarding the way back', yr:-3997 },
   { event:'Abraham & the Covenant',   book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-2000 },
   { event:'Sodom & Gomorrah',         book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-1900 },
   { event:'Isaac & Jacob',            book:'Genesis',                        greek:'ΓΕΝΕΣΙΣ',                      note:null,              yr:-1800 },
@@ -5764,6 +5810,7 @@ const BIBLICAL_EVENTS = [
   // Exodus & Conquest
   { event:'The Exodus',               book:'Exodus',                         greek:'ΕΞΟΔΟΣ',                       note:null,              yr:-1446 },
   { event:'The Law at Sinai',         book:'Exodus · Leviticus',             greek:'ΕΞΟΔΟΣ · ΛΕΥΙΤΙΚΟΝ',           note:null,              yr:-1445 },
+  { event:'The Tabernacle Veil',      book:'Exodus 26:31\u201333',            greek:'ΕΞΟΔΟΣ',                       note:'the high priest alone may pass', yr:-1444 },
   { event:'Wilderness Wanderings',    book:'Numbers',                        greek:'ΑΡΙΘΜΟΙ',                      note:'40 years',        yr:-1444 },
   { event:'Conquest of Canaan',       book:'Joshua',                         greek:'ΙΗΣΟΥΣ ΝΑΥΗ',                  note:null,              yr:-1406 },
   { event:'The Judges',               book:'Judges',                         greek:'ΚΡΙΤΑΙ',                       note:null,              yr:-1200 },
@@ -5774,6 +5821,7 @@ const BIBLICAL_EVENTS = [
   { event:"David's Reign",            book:'2 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Β΄',                 note:null,              yr:-1010 },
   { event:'Psalm 22 (21)',            book:'Psalms',                         greek:'ΨΑΛΜΟΙ',                      note:'the Psalm of the Cross', yr:-1000 },
   { event:'Solomon & First Temple',   book:'3 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Γ΄',                 note:null,              yr:-970  },
+  { event:'The Temple Veil',          book:'2 Chronicles 3:14',              greek:'ΠΑΡΑΛΕΙΠΟΜΕΝΩΝ Β΄',            note:'cherubim woven into the veil', yr:-969 },
   // Divided Kingdom
   { event:'The Kingdom Divided',      book:'3–4 Kingdoms',                   greek:'ΒΑΣΙΛΕΙΩΝ Γ΄–Δ΄',              note:null,              yr:-931  },
   { event:'Elijah & the Prophets',    book:'4 Kingdoms',                     greek:'ΒΑΣΙΛΕΙΩΝ Δ΄',                 note:null,              yr:-875  },
@@ -6021,7 +6069,18 @@ function renderBiblical() {
       if (ev.event === 'The Last Supper')   { card.id = 'bs-bread-supper';   card.classList.add('bs-bread-card'); card.style.setProperty('--bc', '#cba23e'); }
       // The new-Eve thread (Adam & Eve -> the Annunciation) takes a Marian-blue
       // accent; wireEveArc() links the fall to the Ave that reverses it.
+      // Three Genesis-opening threads, each its own card, all converging on the
+      // Crucifixion card (already shared with the Psalm thread): the veil
+      // (day two never declared "good" -> the temple veil torn), the fig
+      // leaves (self-covering -> uncovered at the cross), and hiding among
+      // the trees (concealment -> hung on a tree in the open).
+      if (ev.event === 'The Firmament')     { card.id = 'bs-veil-firmament'; card.classList.add('bs-veil-card'); card.style.setProperty('--bc', '#3a4f73'); }
+      if (ev.event === 'The Flaming Sword') { card.id = 'bs-veil-sword'; card.classList.add('bs-veil-card'); card.style.setProperty('--bc', '#3a4f73'); }
+      if (ev.event === 'The Tabernacle Veil') { card.id = 'bs-veil-tabernacle'; card.classList.add('bs-veil-card'); card.style.setProperty('--bc', '#3a4f73'); }
+      if (ev.event === 'The Temple Veil')   { card.id = 'bs-veil-temple'; card.classList.add('bs-veil-card'); card.style.setProperty('--bc', '#3a4f73'); }
       if (ev.event === 'Adam & Eve')        { card.id = 'bs-eve-fall'; card.classList.add('bs-eve-card'); card.style.setProperty('--bc', '#5b7aa6'); }
+      if (ev.event === 'The Fig Leaves')    { card.id = 'bs-covering-fig'; card.classList.add('bs-covering-card'); card.style.setProperty('--bc', '#6b5638'); }
+      if (ev.event === 'Among the Trees')   { card.id = 'bs-tree-hide'; card.classList.add('bs-tree-card'); card.style.setProperty('--bc', '#3d4a35'); }
       if (ev.event === 'The Annunciation')  { card.id = 'bs-eve-mary'; card.classList.add('bs-eve-card'); card.style.setProperty('--bc', '#5b7aa6'); }
       // The scapegoat thread: the Trial (Barabbas, "son of the father," released)
       // arced back to the scapegoat law given at Sinai (Leviticus 16).
@@ -6137,6 +6196,9 @@ function renderBiblical() {
   if (typeof wireBreadArc === 'function') setTimeout(wireBreadArc, 40);
   if (typeof wireEveArc === 'function') setTimeout(wireEveArc, 40);
   if (typeof wireTrialArc === 'function') setTimeout(wireTrialArc, 40);
+  if (typeof wireVeilArc === 'function') setTimeout(wireVeilArc, 40);
+  if (typeof wireCoveringArc === 'function') setTimeout(wireCoveringArc, 40);
+  if (typeof wireTreeArc === 'function') setTimeout(wireTreeArc, 40);
 }
 
 function setView(view) {
@@ -7270,6 +7332,258 @@ function closeEveReveal() {
   layoutReveals();
 }
 
+// ── THREE GENESIS-OPENING THREADS, EACH ITS OWN CARD, CONVERGING ON THE CROSS ──
+// The veil: day two of creation is the only day Genesis never calls "good";
+// that same firmament becomes the veil man cannot cross from his own side,
+// finished only when it is torn, top to bottom, at the Crucifixion.
+// The fig leaves: Adam and Eve cover themselves the moment they fall; at the
+// cross Christ is uncovered by others' hands and does not hide.
+// Among the trees: they hide themselves from the Creator in the garden;
+// Christ hides nothing, lifted up on a tree in the open instead.
+// All three use the same simple dashed bow the other secondary threads use
+// (Psalm, Eve, Donkey, Bread), peaking above the era titles like they do.
+// All three converge on the Crucifixion card, already shared with the Psalm
+// thread; to avoid stacking several modals on one click, only each thread's
+// ORIGIN card drives the click-to-open reveal, while the shared destination
+// just glows on hover, previewing whichever thread the visitor is near. All
+// listeners use addEventListener rather than direct .onclick assignment, so
+// threads sharing a card layer cleanly instead of clobbering one another,
+// now or for any thread added later.
+function wireTwoPointArc(opts) {
+  const track = document.getElementById('bible-track');
+  if (!track) return;
+  const oSpine = track.querySelector(`[data-bs-event="${opts.originEvent}"]`);
+  const dSpine = track.querySelector(`[data-bs-event="${opts.destEvent}"]`);
+  const oCard = document.getElementById(opts.originId);
+  const dCard = document.getElementById(opts.destId);
+  if (!oSpine || !dSpine || !oCard || !dCard) return;
+
+  let svg = document.getElementById(opts.svgId);
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = opts.svgId;
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:27;opacity:0;transition:opacity 0.5s ease;overflow:visible;';
+    track.appendChild(svg);
+  }
+  let label = document.getElementById(opts.labelId);
+  if (!label) {
+    label = document.createElement('div');
+    label.id = opts.labelId;
+    label.style.cssText = 'position:absolute;z-index:31;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s ease;white-space:nowrap;';
+    track.appendChild(label);
+  }
+
+  const show = () => {
+    const tr = track.getBoundingClientRect();
+    const o = oSpine.getBoundingClientRect();
+    const d = dSpine.getBoundingClientRect();
+    const ax = (o.left + o.width / 2 - tr.left) + track.scrollLeft;
+    const ay = (o.top + o.height / 2 - tr.top);
+    const ox = (d.left + d.width / 2 - tr.left) + track.scrollLeft;
+    const oy = (d.top + d.height / 2 - tr.top);
+    const eraLabelEl = track.querySelector('.tl-era');
+    const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
+    const canopyY = Math.max(14, titleTop - 12) - opts.lane;
+    const midX = (ax + ox) / 2;
+    const ctrlY = 2 * canopyY - (ay + oy) / 2;
+    const dArc = `M ${ax.toFixed(1)} ${ay.toFixed(1)} Q ${midX.toFixed(1)} ${ctrlY.toFixed(1)} ${ox.toFixed(1)} ${oy.toFixed(1)}`;
+    svg.innerHTML = `
+      <defs><linearGradient id="${opts.svgId}-grad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="${opts.color}"/><stop offset="50%" stop-color="${opts.colorMid}"/><stop offset="100%" stop-color="${opts.color}"/>
+      </linearGradient></defs>
+      <path d="${dArc}" fill="none" stroke="url(#${opts.svgId}-grad)" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="6 5" opacity="0.85"/>
+      <circle cx="${ax}" cy="${ay}" r="4" fill="${opts.color}"/>
+      <circle cx="${ox}" cy="${oy}" r="4" fill="${opts.color}"/>`;
+    label.style.left = ((ax + ox) / 2) + 'px';
+    label.style.top = (canopyY - 4) + 'px';
+    label.style.transform = 'translate(-50%, -100%)';
+    label.innerHTML = `<div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:${opts.color};text-transform:uppercase;">${opts.labelText}</div>`;
+    svg.style.opacity = '1';
+    label.style.opacity = '1';
+    oCard.classList.add('bs-symmetry-lit');
+    dCard.classList.add('bs-symmetry-lit');
+  };
+  const hide = () => {
+    svg.style.opacity = '0';
+    label.style.opacity = '0';
+    oCard.classList.remove('bs-symmetry-lit');
+    dCard.classList.remove('bs-symmetry-lit');
+  };
+
+  let pinned = false;
+  oCard.style.cursor = 'pointer';
+  oCard.addEventListener('mouseenter', () => { if (!pinned) show(); });
+  oCard.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+  oCard.addEventListener('click', () => {
+    if (pinned) { pinned = false; hide(); opts.closeReveal(); }
+    else { pinned = true; show(); opts.openReveal(); }
+  });
+  // Shared destination card: hover-preview only, so clicking it never piles
+  // this thread's reveal on top of whichever other thread already owns its
+  // click (e.g. the Psalm thread on the Crucifixion card).
+  dCard.addEventListener('mouseenter', () => { if (!pinned) show(); });
+  dCard.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+}
+
+// ── THE VEIL THREAD: A CHAIN THROUGH FIVE WAYPOINTS ────────────────────────
+// Day two of creation is the only day Genesis never calls "good." That same
+// firmament becomes a guarded barrier the moment man falls (cherubim and a
+// flaming sword bar the way back to the tree of life), then the same
+// cherubim are woven into the tabernacle veil, then into the Temple veil,
+// and the chain only resolves when that last veil is torn, top to bottom,
+// at the Crucifixion. Modeled on wireDonkeyArc's chained-parabola geometry
+// (one Q segment per consecutive pair, each peaking at canopyY) rather than
+// the two-point bow the Covering and Tree threads use, since this thread is
+// a sequence of waypoints, not a single span. The final waypoint, the
+// Crucifixion card, is shared with the Psalm/Covering/Tree threads, so it
+// gets hover-preview only here; the four cards exclusive to this thread
+// drive the click-to-open reveal. All listeners use addEventListener so
+// nothing here can clobber, or be clobbered by, another thread.
+function wireVeilArc() {
+  const track = document.getElementById('bible-track');
+  if (!track) return;
+  const events = ['The Firmament', 'The Flaming Sword', 'The Tabernacle Veil', 'The Temple Veil', 'Crucifixion & Resurrection'];
+  const ids = ['bs-veil-firmament', 'bs-veil-sword', 'bs-veil-tabernacle', 'bs-veil-temple', 'bs-crucifixion-card'];
+  const dots = events.map(e => track.querySelector(`[data-bs-event="${e}"]`));
+  const cards = ids.map(id => document.getElementById(id));
+  if (dots.some(d => !d) || cards.some(c => !c)) return;
+
+  let svg = document.getElementById('bs-veil-arc-svg');
+  if (!svg) {
+    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = 'bs-veil-arc-svg';
+    svg.setAttribute('aria-hidden', 'true');
+    svg.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:27;opacity:0;transition:opacity 0.5s ease;overflow:visible;';
+    track.appendChild(svg);
+  }
+  let label = document.getElementById('bs-veil-arc-label');
+  if (!label) {
+    label = document.createElement('div');
+    label.id = 'bs-veil-arc-label';
+    label.style.cssText = 'position:absolute;z-index:31;pointer-events:none;text-align:center;opacity:0;transition:opacity 0.5s ease;white-space:nowrap;';
+    track.appendChild(label);
+  }
+
+  const show = () => {
+    const tr = track.getBoundingClientRect();
+    const pts = dots.map(d => {
+      const r = d.getBoundingClientRect();
+      return { x: (r.left + r.width / 2 - tr.left) + track.scrollLeft, y: (r.top + r.height / 2 - tr.top) };
+    });
+    const eraLabelEl = track.querySelector('.tl-era');
+    const titleTop = eraLabelEl ? (eraLabelEl.getBoundingClientRect().top - tr.top) : 58;
+    const canopyY = Math.max(14, titleTop - 12);
+    let d = `M ${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+    for (let k = 0; k < pts.length - 1; k++) {
+      const a = pts[k], b = pts[k + 1];
+      const midX = (a.x + b.x) / 2;
+      const ctrlY = 2 * canopyY - (a.y + b.y) / 2;
+      d += ` Q ${midX.toFixed(1)} ${ctrlY.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`;
+    }
+    const circles = pts.map(p => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#3a4f73"/>`).join('');
+    svg.innerHTML = `
+      <defs><linearGradient id="bs-veil-grad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#3a4f73"/><stop offset="50%" stop-color="#7a93b8"/><stop offset="100%" stop-color="#3a4f73"/>
+      </linearGradient></defs>
+      <path d="${d}" fill="none" stroke="url(#bs-veil-grad)" stroke-width="2"
+            stroke-linecap="round" stroke-dasharray="6 5" opacity="0.85"/>
+      ${circles}`;
+    const midPt = pts[2];
+    label.style.left = midPt.x + 'px';
+    label.style.top = (canopyY - 4) + 'px';
+    label.style.transform = 'translate(-50%, -100%)';
+    label.innerHTML = `<div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.22em;color:#3a4f73;text-transform:uppercase;">the unfinished day &middot; finished when the veil is torn</div>`;
+    svg.style.opacity = '1';
+    label.style.opacity = '1';
+    cards.forEach(c => c.classList.add('bs-symmetry-lit'));
+  };
+  const hide = () => {
+    svg.style.opacity = '0';
+    label.style.opacity = '0';
+    cards.forEach(c => c.classList.remove('bs-symmetry-lit'));
+  };
+
+  let pinned = false;
+  cards.slice(0, -1).forEach(c => {
+    c.style.cursor = 'pointer';
+    c.addEventListener('mouseenter', () => { if (!pinned) show(); });
+    c.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+    c.addEventListener('click', () => {
+      if (pinned) { pinned = false; hide(); closeVeilReveal(); }
+      else { pinned = true; show(); openVeilReveal(); }
+    });
+  });
+  // The final waypoint, the Crucifixion card, is shared with other threads:
+  // hover-preview only here, so clicking it never piles this reveal on top
+  // of whichever other thread already owns its click.
+  const cxCard = cards[cards.length - 1];
+  cxCard.addEventListener('mouseenter', () => { if (!pinned) show(); });
+  cxCard.addEventListener('mouseleave', () => { if (!pinned) hide(); });
+}
+function openVeilReveal() {
+  const modal = document.getElementById('veil-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  layoutReveals();
+  const stage = modal.querySelector('.sg-stage[data-thread="veil"]');
+  if (stage) { stage.classList.remove('sg-run'); void stage.offsetWidth; stage.classList.add('sg-run'); }
+}
+function closeVeilReveal() {
+  const modal = document.getElementById('veil-reveal');
+  if (modal) modal.classList.remove('open');
+  layoutReveals();
+}
+
+function wireCoveringArc() {
+  wireTwoPointArc({
+    originEvent: 'The Fig Leaves', destEvent: 'Crucifixion & Resurrection',
+    originId: 'bs-covering-fig', destId: 'bs-crucifixion-card',
+    svgId: 'bs-covering-arc-svg', labelId: 'bs-covering-arc-label',
+    color: '#6b5638', colorMid: '#a98f63', lane: 16,
+    labelText: 'they covered themselves &middot; uncovered at the cross',
+    openReveal: openCoveringReveal, closeReveal: closeCoveringReveal
+  });
+}
+function openCoveringReveal() {
+  const modal = document.getElementById('covering-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  layoutReveals();
+  const stage = modal.querySelector('.sg-stage[data-thread="covering"]');
+  if (stage) { stage.classList.remove('sg-run'); void stage.offsetWidth; stage.classList.add('sg-run'); }
+}
+function closeCoveringReveal() {
+  const modal = document.getElementById('covering-reveal');
+  if (modal) modal.classList.remove('open');
+  layoutReveals();
+}
+
+function wireTreeArc() {
+  wireTwoPointArc({
+    originEvent: 'Among the Trees', destEvent: 'Crucifixion & Resurrection',
+    originId: 'bs-tree-hide', destId: 'bs-crucifixion-card',
+    svgId: 'bs-tree-arc-svg', labelId: 'bs-tree-arc-label',
+    color: '#3d4a35', colorMid: '#7a9168', lane: 32,
+    labelText: 'they hid themselves &middot; hung on a tree in the open',
+    openReveal: openTreeReveal, closeReveal: closeTreeReveal
+  });
+}
+function openTreeReveal() {
+  const modal = document.getElementById('tree-reveal');
+  if (!modal) return;
+  modal.classList.add('open');
+  layoutReveals();
+  const stage = modal.querySelector('.sg-stage[data-thread="tree"]');
+  if (stage) { stage.classList.remove('sg-run'); void stage.offsetWidth; stage.classList.add('sg-run'); }
+}
+function closeTreeReveal() {
+  const modal = document.getElementById('tree-reveal');
+  if (modal) modal.classList.remove('open');
+  layoutReveals();
+}
+
 // ── THE SCAPEGOAT THREAD: THE TRIAL -> THE LAW AT SINAI (Leviticus 16) ─────────
 // Barabbas, "son of the father," is released while the true Son is condemned:
 // the two goats of the Day of Atonement, one let go, one slain in its place.
@@ -7642,7 +7956,7 @@ function showLegendSheet() {
   const content = document.getElementById('ancient-sheet-content');
   // Build legend from series present in the library (respecting context state)
   const seen = new Set();
-  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v38.0 · 16 June 2026</div>';
+  let html = '<div style="font-family:Cinzel,serif;font-size:8px;letter-spacing:0.12em;color:var(--brown-light);text-align:center;margin:2px 0 14px;opacity:0.7;">Compiled by Nicholas · v38.3 · 16 June 2026</div>';
   html += '<div class="ms-heading">Series</div>';
   allVolumes.forEach(v => {
     if (!showContextual && isContextual(v)) return;
@@ -8874,6 +9188,55 @@ window.addEventListener('resize', () => {
       <div class="tg-devo" style="--d:3.9s">At the trial the lot falls the same way: the guilty <b>son of the father</b> walks free because the innocent <b>Son of the Father</b> is condemned in his place.</div>
 
       <div class="tg-coda">The wrong man went free, and that is the gospel in miniature: the guilty released, the innocent bound, the true Son standing in the place of the son of the father.</div>
+    </div>
+  </div>
+</div>
+
+<div id="veil-reveal" class="reveal-popup sg-reveal" onclick="if(event.target===this)closeVeilReveal()">
+  <div class="sg-panel" style="--accent:#3a4f73;--accent-border:rgba(58,79,115,0.45);">
+    <button class="sg-close" onclick="closeVeilReveal()" aria-label="Close">✕</button>
+    <div class="sg-eyebrow">The Veil</div>
+    <div class="sg-stage" data-thread="veil">
+      <div class="sg-intro">On the second day God set the firmament between the waters above and below. Of all six days of work, this alone he never calls <b>good</b>, and the same barrier runs all the way to the cross.</div>
+      <div class="sg-beat" style="--d:1.1s">Five times Genesis records &ldquo;and God saw that it was good&rdquo;; a sixth time, &ldquo;very good.&rdquo; Day two alone passes in silence. <span class="r">Genesis 1:6&ndash;8, 31</span></div>
+      <div class="sg-beat" style="--d:1.5s">When man is driven from the garden, cherubim and a flaming sword are set to guard the way back to the tree of life. <span class="r">Genesis 3:24</span></div>
+      <div class="sg-beat" style="--d:1.9s">In the tabernacle the same cherubim are woven into the veil itself, and only the high priest may pass beyond it, once a year. <span class="r">Exodus 26:31 &middot; Leviticus 16</span></div>
+      <div class="sg-beat" style="--d:2.3s">Solomon weaves cherubim into the Temple veil too; the barrier becomes permanent, set in cedar and gold rather than goat-hair tent. <span class="r">2 Chronicles 3:14</span></div>
+      <div class="sg-tier">fulfilled</div>
+      <div class="sg-devo" style="--d:3.2s">At the moment Christ breathed his last, that same veil was torn, not from the bottom by human hands reaching up, but from top to bottom, by the only hand that could reach down. <span class="r">Matthew 27:51</span></div>
+      <div class="sg-coda">What day two withheld is given at Calvary: the cherubim&rsquo;s long watch ends, and the division finishes its purpose by being undone.</div>
+    </div>
+  </div>
+</div>
+
+<div id="covering-reveal" class="reveal-popup sg-reveal" onclick="if(event.target===this)closeCoveringReveal()">
+  <div class="sg-panel" style="--accent:#6b5638;--accent-border:rgba(107,86,56,0.45);">
+    <button class="sg-close" onclick="closeCoveringReveal()" aria-label="Close">✕</button>
+    <div class="sg-eyebrow">The Fig Leaves</div>
+    <div class="sg-stage" data-thread="covering">
+      <div class="sg-intro">Adam and Eve sewed fig leaves and covered themselves the moment their eyes were opened. At the cross, Christ is uncovered by others&rsquo; hands, and does not resist it.</div>
+      <div class="sg-beat" style="--d:1.3s">Their eyes were opened and they knew they were naked; they sewed fig leaves and made themselves coverings. <span class="r">Genesis 3:7</span></div>
+      <div class="sg-beat" style="--d:1.7s">It is the first human act after the fall, not repentance, but self-covering, done before God has even spoken a word.</div>
+      <div class="sg-beat" style="--d:2.1s">Centuries later, soldiers at the cross strip Christ of his garments and divide them among themselves, casting lots. <span class="r">Matthew 27:35 &middot; John 19:23&ndash;24</span></div>
+      <div class="sg-tier">fulfilled</div>
+      <div class="sg-devo" style="--d:3.2s">Adam covers his own shame by his own hand; the new Adam is uncovered by others&rsquo; hands and does not resist it, like a lamb led silently before its shearers. <span class="r">Isaiah 53:7</span></div>
+      <div class="sg-coda">The first covering was sewn in fear. The last uncovering is borne in silence, and nothing is hidden anymore.</div>
+    </div>
+  </div>
+</div>
+
+<div id="tree-reveal" class="reveal-popup sg-reveal" onclick="if(event.target===this)closeTreeReveal()">
+  <div class="sg-panel" style="--accent:#3d4a35;--accent-border:rgba(61,74,53,0.45);">
+    <button class="sg-close" onclick="closeTreeReveal()" aria-label="Close">✕</button>
+    <div class="sg-eyebrow">Among the Trees</div>
+    <div class="sg-stage" data-thread="tree">
+      <div class="sg-intro">Adam and Eve hid themselves among the trees of the garden, away from their Maker. Christ does not hide. He is lifted up on a tree, in full view.</div>
+      <div class="sg-beat" style="--d:1.3s">&ldquo;I heard your voice in the garden, and I was afraid, because I was naked, and I hid myself.&rdquo; <span class="r">Genesis 3:10</span></div>
+      <div class="sg-beat" style="--d:1.7s">From among the trees of the garden they had eaten; among the same trees they now hide.</div>
+      <div class="sg-beat" style="--d:2.1s">&ldquo;Cursed is everyone who hangs on a tree,&rdquo; the law had said; Paul names the cross with that very word. <span class="r">Galatians 3:13 &middot; Deuteronomy 21:23</span></div>
+      <div class="sg-tier">fulfilled</div>
+      <div class="sg-devo" style="--d:3.2s">Where Adam withdrew into hiding, the new Adam is lifted up in the open, on a tree, for all to see; the apostles preach the cross by that same name from their very first sermons. <span class="r">Acts 5:30 &middot; 1 Peter 2:24</span></div>
+      <div class="sg-coda">The first man hid among the trees, afraid. The new Adam hangs on a tree, in the open, that nothing further need be hidden.</div>
     </div>
   </div>
 </div>
