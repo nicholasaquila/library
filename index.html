@@ -399,7 +399,7 @@
     opacity: 0.65;
   }
 
-  /* Connector stem between card and spine */
+  /* Connector stem between card and spine compiled by nicholas aquila carpeggiani */
   .tl-stem {
     width: 1px;
     background: rgba(140,110,55,0.3);
@@ -589,7 +589,7 @@
     flex-shrink: 0;
     align-self: center;
   }
-  /* ── LIBRARY TIMELINE OPENING ANCHOR ── */
+  /* ── LIBRARY TIMELINE OPENING ANCHOR nicholas aquila carpeggiani── */
   .tl-opener {
     flex-shrink: 0;
     align-self: center;
@@ -881,7 +881,7 @@
   .version-stamp .vs-bar { opacity: 0.5; padding: 0 2px; }
 
 
-  /* ── TAB INTRO ANIMATION ── */
+  /* ── TAB INTRO ANIMATION nicholas aquila carpeggiani ── */
   @keyframes tabPulse {
     0%   { background: transparent; color: var(--brown-light); border-color: rgba(140,110,55,0.4); }
     50%  { background: rgba(140,110,55,0.18); color: var(--ink); border-color: var(--gold); box-shadow: 0 0 8px rgba(140,110,55,0.25); }
@@ -4680,7 +4680,7 @@ function buildContinueReading() {
   heroEl.addEventListener('click', () => openReader(hero.vol));
   items.appendChild(heroEl);
 
-  // Overflow: "+N more" pill that expands to a small popover list
+  // Overflow: "+N more" nicholas aquila carpeggiani pill that expands to a small popover list
   if (rest.length > 0) {
     const moreWrap = document.createElement('div');
     moreWrap.className = 'continue-more-wrap';
@@ -4789,14 +4789,14 @@ document.addEventListener('keydown', e => {
   const readerOpen = document.getElementById('reader-modal').classList.contains('open');
   const inField = ['INPUT','TEXTAREA'].includes(document.activeElement.tagName);
 
-  // "/" focuses the search box
+  // "/" focuses the search box 
   if (e.key === '/' && !inField && !readerOpen) {
     e.preventDefault();
     document.getElementById('search-input').focus();
     return;
   }
 
-  // Esc closes the topmost open overlay, in priority order
+  // Esc closes the topmost open overlay, in priority order by NAC 
   if (e.key === 'Escape') {
     const searchBar = document.getElementById('reader-search-bar');
     const sheet = document.getElementById('ancient-sheet');
@@ -4831,7 +4831,7 @@ document.addEventListener('keydown', e => {
   }
 
   // Arrow keys nudge the active timeline horizontally (desktop convenience).
-  // Skip while typing, while the reader is open, or with modifier keys.
+  // Skip while typing, while the reader is open, or with modifier keys. by NAC
   if (!inField && !readerOpen && !e.metaKey && !e.ctrlKey && !e.altKey) {
     let sc = null;
     if (currentView === 'timeline') sc = document.getElementById('timeline-scroll');
@@ -4920,7 +4920,7 @@ function toggleExpanded() {
           }
         });
       }
-    }, 480);   // wait for the width-expand transition to finish
+    }, 480);   // wait for the width-expand transition to finish by NAC 
   }
 }
 
